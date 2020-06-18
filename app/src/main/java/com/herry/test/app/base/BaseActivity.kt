@@ -203,7 +203,7 @@ abstract class BaseActivity : AppCompatActivity(), AC {
         blockedPermissionPopupHelper = PopupHelper(::getActivity)
         blockedPermissionPopupHelper?.showPopup(
             title = "Setting permissions",
-            message = "Permission settings are turned off and can not access those services.\n\nPlease turn in [Settings]&#x3E; [authority].",
+            message = "Permission settings are turned off and can not access those services.\n\nPlease turn in [Settings] > [authority].",
             positiveListener = DialogInterface.OnClickListener { dialog, _ ->
                 dialog.dismiss()
                 applicationContext?.let {

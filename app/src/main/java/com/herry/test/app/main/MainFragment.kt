@@ -1,5 +1,6 @@
 package com.herry.test.app.main
 
+import android.Manifest
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,7 +17,8 @@ import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.test.R
 import com.herry.test.app.base.BaseView
 import com.herry.test.app.base.activity_caller.module.ACNavigation
-import com.herry.test.app.gifdecoder.GifDecoderFragment
+import com.herry.test.app.base.activity_caller.module.ACPermission
+import com.herry.test.app.gif.list.GifListFragment
 import com.herry.test.app.scheme.SchemeFragment
 import com.herry.test.widget.TitleBarForm
 import kotlinx.android.synthetic.main.main_fragment.view.*
@@ -75,7 +77,18 @@ class MainFragment : BaseView<MainContract.View, MainContract.Presenter>(), Main
     override fun onScreen(type: MainContract.TestItemType) {
         when (type) {
             MainContract.TestItemType.SCHEME_TEST -> aC?.call(ACNavigation.SingleCaller(SchemeFragment::class))
-            MainContract.TestItemType.GIF_DECODER -> aC?.call(ACNavigation.SingleCaller(GifDecoderFragment::class))
+            MainContract.TestItemType.GIF_DECODER -> {
+                aC?.call(ACPermission.Caller(
+                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                    onGranted = {
+                        android.os.Handler(android.os.Looper.getMainLooper()).post {
+                            aC?.call(ACNavigation.SingleCaller(
+                                GifListFragment::class
+                            ))
+                        }
+                    }
+                ))
+            }
         }
     }
 

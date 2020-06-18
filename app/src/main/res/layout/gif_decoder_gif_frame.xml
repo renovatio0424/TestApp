@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="@dimen/size64"
-    android:layout_height="@dimen/size64"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/size04"
     android:orientation="vertical"
     tools:ignore="SpUsage">
 
-    <ImageView
-        android:contentDescription="@null"
-        android:id="@+id/gif_decoder_gif_frame_image"
+    <TextView
+        android:id="@+id/gif_decoder_gif_frame_number"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"/>
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/size12"
+        android:textColor="@color/tbc_100"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/gif_decoder_gif_frame_duration"
@@ -22,4 +24,12 @@
         android:textColor="@color/tbc_100"
         android:textStyle="italic" />
 
-</FrameLayout>
+    <ImageView
+        android:contentDescription="@null"
+        android:id="@+id/gif_decoder_gif_frame_image"
+        android:layout_width="@dimen/size64"
+        android:layout_height="@dimen/size64"
+        android:scaleType="centerCrop"
+        android:background="@color/tbc_100"/>
+
+</LinearLayout>

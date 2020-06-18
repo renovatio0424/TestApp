@@ -166,6 +166,11 @@ class GifDecoder(
     }
 
     @Synchronized
+    fun setData(filePath: String, @IntRange(from = 1, to = Int.MAX_VALUE.toLong()) sampleSize: Int = 1) {
+
+    }
+
+    @Synchronized
     fun setData(data: ByteArray, @IntRange(from = 1, to = Int.MAX_VALUE.toLong()) sampleSize: Int = 1) {
         setData(ByteBuffer.wrap(data), sampleSize)
     }
@@ -177,9 +182,9 @@ class GifDecoder(
 
         status = GifDecodeStatus.OK
 
-        headerParser = GifHeaderParser().apply {
-            header = setData(buffer).parseHeader()
-        }
+        headerParser = GifHeaderParser()
+        headerParser?.setData(buffer)
+        header = headerParser?.parseHeader()
 
         framePointer = INITIAL_FRAME_POINTER
 
