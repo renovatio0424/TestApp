@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:ignore="HardcodedText,SpUsage" >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start|center_vertical"
+        android:textSize="@dimen/size16"
+        android:textColor="@color/tbc_100"
+        android:textStyle="bold"
+        android:text="Decoded Gif Frames" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/gif_decoder_decoded_gif_frames"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size64"
+            android:layout_gravity="start|center_vertical"
+            android:nestedScrollingEnabled="true" />
+
+        <LinearLayout
+            android:id="@+id/gif_decoder_decoded_gif_frames_indicator"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size20"
+            android:layout_marginBottom="@dimen/size10"
+            android:layout_gravity="bottom"
+            android:orientation="horizontal"
+            android:gravity="center"
+            />
+    </FrameLayout>
+
+</LinearLayout>

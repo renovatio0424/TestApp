@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- text and bg color -->
+    <color name="tbc_100">#FF000000</color>
+    <color name="tbc_100_a80">#CC000000</color>
+    <color name="tbc_100_a70">#B2000000</color>
+    <color name="tbc_100_a60">#99000000</color>
+    <color name="tbc_100_a50">#7F000000</color>
+    <color name="tbc_100_a40">#66000000</color>
+    <color name="tbc_100_a30">#4D000000</color>
+    <color name="tbc_100_a20">#33000000</color>
+    <color name="tbc_100_a15">#26000000</color>
+    <color name="tbc_100_a10">#1A000000</color>
+    <color name="tbc_100_a05">#0D000000</color>
+    <color name="tbc_90">#FF3B3B3B</color>
+    <color name="tbc_80">#FF464646</color>
+    <color name="tbc_80_a95">#F2464646</color>
+    <color name="tbc_75">#FF636363</color>
+    <color name="tbc_70">#FF868686</color>
+    <color name="tbc_70_a80">#CC868686</color>
+    <color name="tbc_70_a50">#80868686</color>
+    <color name="tbc_70_a30">#4D868686</color>
+    <color name="tbc_60">#FFA9A9A9</color>
+    <color name="tbc_60_a50">#7FA9A9A9</color>
+    <color name="tbc_50">#FFCACACA</color>
+    <color name="tbc_40">#FFD9D9D9</color>
+    <color name="tbc_35">#FFE6E6E6</color>
+    <color name="tbc_30">#FFEEEEEE</color>
+    <color name="tbc_20">#FFF2F2F2</color>
+    <color name="tbc_20_a50">#7FF2F2F2</color>
+    <color name="tbc_10">#FFFFFFFF</color>
+    <color name="tbc_10_a50">#7FFFFFFF</color>
+    <color name="tbc_10_a40">#66FFFFFF</color>
+    <color name="tbc_10_a20">#33FFFFFF</color>
+    <color name="tbc_10_a10">#1AFFFFFF</color>
+    <color name="tbc_0">#00000000</color>
+
+</resources>

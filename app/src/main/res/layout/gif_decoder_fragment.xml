@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:transitionGroup="true"
+    tools:ignore="SpUsage" >
+
+    <include
+        android:id="@+id/gif_decoder_fragment_title"
+        layout="@layout/title_bar_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/gif_decoder_fragment_contents"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:background="@color/tbc_20"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gif_decoder_fragment_title"
+        app:layout_constraintBottom_toTopOf="@+id/gif_decoder_fragment_decode" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/size16"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/gif_decoder_fragment_media_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start|top"
+                android:textSize="@dimen/size14"
+                android:textColor="@color/tbc_100"
+                />
+
+            <include
+                android:id="@+id/gif_decoder_fragment_decoded_gif_frames"
+                layout="@layout/gif_decoder_decoded_gif_frames"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size100"/>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <TextView
+        android:id="@+id/gif_decoder_fragment_decode"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/size42"
+        android:layout_marginTop="@dimen/size16"
+        android:gravity="center"
+        android:textSize="@dimen/size14"
+        android:textColor="@color/tbc_10"
+        android:background="@color/tbc_50"
+        android:text="decoding"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gif_decoder_fragment_contents"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

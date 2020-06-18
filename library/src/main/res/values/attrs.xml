@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="RoundedFrameLayout">
+        <attr name="rfCornerRadius" format="dimension"/>
+        <attr name="rfCorners" >
+            <!-- Push object to the top of its container, not changing its size. -->
+            <flag name="top" value="0x01" />
+            <!-- Push object to the bottom of its container, not changing its size. -->
+            <flag name="bottom" value="0x02" />
+            <!-- Push object to the left of its container, not changing its size. -->
+            <flag name="start" value="0x04" />
+            <!-- Push object to the right of its container, not changing its size. -->
+            <flag name="end" value="0x08" />
+        </attr>
+        <attr name="rfBackgroundColor" format="reference|color"/>
+        <attr name="rfStrokeColor" format="reference|color"/>
+        <attr name="rfStrokeWidth" format="dimension"/>
+    </declare-styleable>
+</resources>
