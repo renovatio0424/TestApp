@@ -165,10 +165,10 @@ class GifDecoder(
         }
     }
 
-    @Synchronized
-    fun setData(filePath: String, @IntRange(from = 1, to = Int.MAX_VALUE.toLong()) sampleSize: Int = 1) {
-
-    }
+//    @Synchronized
+//    fun setData(filePath: String, @IntRange(from = 1, to = Int.MAX_VALUE.toLong()) sampleSize: Int = 1) {
+//
+//    }
 
     @Synchronized
     fun setData(data: ByteArray, @IntRange(from = 1, to = Int.MAX_VALUE.toLong()) sampleSize: Int = 1) {

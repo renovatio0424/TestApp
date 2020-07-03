@@ -38,5 +38,5 @@ interface GifDecoderContract {
 
     data class DecodedGifFrames(
         val frames: MutableList<DecodedGifFrame> = mutableListOf()
-    )
+    ) : Serializable
 }
