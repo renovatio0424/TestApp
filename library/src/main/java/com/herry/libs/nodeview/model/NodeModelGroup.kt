@@ -1,7 +1,7 @@
 package com.herry.libs.nodeview.model
 
 
-open class NodeModelGroup(override val id: Any? = null, isExpansion: Boolean = true): INodeModelGroup {
+open class NodeModelGroup(override val id: Any? = null, isExpansion: Boolean = true) : INodeModelGroup {
     override var isExpansion: Boolean = isExpansion
         set(value) {
             if (field != value) {

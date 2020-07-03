@@ -1,11 +1,9 @@
 package com.herry.libs.nodeview.model
 
+@Suppress("MemberVisibilityCanBePrivate")
+open class Node<M : Any> {
 
-
-
-open class Node<M: Any> {
-
-    val isVisible: Boolean
+    private val isVisible: Boolean
 
     var isExpansion: Boolean
         get() = nodeModelGroup?.isExpansion ?: false
@@ -15,7 +13,7 @@ open class Node<M: Any> {
 
     var model: M
         set(value) {
-            if(value is INodeModelGroup) {
+            if (value is INodeModelGroup) {
                 this@Node.nodeModelGroup?.setOnGetNode(null)
                 this@Node.nodeModelGroup?.setOnChangedExpansion(null)
                 this@Node.nodeModelGroup = value
@@ -24,25 +22,26 @@ open class Node<M: Any> {
                 }
                 this@Node.nodeModelGroup?.setOnChangedExpansion {
                     changedNode()
-                    if(this@Node.nodeChildren.viewCount > 0) {
+                    if (this@Node.nodeChildren.viewCount > 0) {
                         this@Node.parent?.run {
                             val param = NodeNotifyParam(
-                                    if (it.isExpansion) NodeNotifyParam.STATE.INSERT else NodeNotifyParam.STATE.REMOVE,
-                                    this@Node.viewPosition + if(this@Node.isVisible) 1 else 0,
-                                this@Node.nodeChildren.viewCount)
+                                if (it.isExpansion) NodeNotifyParam.STATE.INSERT else NodeNotifyParam.STATE.REMOVE,
+                                this@Node.viewPosition + if (this@Node.isVisible) 1 else 0,
+                                this@Node.nodeChildren.viewCount
+                            )
 
                             val success = this@Node.parent?.notify(param) {
 
                             } ?: true
 
-                            if(!success) {
-                                param.position = this@Node.viewPosition + if(this@Node.isVisible) 1 else 0
+                            if (!success) {
+                                param.position = this@Node.viewPosition + if (this@Node.isVisible) 1 else 0
                                 this@Node.parent?.notify(param, null)
                             }
                         }
                     }
                 }
-            } else if(value is INodeModel) {
+            } else if (value is INodeModel) {
                 this@Node.nodeModel?.setOnGetNode(null)
                 this@Node.nodeModel = value
                 this@Node.nodeModel?.setOnGetNode {
@@ -70,7 +69,7 @@ open class Node<M: Any> {
 
     private var nodeId: Long = 0
 
-    internal val nodeChildren: NodeChildren = NodeChildren(notify = fun (param: NodeNotifyParam, then: () -> Unit) {
+    internal val nodeChildren: NodeChildren = NodeChildren(notify = fun(param: NodeNotifyParam, then: () -> Unit) {
         notifyFromChild(param, then)
     })
 
@@ -87,8 +86,8 @@ open class Node<M: Any> {
     fun getViewPosition(): Int = viewPosition
 
     fun getViewCount(): Int {
-        var viewCount = if(isVisible) 1 else 0
-        if(isExpansion) {
+        var viewCount = if (isVisible) 1 else 0
+        if (isExpansion) {
             viewCount += nodeChildren.viewCount
         }
         return viewCount
@@ -99,8 +98,8 @@ open class Node<M: Any> {
     internal fun getNodePosition(): NodePosition? {
         var nodePosition = NodePosition(intArrayOf(viewPosition))
         var parentNode = parent
-        while(parentNode != this) {
-            if(parentNode == null) {
+        while (parentNode != this) {
+            if (parentNode == null) {
                 return nodePosition
             }
 
@@ -112,7 +111,7 @@ open class Node<M: Any> {
     }
 
     fun getNodePosition(viewPosition: Int): NodePosition? {
-        if(viewPosition in 0 until getViewCount()) {
+        if (viewPosition in 0 until getViewCount()) {
             var index = viewPosition
             if (isVisible) {
                 if (index == 0) {
@@ -127,8 +126,8 @@ open class Node<M: Any> {
 
     fun getNode(nodePosition: NodePosition): Node<*>? {
         var result: Node<*>? = this
-        for(position in nodePosition.position) {
-            if(result == null) {
+        for (position in nodePosition.position) {
+            if (result == null) {
                 return null
             }
             result = result.getChildNode(position)
@@ -153,16 +152,17 @@ open class Node<M: Any> {
     fun getChildNode(position: Int): Node<*>? = nodeChildren.get(position)
 
     fun changedNode() {
-        if(isVisible) {
+        if (isVisible) {
             val param = NodeNotifyParam(
-                    NodeNotifyParam.STATE.CHANGE,
-                    viewPosition,
-                    1)
+                NodeNotifyParam.STATE.CHANGE,
+                viewPosition,
+                1
+            )
             parent?.run {
                 val success = this.notify(param) {
 
                 }
-                if(!success) {
+                if (!success) {
                     param.position = this@Node.viewPosition
                     this.notify(param, null)
                 }
@@ -179,7 +179,7 @@ open class Node<M: Any> {
     }
 
     fun addChild(nodes: MutableList<Node<*>>, position: Int = nodeChildren.getCount()) {
-        if(nodeModelGroup == null) {
+        if (nodeModelGroup == null) {
             return
         }
         nodeChildren.add(this@Node, nodes, position)
@@ -197,16 +197,16 @@ open class Node<M: Any> {
     }
 
     fun replace(node: Node<*>) {
-        if(node.model is INodeModelGroup) {
+        if (node.model is INodeModelGroup) {
             val nodeModel = node.model as INodeModelGroup
             val childList = mutableListOf<Node<*>>()
-            for(i in 0 until node.getChildCount()) {
+            for (i in 0 until node.getChildCount()) {
                 node.getChildNode(i)?.let {
                     childList.add(it)
                 }
             }
 
-            if(isExpansion != nodeModel.isExpansion) {
+            if (isExpansion != nodeModel.isExpansion) {
                 nodeChildren.clear()
                 @Suppress("UNCHECKED_CAST")
                 this.model = node.model as M
@@ -223,9 +223,9 @@ open class Node<M: Any> {
     }
 
     internal open fun notifyFromChild(param: NodeNotifyParam, then: (() -> Unit)?) {
-        if(isExpansion && parent != null) {
+        if (isExpansion && parent != null) {
             val success = parent!!.notify(NodeNotifyParam(param.state, param.position + viewPosition + if (isVisible) 1 else 0, param.count), then)
-            if(!success) {
+            if (!success) {
                 parent!!.notify(NodeNotifyParam(param.state, param.position + viewPosition + if (isVisible) 1 else 0, param.count), null)
             }
         } else {
@@ -234,8 +234,8 @@ open class Node<M: Any> {
     }
 
     internal open fun notify(param: NodeNotifyParam, then: (() -> Unit)?): Boolean {
-        if(isExpansion) {
-            if(param.state == NodeNotifyParam.STATE.INSERT || param.state == NodeNotifyParam.STATE.REMOVE) {
+        if (isExpansion) {
+            if (param.state == NodeNotifyParam.STATE.INSERT || param.state == NodeNotifyParam.STATE.REMOVE) {
                 updatedTraversal = false
             }
 
@@ -250,10 +250,10 @@ open class Node<M: Any> {
     }
 
     internal open fun traversals(): Int {
-        if(!updatedTraversal) {
+        if (!updatedTraversal) {
             updatedTraversal = true
             nodeChildren.traversals()
         }
-        return if (isVisible) 1 else 0 + if(isExpansion) nodeChildren.viewCount else 0
+        return if (isVisible) 1 else 0 + if (isExpansion) nodeChildren.viewCount else 0
     }
 }

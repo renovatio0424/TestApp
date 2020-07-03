@@ -3,8 +3,6 @@ package com.herry.libs.nodeview.model
 import kotlin.reflect.KClass
 
 
-
-
 internal class NodeChildren(private val notify: (param: NodeNotifyParam, then: () -> Unit) -> Unit) {
 
     var viewCount = 0
@@ -42,7 +40,7 @@ internal class NodeChildren(private val notify: (param: NodeNotifyParam, then: (
     }
 
     internal fun clear() {
-        if(viewCount > 0) {
+        if (viewCount > 0) {
             notify(NodeNotifyParam(NodeNotifyParam.STATE.REMOVE, 0, viewCount)) {
                 for (node in list) {
                     node.parent = null
@@ -70,7 +68,7 @@ internal class NodeChildren(private val notify: (param: NodeNotifyParam, then: (
         var addedViewCount = 0
         for (node in nodes) {
             node.parent = parent
-            node.viewPosition =  startViewPosition + addedViewCount
+            node.viewPosition = startViewPosition + addedViewCount
             node.getRoot()?.let {
                 node.setNodeId(it)
             }
@@ -83,7 +81,7 @@ internal class NodeChildren(private val notify: (param: NodeNotifyParam, then: (
                 list.addAll(startNodePosition, nodes)
 
                 viewCount = startViewPosition + addedViewCount
-                for(i in startNodePosition + nodes.size until list.size) {
+                for (i in startNodePosition + nodes.size until list.size) {
                     list[i].viewPosition = viewCount
                     viewCount += list[i].getViewCount()
                 }
@@ -99,8 +97,8 @@ internal class NodeChildren(private val notify: (param: NodeNotifyParam, then: (
         var removedViewCount = 0
 
         for (i: Int in 0 until count) {
-            if(position in 0 until list.size) {
-                if(removedViewPosition < 0) {
+            if (position in 0 until list.size) {
+                if (removedViewPosition < 0) {
                     removedViewPosition = list[position + i].viewPosition
                 }
                 removedViewCount += list[position + i].getViewCount()
@@ -110,21 +108,21 @@ internal class NodeChildren(private val notify: (param: NodeNotifyParam, then: (
         if (removedViewPosition >= 0 && removedViewCount > 0) {
             notify(NodeNotifyParam(NodeNotifyParam.STATE.REMOVE, removedViewPosition, removedViewCount)) {
                 for (i: Int in 0 until count) {
-                    if(position in 0 until list.size) {
+                    if (position in 0 until list.size) {
                         val node = list.removeAt(position)
                         node.parent = null
                     }
                 }
 
                 viewCount = removedViewPosition
-                for(i in position until list.size) {
+                for (i in position until list.size) {
                     list[i].viewPosition = viewCount
                     viewCount += list[i].getViewCount()
                 }
             }
         } else {
             for (i: Int in 0 until count) {
-                if(position in 0 until list.size) {
+                if (position in 0 until list.size) {
                     val node = list.removeAt(position)
                     node.parent = null
                 }
@@ -162,8 +160,10 @@ internal class NodeChildren(private val notify: (param: NodeNotifyParam, then: (
         }
         val node = get(mid)
         return if (node != null) {
-            NodePosition.compose(mid,
-                    node.getNodePosition(viewPosition - node.getViewPosition()))
+            NodePosition.compose(
+                mid,
+                node.getNodePosition(viewPosition - node.getViewPosition())
+            )
         } else
             null
     }
@@ -176,7 +176,7 @@ internal class NodeChildren(private val notify: (param: NodeNotifyParam, then: (
         while (fromList.isNotEmpty() && toList.isNotEmpty()) {
             val fromId = fromList[0].id
 
-            if(fromId.isNode && fromId.id == null) {
+            if (fromId.isNode && fromId.id == null) {
                 remove(fromIndex, fromList.removeAt(0).size)
             } else {
                 val containToIndex = containIdList(toList, fromId)
@@ -217,7 +217,7 @@ internal class NodeChildren(private val notify: (param: NodeNotifyParam, then: (
             }
         }
 
-        if(fromList.isNotEmpty()) {
+        if (fromList.isNotEmpty()) {
             var removeCount = 0
             for (fromIdList in fromList) {
                 removeCount += fromIdList.size
@@ -225,7 +225,7 @@ internal class NodeChildren(private val notify: (param: NodeNotifyParam, then: (
             remove(fromIndex, removeCount)
         }
 
-        if(toList.isNotEmpty()) {
+        if (toList.isNotEmpty()) {
             val addList = mutableListOf<Node<*>>()
             for (toIdList in toList) {
                 addList.addAll(toIdList)
@@ -234,18 +234,18 @@ internal class NodeChildren(private val notify: (param: NodeNotifyParam, then: (
         }
     }
 
-    private class IdList(val id: Id): MutableList<Node<*>> by ArrayList()
+    private class IdList(val id: Id) : MutableList<Node<*>> by ArrayList()
 
     private data class Id(
-            val kClass: KClass<out Any>,
-            val isNode: Boolean = false,
-            val id: Any? = null
+        val kClass: KClass<out Any>,
+        val isNode: Boolean = false,
+        val id: Any? = null
     )
 
     private fun getIdList(items: MutableList<Node<*>>): MutableList<IdList> {
         val idList = mutableListOf<IdList>()
         var list: IdList? = null
-        for(item in items) {
+        for (item in items) {
             val id = generateId(item)
             when {
                 list == null -> {
@@ -254,7 +254,7 @@ internal class NodeChildren(private val notify: (param: NodeNotifyParam, then: (
                 }
                 list.id == id -> list.add(item)
                 else -> {
-                    if(list.size > 0) {
+                    if (list.size > 0) {
                         idList.add(list)
                     }
                     list = IdList(id)
@@ -270,7 +270,7 @@ internal class NodeChildren(private val notify: (param: NodeNotifyParam, then: (
 
     private fun generateId(node: Node<*>): Id {
         val model = node.model
-        return if(model is INodeModelGroup) {
+        return if (model is INodeModelGroup) {
             Id(model::class, true, model.id)
         } else {
             Id(model::class)
@@ -278,8 +278,8 @@ internal class NodeChildren(private val notify: (param: NodeNotifyParam, then: (
     }
 
     private fun containIdList(list: MutableList<IdList>, id: Id): Int {
-        for(i in 0 until list.size) {
-            if(list[i].id == id) {
+        for (i in 0 until list.size) {
+            if (list[i].id == id) {
                 return i
             }
         }

@@ -7,6 +7,7 @@ import android.util.TypedValue
 import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.herry.libs.nodeview.INodeRoot
 import com.herry.libs.nodeview.NodeForm
 import com.herry.libs.nodeview.NodeHolder
@@ -16,10 +17,13 @@ import com.herry.libs.nodeview.model.NodePosition
 import com.herry.libs.nodeview.model.NodeRoot
 
 @Suppress("unused")
-abstract class NodeRecyclerAdapter(protected val context: () -> Context, log: Boolean = false): androidx.recyclerview.widget.RecyclerView.Adapter<NodeRecyclerHolder>(),
+abstract class NodeRecyclerAdapter(
+    protected val context: () -> Context, log: Boolean = false
+) : RecyclerView.Adapter<NodeRecyclerHolder>(),
     INodeRoot {
 
     private val viewTypeToForms = mutableMapOf<Int, NodeForm<out NodeHolder, *>>()
+
     override val root = NodeRoot(object : NodeNotify {
         override fun nodeSetChanged() {
             notifyDataSetChanged()
@@ -50,9 +54,9 @@ abstract class NodeRecyclerAdapter(protected val context: () -> Context, log: Bo
     }
 
     private fun bindForms() {
-        val formsList = mutableListOf<NodeForm<out NodeHolder,*>>()
+        val formsList = mutableListOf<NodeForm<out NodeHolder, *>>()
         onBindForms(formsList)
-        for(i in formsList.indices) {
+        for (i in formsList.indices) {
             viewTypeToForms[i + 1] = formsList[i]
         }
     }
@@ -71,8 +75,8 @@ abstract class NodeRecyclerAdapter(protected val context: () -> Context, log: Bo
     override fun getItemViewType(position: Int): Int {
         val model = getBindModel(position)
         model?.let {
-            for(viewTypeToForm in viewTypeToForms) {
-                if(viewTypeToForm.value.mClass.isInstance(it)) {
+            for (viewTypeToForm in viewTypeToForms) {
+                if (viewTypeToForm.value.mClass.isInstance(it)) {
                     return viewTypeToForm.key
                 }
             }
@@ -89,7 +93,10 @@ abstract class NodeRecyclerAdapter(protected val context: () -> Context, log: Bo
             return NodeRecyclerHolder(it)
         } ?: let {
             val tv = TextView(context()).apply {
-                layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                )
                 gravity = Gravity.CENTER
 
                 setTextColor(Color.WHITE)
@@ -110,8 +117,8 @@ abstract class NodeRecyclerAdapter(protected val context: () -> Context, log: Bo
 
             when {
                 form != null -> {
-                    if(node.model is NodeRecyclerSingleModel && p0.itemId == node.getNodeId()) {
-                        if(!(node.model as NodeRecyclerSingleModel).updated) {
+                    if (node.model is NodeRecyclerSingleModel && p0.itemId == node.getNodeId()) {
+                        if (!(node.model as NodeRecyclerSingleModel).updated) {
                             (node.model as NodeRecyclerSingleModel).updated = true
                             form.bindModel(context(), p0.holder, node.model)
                         }
@@ -126,7 +133,8 @@ abstract class NodeRecyclerAdapter(protected val context: () -> Context, log: Bo
         }
     }
 
-    fun getNodePosition(holder: NodeRecyclerHolder): NodePosition? = getNodePosition(holder.adapterPosition)
+    fun getNodePosition(holder: NodeRecyclerHolder): NodePosition? =
+        getNodePosition(holder.adapterPosition)
 
     fun getNodePosition(position: Int): NodePosition? = root.getNodePosition(position)
 
@@ -152,24 +160,33 @@ abstract class NodeRecyclerAdapter(protected val context: () -> Context, log: Bo
     override fun onViewRecycled(holder: NodeRecyclerHolder) {
         super.onViewRecycled(holder)
 
-        if(viewTypeToForms[holder.itemViewType] is NodeRecyclerForm) {
-            (viewTypeToForms[holder.itemViewType] as NodeRecyclerForm).onViewRecycled(context(), holder.holder)
+        if (viewTypeToForms[holder.itemViewType] is NodeRecyclerForm) {
+            (viewTypeToForms[holder.itemViewType] as NodeRecyclerForm).onViewRecycled(
+                context(),
+                holder.holder
+            )
         }
     }
 
     override fun onViewAttachedToWindow(holder: NodeRecyclerHolder) {
         super.onViewAttachedToWindow(holder)
 
-        if(viewTypeToForms[holder.itemViewType] is NodeRecyclerForm) {
-            (viewTypeToForms[holder.itemViewType] as NodeRecyclerForm).onViewAttachedToWindow(context(), holder.holder)
+        if (viewTypeToForms[holder.itemViewType] is NodeRecyclerForm) {
+            (viewTypeToForms[holder.itemViewType] as NodeRecyclerForm).onViewAttachedToWindow(
+                context(),
+                holder.holder
+            )
         }
     }
 
     override fun onViewDetachedFromWindow(holder: NodeRecyclerHolder) {
         super.onViewDetachedFromWindow(holder)
 
-        if(viewTypeToForms[holder.itemViewType] is NodeRecyclerForm) {
-            (viewTypeToForms[holder.itemViewType] as NodeRecyclerForm).onViewDetachedFromWindow(context(), holder.holder)
+        if (viewTypeToForms[holder.itemViewType] is NodeRecyclerForm) {
+            (viewTypeToForms[holder.itemViewType] as NodeRecyclerForm).onViewDetachedFromWindow(
+                context(),
+                holder.holder
+            )
         }
     }
 }

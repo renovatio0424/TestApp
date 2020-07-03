@@ -3,7 +3,6 @@ package com.herry.libs.nodeview.model
 import android.util.Log
 
 
-
 class NodeRoot internal constructor(private val notify: NodeNotify, private val log: Boolean = false) : Node<NodeModelGroup>(NodeModelGroup()) {
 
     private var nextNodeId = 0L
@@ -15,7 +14,7 @@ class NodeRoot internal constructor(private val notify: NodeNotify, private val 
 
     internal fun nextNodeId(): Long {
         nextNodeId++
-        if(nextNodeId == Long.MAX_VALUE) {
+        if (nextNodeId == Long.MAX_VALUE) {
             nextNodeId = 1L
         }
         return nextNodeId
@@ -31,17 +30,17 @@ class NodeRoot internal constructor(private val notify: NodeNotify, private val 
     override fun beginTransition() {
         isTransition = true
         isNodeSetChanged = getViewCount() <= 0
-        if(log) {
+        if (log) {
             Log.d("node_ui", "beginTransition isNodeSetChanged : $isNodeSetChanged")
         }
     }
 
     override fun endTransition() {
-        if(log) {
+        if (log) {
             Log.d("node_ui", "endTransition isTransition : $isTransition isNodeSetChanged : $isNodeSetChanged")
         }
 
-        if(!isTransition || isNodeSetChanged) {
+        if (!isTransition || isNodeSetChanged) {
             traversals()
             this.param = null
             notify.nodeSetChanged()
@@ -59,32 +58,32 @@ class NodeRoot internal constructor(private val notify: NodeNotify, private val 
 
     override fun notifyFromChild(param: NodeNotifyParam, then: (() -> Unit)?) {
         val success = notify(param, then)
-        if(!success) {
+        if (!success) {
             notify(param, null)
         }
     }
 
     override fun notify(param: NodeNotifyParam, then: (() -> Unit)?): Boolean {
-        if(log && then != null) {
+        if (log && then != null) {
             Log.d("node_ui", "notify param $param")
         }
 
-        if(isNodeSetChanged) {
-            if(log) {
+        if (isNodeSetChanged) {
+            if (log) {
                 Log.d("node_ui", "notify isNodeSetChanged : TRUE")
             }
             then?.let { it() }
             return true
         }
 
-        if(isTransition) {
-            if(this.param != null) {
+        if (isTransition) {
+            if (this.param != null) {
                 val composeParam = this.param!!.compose(param)
-                if(log) {
+                if (log) {
                     Log.d("node_ui", "notify isTransition : $isTransition this.param : ${this.param} composeParam : $composeParam ")
                 }
 
-                return if(composeParam != null) {
+                return if (composeParam != null) {
                     this.param = composeParam
                     then?.let { it() }
                     true
@@ -95,7 +94,7 @@ class NodeRoot internal constructor(private val notify: NodeNotify, private val 
                     false
                 }
             } else {
-                if(log) {
+                if (log) {
                     Log.d("node_ui", "notify isTransition : $isTransition this.param : null")
                 }
                 this.param = param
@@ -103,10 +102,10 @@ class NodeRoot internal constructor(private val notify: NodeNotify, private val 
                 return true
             }
         } else {
-            if(log) {
+            if (log) {
                 Log.d("node_ui", "notify $isTransition ${getViewCount()}")
             }
-            if(getViewCount() <= 0) {
+            if (getViewCount() <= 0) {
                 then?.let { it() }
                 traversals()
                 this.param = null
@@ -122,20 +121,20 @@ class NodeRoot internal constructor(private val notify: NodeNotify, private val 
     private fun applyTo(param: NodeNotifyParam) {
         when (param.state) {
             NodeNotifyParam.STATE.CHANGE -> {
-                if(log) {
+                if (log) {
                     Log.d("node_ui", "applyTo CHANGED : POS = ${param.position}, CNT = ${param.count}")
                 }
                 notify.nodeChanged(param.position, param.count)
             }
             NodeNotifyParam.STATE.INSERT -> {
-                if(log) {
+                if (log) {
                     Log.d("node_ui", "applyTo INSERTED : POS = ${param.position}, CNT = ${param.count}")
                 }
                 traversals()
                 notify.nodeInserted(param.position, param.count)
             }
             NodeNotifyParam.STATE.REMOVE -> {
-                if(log) {
+                if (log) {
                     Log.d("node_ui", "applyTo REMOVED : POS = ${param.position}, CNT = ${param.count}")
                 }
                 traversals()

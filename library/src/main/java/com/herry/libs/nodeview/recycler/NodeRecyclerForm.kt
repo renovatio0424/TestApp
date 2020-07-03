@@ -1,5 +1,3 @@
-@file:Suppress("unused")
-
 package com.herry.libs.nodeview.recycler
 
 import android.content.Context
@@ -10,7 +8,7 @@ import com.herry.libs.nodeview.model.Node
 import com.herry.libs.nodeview.model.NodePosition
 import kotlin.reflect.full.safeCast
 
-@Suppress("MemberVisibilityCanBePrivate")
+@Suppress("MemberVisibilityCanBePrivate", "unused")
 interface NodeRecyclerForm {
 
     companion object {

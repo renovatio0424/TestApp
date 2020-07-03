@@ -7,11 +7,11 @@ import android.view.ViewGroup
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 
-abstract class NodeView<H: NodeHolder> {
+abstract class NodeView<H : NodeHolder> {
 
     open fun createHolder(context: Context, parent: ViewGroup?, attach: Boolean = true): H? {
         val view = onCreateView(context, parent)
-        if(attach) {
+        if (attach) {
             parent?.addView(view)
         }
         return bindHolder(context, view)
@@ -28,7 +28,7 @@ abstract class NodeView<H: NodeHolder> {
     }
 
     protected open fun onCreateView(context: Context, parent: ViewGroup?): View =
-            LayoutInflater.from(context).inflate(onLayout(), parent, false)
+        LayoutInflater.from(context).inflate(onLayout(), parent, false)
 
     @LayoutRes
     protected abstract fun onLayout(): Int

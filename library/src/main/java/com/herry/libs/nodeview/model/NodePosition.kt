@@ -1,14 +1,15 @@
 package com.herry.libs.nodeview.model
 
 
+@Suppress("unused")
 class NodePosition(val position: IntArray) {
     companion object {
         fun compose(pos: Int, pPos: NodePosition?): NodePosition {
-            if(pPos != null) {
+            if (pPos != null) {
                 val newPPos = IntArray(pPos.position.size + 1)
                 newPPos[0] = pos
-                for(i in 1..pPos.position.size) {
-                    newPPos[i] = pPos.position[i -1]
+                for (i in 1..pPos.position.size) {
+                    newPPos[i] = pPos.position[i - 1]
                 }
                 return NodePosition(newPPos)
             }
@@ -18,23 +19,23 @@ class NodePosition(val position: IntArray) {
 
     fun getViewPosition(): Int {
         var viewPosition = 0
-        for(inPosition in position) {
+        for (inPosition in position) {
             viewPosition += inPosition
         }
         return viewPosition
     }
 
     fun getPosition(): Int {
-        if(position.isNotEmpty()) {
+        if (position.isNotEmpty()) {
             return position[position.size - 1]
         }
         return -1
     }
 
     fun getParentPosition(): NodePosition? {
-        if(position.size > 1) {
+        if (position.size > 1) {
             val parentPos = IntArray(position.size - 1)
-            for(i in 0 until parentPos.size) {
+            for (i in parentPos.indices) {
                 parentPos[i] = position[i]
             }
             return NodePosition(parentPos)
@@ -44,7 +45,7 @@ class NodePosition(val position: IntArray) {
 
     override fun toString(): String {
         val sb = StringBuilder()
-        for(pos in position) {
+        for (pos in position) {
             sb.append("[$pos]")
         }
         return sb.toString()

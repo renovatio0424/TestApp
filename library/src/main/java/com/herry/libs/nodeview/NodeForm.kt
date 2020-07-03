@@ -7,7 +7,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.safeCast
 
 @Suppress("unused")
-abstract class NodeForm<H: NodeHolder, M: Any>(val hClass: KClass<H>, val mClass: KClass<M>): NodeView<H>() {
+abstract class NodeForm<H : NodeHolder, M : Any>(val hClass: KClass<H>, val mClass: KClass<M>) : NodeView<H>() {
     var holder: H? = null
         private set
 
@@ -41,7 +41,7 @@ abstract class NodeForm<H: NodeHolder, M: Any>(val hClass: KClass<H>, val mClass
         val cHolder: H? = hClass.safeCast(holder)
         val cModel: M? = mClass.safeCast(model)
 
-        if(cHolder != null && cModel != null) {
+        if (cHolder != null && cModel != null) {
             @Suppress("UNCHECKED_CAST")
             this.model = model as M
             onBindModel(context, cHolder, cModel)
