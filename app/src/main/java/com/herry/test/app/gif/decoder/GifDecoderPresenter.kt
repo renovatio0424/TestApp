@@ -4,7 +4,7 @@ import android.util.Log
 import com.herry.libs.media.gif.decoder.GifDecoder
 import com.herry.libs.media.gif.decoder.GifHeader
 import com.herry.libs.util.FileUtil
-import com.herry.test.data.GifFileInfoData
+import com.herry.test.data.GifMediaFileInfoData
 import io.reactivex.Observable
 import java.io.File
 
@@ -12,7 +12,7 @@ import java.io.File
 /**
  * Created by herry.park on 2020/06/11.
  **/
-class GifDecoderPresenter(private val data: GifFileInfoData) : GifDecoderContract.Presenter() {
+class GifDecoderPresenter(private val data: GifMediaFileInfoData) : GifDecoderContract.Presenter() {
 
     override fun onLaunched(view: GifDecoderContract.View) {
         Log.d("Herry", "filePath = ${data.path} ")
@@ -30,7 +30,7 @@ class GifDecoderPresenter(private val data: GifFileInfoData) : GifDecoderContrac
         )
     }
 
-    private fun getDecodedGif(data: GifFileInfoData) : Observable<GifDecoderContract.DecodedGifMediaInfo> {
+    private fun getDecodedGif(data: GifMediaFileInfoData) : Observable<GifDecoderContract.DecodedGifMediaInfo> {
         return Observable.create { emitter ->
             val rowData: ByteArray? = FileUtil.readFileToByteArray(File(data.path))
             rowData?.let { _rowData ->

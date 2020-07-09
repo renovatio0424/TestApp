@@ -1,21 +1,21 @@
-package com.herry.test.app.gif.list
+package com.herry.test.app.intent.share
 
 import com.herry.libs.mvp.IMvpView
 import com.herry.libs.nodeview.INodeRoot
 import com.herry.test.app.base.BasePresent
-import com.herry.test.data.GifMediaFileInfoData
+import com.herry.test.data.MediaFileInfoData
 
 /**
  * Created by herry.park on 2020/06/11.
  **/
-interface GifListContract {
+interface ShareMediaListContract {
 
     interface View : IMvpView<Presenter>, INodeRoot {
-        fun onDetail(content: GifMediaFileInfoData)
+        fun onShare(content: MediaFileInfoData)
     }
 
     abstract class Presenter : BasePresent<View>() {
-        abstract fun decode(content: GifMediaFileInfoData)
+        abstract fun share(content: MediaFileInfoData)
     }
 
 }

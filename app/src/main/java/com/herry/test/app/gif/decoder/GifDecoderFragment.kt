@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,17 +18,14 @@ import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.libs.util.AppUtil
 import com.herry.libs.util.BundleUtil
-import com.herry.libs.util.ViewUtil
 import com.herry.libs.widget.extension.setOnProtectClickListener
-import com.herry.libs.widget.loopsnaprecyclerview.PagerSnapExHelper
 import com.herry.test.R
 import com.herry.test.app.base.BaseView
-import com.herry.test.data.GifFileInfoData
+import com.herry.test.data.GifMediaFileInfoData
 import com.herry.test.widget.TitleBarForm
 import kotlinx.android.synthetic.main.gif_decoder_decoded_gif_frames.view.*
 import kotlinx.android.synthetic.main.gif_decoder_fragment.view.*
 import kotlinx.android.synthetic.main.gif_decoder_gif_frame.view.*
-import kotlinx.android.synthetic.main.gif_decoder_gif_frames_indicator.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -43,7 +39,7 @@ class GifDecoderFragment : BaseView<GifDecoderContract.View, GifDecoderContract.
         const val ARG_GIF_INFO_DATA: String = "ARG_GIF_INFO_DATA"
     }
     override fun onCreatePresenter(): GifDecoderContract.Presenter? {
-        val data = BundleUtil.getSerializableData(getDefaultArguments(), ARG_GIF_INFO_DATA, GifFileInfoData::class) ?: return null
+        val data = BundleUtil.getSerializableData(getDefaultArguments(), ARG_GIF_INFO_DATA, GifMediaFileInfoData::class) ?: return null
         return GifDecoderPresenter(data)
     }
 

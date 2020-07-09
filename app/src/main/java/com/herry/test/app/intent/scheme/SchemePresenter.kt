@@ -1,4 +1,4 @@
-package com.herry.test.app.scheme
+package com.herry.test.app.intent.scheme
 
 import com.herry.libs.nodeview.model.Node
 import com.herry.libs.nodeview.model.NodeHelper

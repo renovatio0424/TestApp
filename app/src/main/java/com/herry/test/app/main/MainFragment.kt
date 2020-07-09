@@ -22,7 +22,7 @@ import com.herry.test.app.base.activity_caller.module.ACNavigation
 import com.herry.test.app.base.activity_caller.module.ACPermission
 import com.herry.test.app.checker.list.CheckerListFragment
 import com.herry.test.app.gif.list.GifListFragment
-import com.herry.test.app.scheme.SchemeFragment
+import com.herry.test.app.intent.list.IntentListFragment
 import com.herry.test.widget.TitleBarForm
 import kotlinx.android.synthetic.main.main_fragment.view.*
 import kotlinx.android.synthetic.main.main_test_item.view.*
@@ -79,7 +79,7 @@ class MainFragment : BaseView<MainContract.View, MainContract.Presenter>(), Main
 
     override fun onScreen(type: MainContract.TestItemType) {
         when (type) {
-            MainContract.TestItemType.SCHEME_TEST -> aC?.call(ACNavigation.SingleCaller(SchemeFragment::class))
+            MainContract.TestItemType.SCHEME_TEST -> aC?.call(ACNavigation.SingleCaller(IntentListFragment::class))
             MainContract.TestItemType.GIF_DECODER -> {
                 aC?.call(ACPermission.Caller(
                     arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
@@ -113,7 +113,7 @@ class MainFragment : BaseView<MainContract.View, MainContract.Presenter>(), Main
 
         override fun onBindModel(context: Context, holder: TestItemForm.Holder, model: MainContract.TestItemType) {
             holder.view.main_test_item_title.text = when (model) {
-                MainContract.TestItemType.SCHEME_TEST -> "Scheme Intent"
+                MainContract.TestItemType.SCHEME_TEST -> "Intent"
                 MainContract.TestItemType.GIF_DECODER -> "GIF Decoder"
                 MainContract.TestItemType.CHECKER_LIST -> "Checker List"
             }
