@@ -1,4 +1,4 @@
-package com.herry.test.app.checker.list
+package com.herry.test.app.checker
 
 import com.herry.libs.mvp.IMvpView
 import com.herry.libs.nodeview.INodeRoot
@@ -7,7 +7,7 @@ import com.herry.test.app.base.BasePresent
 /**
  * Created by herry.park on 2020/7/7
  **/
-interface CheckerListContract {
+interface DataCheckerContract {
 
     interface View : IMvpView<Presenter>, INodeRoot {
         fun onShow(item: ItemType)

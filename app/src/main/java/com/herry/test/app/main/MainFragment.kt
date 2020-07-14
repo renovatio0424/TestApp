@@ -20,7 +20,7 @@ import com.herry.test.R
 import com.herry.test.app.base.BaseView
 import com.herry.test.app.base.activity_caller.module.ACNavigation
 import com.herry.test.app.base.activity_caller.module.ACPermission
-import com.herry.test.app.checker.list.CheckerListFragment
+import com.herry.test.app.checker.DataCheckerFragment
 import com.herry.test.app.gif.list.GifListFragment
 import com.herry.test.app.intent.list.IntentListFragment
 import com.herry.test.widget.TitleBarForm
@@ -92,7 +92,8 @@ class MainFragment : BaseView<MainContract.View, MainContract.Presenter>(), Main
                     }
                 ))
             }
-            MainContract.TestItemType.CHECKER_LIST -> aC?.call(ACNavigation.SingleCaller(CheckerListFragment::class))
+            MainContract.TestItemType.CHECKER_LIST -> aC?.call(ACNavigation.SingleCaller(
+                DataCheckerFragment::class))
         }
     }
 

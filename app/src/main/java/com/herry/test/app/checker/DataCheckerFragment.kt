@@ -1,4 +1,4 @@
-package com.herry.test.app.checker.list
+package com.herry.test.app.checker
 
 import android.content.Context
 import android.os.Bundle
@@ -24,11 +24,12 @@ import kotlinx.android.synthetic.main.main_test_item.view.*
 /**
  * Created by herry.park on 2020/7/7
  **/
-class CheckerListFragment : BaseView<CheckerListContract.View, CheckerListContract.Presenter>(), CheckerListContract.View {
+class DataCheckerFragment : BaseView<DataCheckerContract.View, DataCheckerContract.Presenter>(), DataCheckerContract.View {
 
-    override fun onCreatePresenter(): CheckerListContract.Presenter? = CheckerListPresenter()
+    override fun onCreatePresenter(): DataCheckerContract.Presenter? =
+        DataCheckerPresenter()
 
-    override fun onCreatePresenterView(): CheckerListContract.View = this
+    override fun onCreatePresenterView(): DataCheckerContract.View = this
 
     override val root: NodeRoot
         get() = adapter.root
@@ -62,11 +63,11 @@ class CheckerListFragment : BaseView<CheckerListContract.View, CheckerListContra
             if (itemAnimator is SimpleItemAnimator) {
                 (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
             }
-            adapter = this@CheckerListFragment.adapter
+            adapter = this@DataCheckerFragment.adapter
         }
     }
 
-    override fun onShow(item: CheckerListContract.ItemType) {
+    override fun onShow(item: DataCheckerContract.ItemType) {
 //        when(item) {
 //            CheckerListContract.ItemType.CHANGE -> TODO()
 //            CheckerListContract.ItemType.MANDATORY -> TODO()
@@ -80,8 +81,8 @@ class CheckerListFragment : BaseView<CheckerListContract.View, CheckerListContra
         }
     }
 
-    private inner class CheckerListItemForm : NodeForm<CheckerListItemForm.Holder, CheckerListContract.ItemType>(
-        Holder::class, CheckerListContract.ItemType::class) {
+    private inner class CheckerListItemForm : NodeForm<CheckerListItemForm.Holder, DataCheckerContract.ItemType>(
+        Holder::class, DataCheckerContract.ItemType::class) {
         inner class Holder(context: Context, view: View) : NodeHolder(context, view) {
             init {
                 view.setOnProtectClickListener {
@@ -96,11 +97,11 @@ class CheckerListFragment : BaseView<CheckerListContract.View, CheckerListContra
 
         override fun onLayout(): Int = R.layout.main_test_item
 
-        override fun onBindModel(context: Context, holder: Holder, model: CheckerListContract.ItemType) {
+        override fun onBindModel(context: Context, holder: Holder, model: DataCheckerContract.ItemType) {
             holder.view.main_test_item_title.text = when (model) {
-                CheckerListContract.ItemType.CHANGE -> "Checks Changed Data"
-                CheckerListContract.ItemType.MANDATORY -> "Checks Mandatory Data"
-                CheckerListContract.ItemType.COMBINATION -> "Checks Combination Data"
+                DataCheckerContract.ItemType.CHANGE -> "Checks Changed Data"
+                DataCheckerContract.ItemType.MANDATORY -> "Checks Mandatory Data"
+                DataCheckerContract.ItemType.COMBINATION -> "Checks Combination Data"
             }
         }
     }

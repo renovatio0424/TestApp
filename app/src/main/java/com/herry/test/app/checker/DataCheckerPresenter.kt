@@ -1,4 +1,4 @@
-package com.herry.test.app.checker.list
+package com.herry.test.app.checker
 
 import com.herry.libs.nodeview.model.Node
 import com.herry.libs.nodeview.model.NodeHelper
@@ -7,10 +7,10 @@ import com.herry.libs.nodeview.model.NodeModelGroup
 /**
  * Created by herry.park on 2020/7/7
  **/
-class CheckerListPresenter : CheckerListContract.Presenter() {
+class DataCheckerPresenter : DataCheckerContract.Presenter() {
     private val nodes: Node<NodeModelGroup> = NodeHelper.createNodeGroup()
 
-    override fun onAttach(view: CheckerListContract.View) {
+    override fun onAttach(view: DataCheckerContract.View) {
         super.onAttach(view)
 
         view.root.beginTransition()
@@ -18,7 +18,7 @@ class CheckerListPresenter : CheckerListContract.Presenter() {
         view.root.endTransition()
     }
 
-    override fun onLaunched(view: CheckerListContract.View) {
+    override fun onLaunched(view: DataCheckerContract.View) {
         // sets list items
         setList()
     }
@@ -29,14 +29,14 @@ class CheckerListPresenter : CheckerListContract.Presenter() {
         this.nodes.beginTransition()
 
         val nodes: Node<NodeModelGroup> = NodeHelper.createNodeGroup()
-        CheckerListContract.ItemType.values().forEach {
+        DataCheckerContract.ItemType.values().forEach {
             NodeHelper.addModel(nodes, it)
         }
         NodeHelper.upSert(this.nodes, nodes)
         this.nodes.endTransition()
     }
 
-    override fun show(item: CheckerListContract.ItemType) {
+    override fun show(item: DataCheckerContract.ItemType) {
         view?.getViewContext() ?: return
 
         view?.onShow(item)
