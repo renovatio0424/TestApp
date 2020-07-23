@@ -20,7 +20,7 @@ import com.herry.test.R
 import com.herry.test.app.base.BaseView
 import com.herry.test.app.base.activity_caller.module.ACNavigation
 import com.herry.test.app.base.activity_caller.module.ACPermission
-import com.herry.test.app.checker.DataCheckerFragment
+import com.herry.test.app.checker.main.DataCheckerMainFragment
 import com.herry.test.app.gif.list.GifListFragment
 import com.herry.test.app.intent.list.IntentListFragment
 import com.herry.test.widget.TitleBarForm
@@ -93,7 +93,7 @@ class MainFragment : BaseView<MainContract.View, MainContract.Presenter>(), Main
                 ))
             }
             MainContract.TestItemType.CHECKER_LIST -> aC?.call(ACNavigation.SingleCaller(
-                DataCheckerFragment::class))
+                DataCheckerMainFragment::class))
         }
     }
 
@@ -116,7 +116,7 @@ class MainFragment : BaseView<MainContract.View, MainContract.Presenter>(), Main
             holder.view.main_test_item_title.text = when (model) {
                 MainContract.TestItemType.SCHEME_TEST -> "Intent"
                 MainContract.TestItemType.GIF_DECODER -> "GIF Decoder"
-                MainContract.TestItemType.CHECKER_LIST -> "Checker List"
+                MainContract.TestItemType.CHECKER_LIST -> "Data Checker"
             }
         }
     }

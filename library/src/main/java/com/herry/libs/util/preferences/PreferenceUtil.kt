@@ -6,6 +6,7 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
+@Suppress("unused")
 object PreferenceUtil {
     private var PREFERENCE_NAME: String = ""
 
@@ -44,14 +45,10 @@ object PreferenceUtil {
         }
     }
 
-    fun resetVolatile() {
-        getSharedPreferencesEditor()?.let {
-            for(value in PreferenceKey.values()) {
-                if(value.volatile) {
-                    it.remove(value.toString())
-                }
-            }
-            it.commit()
+    fun resetVolatile(keys: MutableList<PreferenceKey>) {
+        getSharedPreferencesEditor()?.let { editor ->
+            keys.filter { key -> key.volatile }.forEach { key -> editor.remove(key.value)}
+            editor.commit()
         }
     }
 

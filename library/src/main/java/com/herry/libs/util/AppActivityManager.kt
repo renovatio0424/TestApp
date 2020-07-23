@@ -32,6 +32,8 @@ class AppActivityManager {
         return null
     }
 
+    fun getActivities(): MutableList<Activity> = activityStack
+
     fun clearChildActivities(parentActivityClass: Class<*>, excludeActivityClass: Class<*>?, latest: Boolean) {
         if (isExistActivityOnRunningTask(parentActivityClass)) {
             var parentActivityPosition = -1

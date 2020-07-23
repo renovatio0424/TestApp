@@ -24,14 +24,16 @@ abstract class BaseActivity : AppCompatActivity(), AC {
     open fun onActivityOrientation() {
         if (ApiHelper.hasOreo()) {
             try {
-                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+//                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR
             } catch (ex: IllegalStateException) {
                 // isTranslucentOrFloating
 //                Trace.e("Oreo", "Only fullscreen opaque activities can request orientation")
             }
 
         } else {
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+//            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR
         }
     }
 
@@ -230,6 +232,10 @@ abstract class BaseActivity : AppCompatActivity(), AC {
     }
 
     open fun getActivityManager(): AppActivityManager? {
-        return (application as BaseApplication?)?.appActivityManager
+        return if (application is BaseApplication) {
+            (application as BaseApplication).appActivityManager
+        } else {
+            null
+        }
     }
 }

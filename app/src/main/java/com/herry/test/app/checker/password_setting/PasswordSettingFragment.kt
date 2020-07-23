@@ -1,4 +1,4 @@
-package com.herry.test.app.checker
+package com.herry.test.app.checker.password_setting
 
 import android.content.Context
 import android.os.Bundle
@@ -18,18 +18,18 @@ import com.herry.libs.widget.extension.setOnProtectClickListener
 import com.herry.test.R
 import com.herry.test.app.base.BaseView
 import com.herry.test.widget.TitleBarForm
-import kotlinx.android.synthetic.main.checker_list_fragment.view.*
-import kotlinx.android.synthetic.main.main_test_item.view.*
+import kotlinx.android.synthetic.main.data_checker_main_fragment.view.*
+import kotlinx.android.synthetic.main.data_checker_main_password.view.*
 
 /**
  * Created by herry.park on 2020/7/7
  **/
-class DataCheckerFragment : BaseView<DataCheckerContract.View, DataCheckerContract.Presenter>(), DataCheckerContract.View {
+class PasswordSettingFragment : BaseView<PasswordSettingContract.View, PasswordSettingContract.Presenter>(), PasswordSettingContract.View {
 
-    override fun onCreatePresenter(): DataCheckerContract.Presenter? =
-        DataCheckerPresenter()
+    override fun onCreatePresenter(): PasswordSettingContract.Presenter? =
+        PasswordSettingPresenter()
 
-    override fun onCreatePresenterView(): DataCheckerContract.View = this
+    override fun onCreatePresenterView(): PasswordSettingContract.View = this
 
     override val root: NodeRoot
         get() = adapter.root
@@ -40,7 +40,7 @@ class DataCheckerFragment : BaseView<DataCheckerContract.View, DataCheckerContra
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (null == this.container) {
-            this.container = inflater.inflate(R.layout.checker_list_fragment, container, false)
+            this.container = inflater.inflate(R.layout.data_checker_main_fragment, container, false)
             init(this.container)
         }
         return this.container
@@ -53,41 +53,33 @@ class DataCheckerFragment : BaseView<DataCheckerContract.View, DataCheckerContra
             activity = requireActivity(),
             onClickBack = { AppUtil.pressBackKey(requireActivity(), view) }
         ).apply {
-            bindFormHolder(view.context, view.checker_list_fragment_title)
-            bindFormModel(view.context, TitleBarForm.Model(title = "Checker List", backEnable = true))
+            bindFormHolder(view.context, view.data_checker_main_fragment_title)
+            bindFormModel(view.context, TitleBarForm.Model(title = "Data Checker Main", backEnable = true))
         }
 
-        view.checker_list_fragment_list.apply {
+        view.data_checker_main_fragment_container.apply {
             layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
             setHasFixedSize(true)
             if (itemAnimator is SimpleItemAnimator) {
                 (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
             }
-            adapter = this@DataCheckerFragment.adapter
+            adapter = this@PasswordSettingFragment.adapter
         }
-    }
-
-    override fun onShow(item: DataCheckerContract.ItemType) {
-//        when(item) {
-//            CheckerListContract.ItemType.CHANGE -> TODO()
-//            CheckerListContract.ItemType.MANDATORY -> TODO()
-//            CheckerListContract.ItemType.COMBINATION -> TODO()
-//        }
     }
 
     inner class Adapter: NodeRecyclerAdapter(::requireContext) {
         override fun onBindForms(list: MutableList<NodeForm<out NodeHolder, *>>) {
-            list.add(CheckerListItemForm())
+            list.add(DataCheckerPasswordItemForm())
         }
     }
 
-    private inner class CheckerListItemForm : NodeForm<CheckerListItemForm.Holder, DataCheckerContract.ItemType>(
-        Holder::class, DataCheckerContract.ItemType::class) {
+    private inner class DataCheckerPasswordItemForm : NodeForm<DataCheckerPasswordItemForm.Holder, PasswordSettingContract.PasswordModel>(
+        Holder::class, PasswordSettingContract.PasswordModel::class) {
         inner class Holder(context: Context, view: View) : NodeHolder(context, view) {
             init {
                 view.setOnProtectClickListener {
-                    NodeRecyclerForm.getBindModel(this@CheckerListItemForm, this@Holder)?.let {
-                        presenter?.show(it)
+                    NodeRecyclerForm.getBindModel(this@DataCheckerPasswordItemForm, this@Holder)?.let {
+//                        presenter?.showPasswordSetting(it)
                     }
                 }
             }
@@ -95,14 +87,10 @@ class DataCheckerFragment : BaseView<DataCheckerContract.View, DataCheckerContra
 
         override fun onCreateHolder(context: Context, view: View): Holder = Holder(context, view)
 
-        override fun onLayout(): Int = R.layout.main_test_item
+        override fun onLayout(): Int = R.layout.data_checker_main_password
 
-        override fun onBindModel(context: Context, holder: Holder, model: DataCheckerContract.ItemType) {
-            holder.view.main_test_item_title.text = when (model) {
-                DataCheckerContract.ItemType.CHANGE -> "Checks Changed Data"
-                DataCheckerContract.ItemType.MANDATORY -> "Checks Mandatory Data"
-                DataCheckerContract.ItemType.COMBINATION -> "Checks Combination Data"
-            }
+        override fun onBindModel(context: Context, holder: Holder, model: PasswordSettingContract.PasswordModel) {
+            holder.view.data_checker_main_password_status.text = if (model.password.isBlank()) "Not exit password" else "Exist password"
         }
     }
 }
