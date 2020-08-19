@@ -23,6 +23,7 @@ import com.herry.test.app.base.activity_caller.module.ACPermission
 import com.herry.test.app.checker.main.DataCheckerMainFragment
 import com.herry.test.app.gif.list.GifListFragment
 import com.herry.test.app.intent.list.IntentListFragment
+import com.herry.test.app.layout.LayoutSampleFragment
 import com.herry.test.widget.TitleBarForm
 import kotlinx.android.synthetic.main.main_fragment.view.*
 import kotlinx.android.synthetic.main.main_test_item.view.*
@@ -94,6 +95,8 @@ class MainFragment : BaseView<MainContract.View, MainContract.Presenter>(), Main
             }
             MainContract.TestItemType.CHECKER_LIST -> aC?.call(ACNavigation.SingleCaller(
                 DataCheckerMainFragment::class))
+            MainContract.TestItemType.LAYOUT_SAMPLE -> aC?.call(ACNavigation.SingleCaller(
+                LayoutSampleFragment::class))
         }
     }
 
@@ -117,6 +120,7 @@ class MainFragment : BaseView<MainContract.View, MainContract.Presenter>(), Main
                 MainContract.TestItemType.SCHEME_TEST -> "Intent"
                 MainContract.TestItemType.GIF_DECODER -> "GIF Decoder"
                 MainContract.TestItemType.CHECKER_LIST -> "Data Checker"
+                MainContract.TestItemType.LAYOUT_SAMPLE -> "Layout Sample"
             }
         }
     }
