@@ -7,17 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import com.herry.libs.helper.ToastHelper
 import com.herry.libs.nodeview.NodeForm
 import com.herry.libs.nodeview.NodeHolder
-import com.herry.libs.nodeview.recycler.NodeRecyclerForm
-import com.herry.libs.nodeview.recycler.NodeRecyclerHolder
-import com.herry.libs.util.AppUtil
 import com.herry.libs.widget.extension.setOnProtectClickListener
 import com.herry.test.R
 import com.herry.test.app.base.BaseView
 import kotlinx.android.synthetic.main.layout_sample_aspect_ratio.view.*
-import kotlinx.android.synthetic.main.layout_sample_fragment.view.*
 
 /**
  * Created by herry.park on 2020/08/19.
@@ -40,69 +35,6 @@ class LayoutSampleFragment : BaseView<LayoutSampleContract.View, LayoutSampleCon
 
     private fun init(view: View?) {
         view ?: return
-
-        view.layout_sample_fragment_title?.text = "Select aspect ratio"
-        view.layout_sample_fragment_close?.setOnClickListener {
-            AppUtil.pressBackKey(requireActivity(), container)
-        }
-
-        view.layout_sample_fragment_aspect_ratio_16x9?.run {
-            val form = AspectRatioItemFrom { model ->
-                ToastHelper.showToast(requireActivity(), "Selected: $model")
-            }
-            form.bindFormHolder(this.context, this)
-            form.bindFormModel(this.context, LayoutSampleContract.AspectRatioType.RATIO_16v9)
-        }
-
-        view.layout_sample_fragment_aspect_ratio_9x16?.run {
-            val form = AspectRatioItemFrom { model ->
-                ToastHelper.showToast(requireActivity(), "Selected: $model")
-            }
-            form.bindFormHolder(this.context, this)
-            form.bindFormModel(this.context, LayoutSampleContract.AspectRatioType.RATIO_9v16)
-        }
-
-        view.layout_sample_fragment_aspect_ratio_1x1?.run {
-            val form = AspectRatioItemFrom { model ->
-                ToastHelper.showToast(requireActivity(), "Selected: $model")
-            }
-            form.bindFormHolder(this.context, this)
-            form.bindFormModel(this.context, LayoutSampleContract.AspectRatioType.RATIO_1v1)
-        }
-
-        view.layout_sample_fragment_aspect_ratio_4x3?.run {
-            val form = AspectRatioItemFrom { model ->
-                ToastHelper.showToast(requireActivity(), "Selected: $model")
-            }
-            form.bindFormHolder(this.context, this)
-            form.bindFormModel(this.context, LayoutSampleContract.AspectRatioType.RATIO_4v3)
-        }
-
-        view.layout_sample_fragment_aspect_ratio_3x4?.run {
-            val form = AspectRatioItemFrom { model ->
-                ToastHelper.showToast(requireActivity(), "Selected: $model")
-            }
-            form.bindFormHolder(this.context, this)
-            form.bindFormModel(this.context, LayoutSampleContract.AspectRatioType.RATIO_3v4)
-        }
-
-        view.layout_sample_fragment_aspect_ratio_4x5?.run {
-            val form = AspectRatioItemFrom { model ->
-                ToastHelper.showToast(requireActivity(), "Selected: $model")
-            }
-            form.bindFormHolder(this.context, this)
-            form.bindFormModel(this.context, LayoutSampleContract.AspectRatioType.RATIO_4v5)
-        }
-
-        view.layout_sample_fragment_aspect_ratio_2_35x1?.run {
-            val form = AspectRatioItemFrom { model ->
-                ToastHelper.showToast(requireActivity(), "Selected: $model")
-            }
-            form.bindFormHolder(this.context, this)
-            form.bindFormModel(this.context, LayoutSampleContract.AspectRatioType.RATIO_2_35v1)
-        }
-
-        view.layout_sample_fragment_information?.text = "프로젝트에 사용한 사진이나 동영상, 오디오를 기기에서 지우면 더 이상 편집에 사용할 수 없습니다."
     }
 
     private inner class AspectRatioItemFrom(

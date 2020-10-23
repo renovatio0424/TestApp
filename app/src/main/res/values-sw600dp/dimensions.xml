@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="layout_sample_preview_height">@dimen/size100</dimen>
+</resources>
