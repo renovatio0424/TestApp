@@ -1,34 +1,164 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:background="@color/tbc_100_a80"
     tools:ignore="SpUsage, ContentDescription">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/size200"
-        android:orientation="horizontal">
+    <FrameLayout
+        android:id="@+id/layout_sample_fragment_top_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        >
 
-<!--        android:layout_height="@dimen/layout_sample_preview_height"-->
-        <View
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/layout_sample_fragment_title"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@color/tbc_100" />
+            android:layout_marginTop="@dimen/size24"
+            android:gravity="center"
+            android:textSize="@dimen/size22"
+            android:textColor="@color/tbc_10"
+            android:text=""
+            />
 
-        <View
-            android:layout_width="@dimen/size200"
-            android:layout_height="match_parent"
-            android:background="@color/tbc_50" />
-    </LinearLayout>
+        <ImageView
+            android:id="@+id/layout_sample_fragment_close"
+            android:layout_width="@dimen/size34"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:layout_marginTop="@dimen/size09"
+            android:layout_marginEnd="@dimen/size16"
+            android:layout_gravity="top|end"
+            android:src="@mipmap/ic_navigation_close"
+            />
+    </FrameLayout>
 
-    <View
-        android:layout_width="match_parent"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_sample_fragment_body_container"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@color/tbc_30" />
-</LinearLayout>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_sample_fragment_top_container"
+        app:layout_constraintBottom_toTopOf="@+id/layout_sample_fragment_bottom_container"
+        >
+
+        <include
+            android:id="@+id/layout_sample_fragment_aspect_ratio_16x9"
+            layout="@layout/layout_sample_aspect_ratio"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintVertical_chainStyle="spread"
+            app:layout_constraintDimensionRatio="H, 104:80"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/layout_sample_fragment_aspect_ratio_9x16"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/layout_sample_fragment_aspect_ratio_3x4"
+            />
+
+        <include
+            android:id="@+id/layout_sample_fragment_aspect_ratio_9x16"
+            layout="@layout/layout_sample_aspect_ratio"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintDimensionRatio="H, 104:80"
+            app:layout_constraintStart_toEndOf="@id/layout_sample_fragment_aspect_ratio_16x9"
+            app:layout_constraintEnd_toStartOf="@+id/layout_sample_fragment_aspect_ratio_1x1"
+            app:layout_constraintTop_toTopOf="@id/layout_sample_fragment_aspect_ratio_16x9"
+            />
+
+        <include
+            android:id="@+id/layout_sample_fragment_aspect_ratio_1x1"
+            layout="@layout/layout_sample_aspect_ratio"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintDimensionRatio="H, 104:80"
+            app:layout_constraintStart_toEndOf="@id/layout_sample_fragment_aspect_ratio_9x16"
+            app:layout_constraintEnd_toStartOf="@+id/layout_sample_fragment_aspect_ratio_4x3"
+            app:layout_constraintTop_toTopOf="@id/layout_sample_fragment_aspect_ratio_9x16"
+            />
+
+        <include
+            android:id="@+id/layout_sample_fragment_aspect_ratio_4x3"
+            layout="@layout/layout_sample_aspect_ratio"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintDimensionRatio="H, 104:80"
+            app:layout_constraintStart_toEndOf="@id/layout_sample_fragment_aspect_ratio_1x1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/layout_sample_fragment_aspect_ratio_1x1"
+            />
+
+        <include
+            android:id="@+id/layout_sample_fragment_aspect_ratio_3x4"
+            layout="@layout/layout_sample_aspect_ratio"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintDimensionRatio="H, 104:80"
+            app:layout_constraintStart_toStartOf="@id/layout_sample_fragment_aspect_ratio_16x9"
+            app:layout_constraintTop_toBottomOf="@id/layout_sample_fragment_aspect_ratio_16x9"
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
+
+        <include
+            android:id="@+id/layout_sample_fragment_aspect_ratio_4x5"
+            layout="@layout/layout_sample_aspect_ratio"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintDimensionRatio="H, 104:80"
+            app:layout_constraintStart_toStartOf="@id/layout_sample_fragment_aspect_ratio_9x16"
+            app:layout_constraintTop_toTopOf="@id/layout_sample_fragment_aspect_ratio_3x4"
+            />
+
+        <include
+            android:id="@+id/layout_sample_fragment_aspect_ratio_2_35x1"
+            layout="@layout/layout_sample_aspect_ratio"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintDimensionRatio="H, 104:80"
+            app:layout_constraintStart_toStartOf="@id/layout_sample_fragment_aspect_ratio_1x1"
+            app:layout_constraintTop_toTopOf="@id/layout_sample_fragment_aspect_ratio_4x5"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_sample_fragment_bottom_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/size52"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/size40"
+        android:paddingEnd="@dimen/size40"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_sample_fragment_body_container"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageView
+            android:layout_width="@dimen/size24"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/size07"
+            android:adjustViewBounds="true"
+            android:src="@mipmap/ic_information_caution"
+            />
+
+        <TextView
+            android:id="@+id/layout_sample_fragment_information"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/size14"
+            android:textColor="@color/tbc_10"
+            android:text=""
+            />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
