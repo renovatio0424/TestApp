@@ -1,4 +1,4 @@
-package com.herry.test.app.base.activity_caller
+package com.herry.libs.app.activity_caller
 
 interface AC {
     companion object {

@@ -22,6 +22,7 @@ interface MainContract {
         SCHEME_TEST,
         GIF_DECODER,
         CHECKER_LIST,
-        LAYOUT_SAMPLE
+        LAYOUT_SAMPLE,
+        PICK_PHOTO
     }
 }

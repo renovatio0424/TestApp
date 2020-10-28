@@ -1,15 +1,15 @@
-package com.herry.test.app.base.activity_caller.module
+package com.herry.libs.app.activity_caller.module
 
 import android.content.Intent
-import com.herry.test.app.base.activity_caller.ACModule
+import com.herry.libs.app.activity_caller.ACModule
 import com.herry.libs.helper.PopupHelper
 import kotlin.reflect.KClass
 
 class ACInject(private val listener: ACModule.OnListener<ACInject>): ACModule {
 
-    private var popupHelper = PopupHelper({
+    private var popupHelper = PopupHelper {
         listener.getActivity()
-    })
+    }
 
     class Caller<T: Any> (
         internal val cls: KClass<T>,

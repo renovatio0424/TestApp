@@ -17,7 +17,7 @@ import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.test.R
 import com.herry.test.app.base.BaseView
-import com.herry.test.app.base.activity_caller.module.ACNavigation
+import com.herry.libs.app.activity_caller.module.ACNavigation
 import com.herry.test.data.MediaFileInfoData
 import com.herry.test.widget.TitleBarForm
 import kotlinx.android.synthetic.main.file_list_item.view.*
@@ -74,7 +74,8 @@ class ShareMediaListFragment : BaseView<ShareMediaListContract.View, ShareMediaL
     }
 
     override fun onShare(content: MediaFileInfoData) {
-        aC?.call(ACNavigation.IntentCaller(
+        aC?.call(
+            ACNavigation.IntentCaller(
             Intent().apply {
                 action = Intent.ACTION_SEND
                 putExtra(Intent.EXTRA_STREAM, Uri.parse(content.path))

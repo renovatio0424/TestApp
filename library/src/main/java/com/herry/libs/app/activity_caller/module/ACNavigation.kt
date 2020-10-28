@@ -1,5 +1,6 @@
-package com.herry.test.app.base.activity_caller.module
+package com.herry.libs.app.activity_caller.module
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -7,41 +8,17 @@ import android.os.Handler
 import android.os.Looper
 import android.view.View
 import androidx.core.app.ActivityOptionsCompat
-import com.herry.test.app.base.activity_caller.AC
-import com.herry.test.app.base.activity_caller.ACModule
-import com.herry.test.app.base.BaseActivity
-import com.herry.test.app.base.BaseFragment
-import com.herry.test.app.base.SingleActivity
-import com.herry.test.app.base.nav.NavDestination
-import kotlin.reflect.KClass
+import com.herry.libs.app.activity_caller.AC
+import com.herry.libs.app.activity_caller.ACModule
+import com.herry.libs.app.nav.NavDestination
 
-class ACNavigation(private val caller: Caller, private val listener: ACModule.OnListener<ACNavigation>): ACModule {
+open class ACNavigation(private val caller: Caller, private val listener: ACModule.OnListener<ACNavigation>): ACModule {
 
     class Transition(
         internal val view: View,
         internal val bitmap: Bitmap,
         internal val name: String
     )
-
-    class NavCaller (
-        internal val cls: Class<out BaseActivity>,
-        internal val bundle: Bundle? = null,
-        internal val startDestination: Int = 0,
-        useTransition: Boolean = true,
-        transitions: Array<Transition>? = null,
-        result: ((resultCode: Int, intent: Intent?, bundle: Bundle?) -> Unit)? = null
-    ) : Caller(useTransition, transitions, result)
-
-    class SingleCaller (
-        internal val cls: KClass<out BaseFragment>,
-        internal val bundle: Bundle? = null,
-//        internal val systemUiVisibility: Int = 0,
-//        internal val statusBarColor: Int = 0,
-        internal val transparentStatusBarFullScreen: Boolean = false,
-        useTransition: Boolean = true,
-        transitions: Array<Transition>? = null,
-        result: ((resultCode: Int, intent: Intent?, bundle: Bundle?) -> Unit)? = null
-    ) : Caller(useTransition, transitions, result)
 
     class IntentCaller (
         internal val intent: Intent,
@@ -70,31 +47,8 @@ class ACNavigation(private val caller: Caller, private val listener: ACModule.On
         return false
     }
 
-    override fun call() {
-        val activity = listener.getActivity()
-
-        val intent = when(caller) {
-            is NavCaller -> {
-                Intent(activity, caller.cls).apply {
-                    caller.bundle?.let {
-                        putExtra(NavDestination.NAV_BUNDLE, it)
-                    }
-                    if (caller.startDestination != 0) {
-                        putExtra(NavDestination.NAV_START_DESTINATION, caller.startDestination)
-                    }
-                }
-            }
-            is SingleCaller -> {
-                Intent(activity, SingleActivity::class.java).apply {
-                    putExtra(SingleActivity.FRAGMENT_CLASS_NAME, caller.cls.qualifiedName)
-                    caller.bundle?.let {
-                        putExtra(SingleActivity.FRAGMENT_BUNDLE, it)
-                    }
-//                        putExtra(SingleActivity.FRAGMENT_SYSTEM_UI_VISIBILITY, caller.systemUiVisibility)
-//                        putExtra(SingleActivity.FRAGMENT_STATUS_BAR_COLOR, caller.statusBarColor)
-                    putExtra(SingleActivity.FRAGMENT_TRANSPARENT_STATUS_BAR, caller.transparentStatusBarFullScreen)
-                }
-            }
+    open fun getCallerIntent(activity: Activity): Intent? {
+        return when(caller) {
             is IntentCaller -> {
                 caller.intent.apply {
                     caller.bundle?.let {
@@ -104,6 +58,12 @@ class ACNavigation(private val caller: Caller, private val listener: ACModule.On
             }
             else -> null
         }
+    }
+
+    final override fun call() {
+        val activity = listener.getActivity()
+
+        val intent = getCallerIntent(activity)
 
         if(caller.useTransition) {
             var options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity).toBundle()

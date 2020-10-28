@@ -4,7 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import com.herry.libs.mvp.IMvpPresenter
 import com.herry.libs.mvp.IMvpView
-import com.herry.test.app.base.activity_caller.module.ACError
+import com.herry.libs.app.activity_caller.module.ACError
 
 abstract class BaseView<V: IMvpView<P>, P: IMvpPresenter<V>>: BaseFragment(), IMvpView<P> {
     override var presenter: P? = null

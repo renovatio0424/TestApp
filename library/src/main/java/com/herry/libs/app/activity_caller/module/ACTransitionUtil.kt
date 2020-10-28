@@ -1,4 +1,4 @@
-package com.herry.test.app.base.activity_caller.module
+package com.herry.libs.app.activity_caller.module
 
 import android.app.Activity
 import android.graphics.Bitmap

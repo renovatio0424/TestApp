@@ -1,7 +1,7 @@
-package com.herry.test.app.base.activity_caller.module
+package com.herry.libs.app.activity_caller.module
 
 import android.content.Intent
-import com.herry.test.app.base.activity_caller.ACModule
+import com.herry.libs.app.activity_caller.ACModule
 
 class ACPermission(private val caller: Caller, private val listener: ACPermissionListener): ACModule {
 

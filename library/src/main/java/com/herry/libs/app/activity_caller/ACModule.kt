@@ -1,4 +1,4 @@
-package com.herry.test.app.base.activity_caller
+package com.herry.libs.app.activity_caller
 
 import android.app.Activity
 import android.content.Intent

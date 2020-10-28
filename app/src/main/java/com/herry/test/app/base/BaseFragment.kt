@@ -5,7 +5,7 @@ import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.herry.libs.helper.ApiHelper
-import com.herry.test.app.base.activity_caller.AC
+import com.herry.libs.app.activity_caller.AC
 
 open class BaseFragment: Fragment() {
     internal open var aC: AC? = null
@@ -38,10 +38,10 @@ open class BaseFragment: Fragment() {
     }
 
     protected open fun onAttachToContext(context: Context?) {
-        if(context is AC) {
-            aC = context
+        aC = if(context is AC) {
+            context
         } else {
-            aC = null
+            null
         }
     }
 

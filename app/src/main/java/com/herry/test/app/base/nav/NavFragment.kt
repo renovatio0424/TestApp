@@ -6,6 +6,7 @@ import androidx.annotation.TransitionRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import com.herry.libs.app.nav.NavDestination
 import com.herry.libs.helper.TransitionHelper
 import com.herry.test.app.base.BaseActivity
 import com.herry.test.app.base.BaseFragment

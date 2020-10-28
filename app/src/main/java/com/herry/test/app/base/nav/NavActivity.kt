@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
+import com.herry.libs.app.nav.NavDestination
 import com.herry.test.R
 import com.herry.test.app.base.BaseActivity
 

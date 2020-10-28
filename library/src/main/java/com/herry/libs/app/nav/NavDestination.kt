@@ -1,4 +1,4 @@
-package com.herry.test.app.base.nav
+package com.herry.libs.app.nav
 
 import android.os.Bundle
 

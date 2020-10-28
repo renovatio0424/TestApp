@@ -15,7 +15,8 @@ import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.test.R
 import com.herry.test.app.base.BaseView
-import com.herry.test.app.base.activity_caller.module.ACNavigation
+import com.herry.libs.app.activity_caller.module.ACNavigation
+import com.herry.test.app.base.ac.AppACNavigation
 import com.herry.test.app.gif.decoder.GifDecoderFragment
 import com.herry.test.data.GifMediaFileInfoData
 import com.herry.test.widget.TitleBarForm
@@ -73,12 +74,13 @@ class GifListFragment : BaseView<GifListContract.View, GifListContract.Presenter
     }
 
     override fun onDetail(content: GifMediaFileInfoData) {
-        aC?.call(ACNavigation.SingleCaller(
-            GifDecoderFragment::class,
-            Bundle().apply {
-                putSerializable(GifDecoderFragment.ARG_GIF_INFO_DATA, content)
-            }
-        ))
+        aC?.call(
+            AppACNavigation.SingleCaller(
+                GifDecoderFragment::class,
+                Bundle().apply {
+                    putSerializable(GifDecoderFragment.ARG_GIF_INFO_DATA, content)
+                }
+            ))
     }
 
     private inner class FileListItemForm : NodeForm<FileListItemForm.Holder, GifMediaFileInfoData>(Holder::class, GifMediaFileInfoData::class) {
