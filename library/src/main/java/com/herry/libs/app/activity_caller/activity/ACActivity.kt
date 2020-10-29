@@ -1,4 +1,4 @@
-package com.herry.libs.app.base
+package com.herry.libs.app.activity_caller.activity
 
 import android.app.Activity
 import android.content.Intent
@@ -9,10 +9,10 @@ import com.herry.libs.app.activity_caller.AC
 import com.herry.libs.app.activity_caller.ACBase
 import com.herry.libs.helper.ApiHelper
 
-abstract class ActivityEx : AppCompatActivity(), AC {
+abstract class ACActivity : AppCompatActivity(), AC {
 
-    protected val aC = ACBase(object : ACBase.ACBaseListener {
-        override fun getActivity(): Activity = this@ActivityEx
+    protected val activityCaller = ACBase(object : ACBase.ACBaseListener {
+        override fun getActivity(): Activity = this@ACActivity
         override fun checkPermission(
             permission: Array<String>,
             blockRequest: Boolean,
@@ -33,11 +33,11 @@ abstract class ActivityEx : AppCompatActivity(), AC {
     })
 
     override fun <T> call(caller: T) {
-        aC.call(caller)
+        activityCaller.call(caller)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (aC.activityResult(requestCode, resultCode, data)) {
+        if (activityCaller.activityResult(requestCode, resultCode, data)) {
             return
         }
         super.onActivityResult(requestCode, resultCode, data)
@@ -127,7 +127,7 @@ abstract class ActivityEx : AppCompatActivity(), AC {
             }
 
             if (requestPermissions.isNotEmpty()) {
-                this@ActivityEx.permissionResults = permissionResults
+                this@ACActivity.permissionResults = permissionResults
                 requestPermissions(
                     requestPermissions.toTypedArray(),
                     PERMISSIONS_REQUEST_RESULT

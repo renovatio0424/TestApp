@@ -8,7 +8,7 @@ import com.herry.libs.helper.ApiHelper
 import com.herry.libs.app.activity_caller.AC
 
 open class BaseFragment: Fragment() {
-    internal open var aC: AC? = null
+    internal open var activityCaller: AC? = null
     protected open var screenTag = ""
 
     protected fun getDefaultArguments(): Bundle {
@@ -38,7 +38,7 @@ open class BaseFragment: Fragment() {
     }
 
     protected open fun onAttachToContext(context: Context?) {
-        aC = if(context is AC) {
+        activityCaller = if(context is AC) {
             context
         } else {
             null
@@ -47,7 +47,7 @@ open class BaseFragment: Fragment() {
 
     override fun onDetach() {
         super.onDetach()
-        aC = null
+        activityCaller = null
     }
 
     open fun onBackPressed(): Boolean = false

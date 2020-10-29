@@ -38,7 +38,7 @@ abstract class NavView<V: IMvpView<P>, P: IMvpPresenter<V>>: NavFragment(), IMvp
     override fun getViewContext(): Context? = context
 
     override fun error(throwable: Throwable) {
-        aC?.call(
+        activityCaller?.call(
             ACError.Caller(throwable) {
                 onError(it)
             }

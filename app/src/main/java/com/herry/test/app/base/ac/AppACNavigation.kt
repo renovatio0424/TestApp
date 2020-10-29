@@ -5,22 +5,11 @@ import android.content.Intent
 import android.os.Bundle
 import com.herry.libs.app.activity_caller.ACModule
 import com.herry.libs.app.activity_caller.module.ACNavigation
-import com.herry.libs.app.nav.NavDestination
-import com.herry.test.app.base.BaseActivity
 import com.herry.test.app.base.BaseFragment
 import com.herry.test.app.base.SingleActivity
 import kotlin.reflect.KClass
 
 class AppACNavigation(private val caller: Caller, private val listener: ACModule.OnListener<ACNavigation>) : ACNavigation(caller, listener) {
-
-    class NavCaller (
-        internal val cls: Class<out BaseActivity>,
-        internal val bundle: Bundle? = null,
-        internal val startDestination: Int = 0,
-        useTransition: Boolean = true,
-        transitions: Array<Transition>? = null,
-        result: ((resultCode: Int, intent: Intent?, bundle: Bundle?) -> Unit)? = null
-    ) : Caller(useTransition, transitions, result)
 
     class SingleCaller (
         internal val cls: KClass<out BaseFragment>,
@@ -35,16 +24,6 @@ class AppACNavigation(private val caller: Caller, private val listener: ACModule
 
     override fun getCallerIntent(activity: Activity): Intent? {
         return when(caller) {
-            is NavCaller -> {
-                Intent(activity, caller.cls).apply {
-                    caller.bundle?.let {
-                        putExtra(NavDestination.NAV_BUNDLE, it)
-                    }
-                    if (caller.startDestination != 0) {
-                        putExtra(NavDestination.NAV_START_DESTINATION, caller.startDestination)
-                    }
-                }
-            }
             is SingleCaller -> {
                 Intent(activity, SingleActivity::class.java).apply {
                     putExtra(SingleActivity.FRAGMENT_CLASS_NAME, caller.cls.qualifiedName)

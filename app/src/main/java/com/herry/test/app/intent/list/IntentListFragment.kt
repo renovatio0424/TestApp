@@ -15,7 +15,6 @@ import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.test.R
 import com.herry.test.app.base.BaseView
-import com.herry.libs.app.activity_caller.module.ACNavigation
 import com.herry.test.app.base.ac.AppACNavigation
 import com.herry.test.app.intent.scheme.SchemeFragment
 import com.herry.test.app.intent.share.ShareMediaListFragment
@@ -75,8 +74,8 @@ class IntentListFragment : BaseView<IntentListContract.View, IntentListContract.
 
     override fun onScreen(type: IntentListContract.TestItemType) {
         when (type) {
-            IntentListContract.TestItemType.SCHEME_TEST -> aC?.call(AppACNavigation.SingleCaller(SchemeFragment::class))
-            IntentListContract.TestItemType.MEDIA_SHARE_TEST -> aC?.call(AppACNavigation.SingleCaller(ShareMediaListFragment::class))
+            IntentListContract.TestItemType.SCHEME_TEST -> activityCaller?.call(AppACNavigation.SingleCaller(SchemeFragment::class))
+            IntentListContract.TestItemType.MEDIA_SHARE_TEST -> activityCaller?.call(AppACNavigation.SingleCaller(ShareMediaListFragment::class))
         }
     }
 

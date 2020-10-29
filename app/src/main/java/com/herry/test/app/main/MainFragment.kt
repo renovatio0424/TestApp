@@ -2,7 +2,6 @@ package com.herry.test.app.main
 
 import android.Manifest
 import android.app.Activity
-import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -13,20 +12,18 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.herry.libs.app.activity_caller.module.ACNavigation
 import com.herry.libs.app.activity_caller.module.ACPermission
-import com.herry.libs.app.base.ActivityEx
-import com.herry.libs.app.extension.callStartActivity
 import com.herry.libs.helper.ToastHelper
 import com.herry.libs.nodeview.NodeForm
 import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.nodeview.model.NodeRoot
 import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
+import com.herry.libs.widget.extension.setOnProtectClickListener
 import com.herry.test.R
 import com.herry.test.app.base.BaseView
 import com.herry.test.app.base.ac.AppACNavigation
@@ -37,6 +34,7 @@ import com.herry.test.app.layout.LayoutSampleFragment
 import com.herry.test.widget.TitleBarForm
 import kotlinx.android.synthetic.main.main_fragment.view.*
 import kotlinx.android.synthetic.main.main_test_item.view.*
+
 
 /**
  * Created by herry.park on 2020/06/11.
@@ -90,35 +88,48 @@ class MainFragment : BaseView<MainContract.View, MainContract.Presenter>(), Main
 
     override fun onScreen(type: MainContract.TestItemType) {
         when (type) {
-            MainContract.TestItemType.SCHEME_TEST -> aC?.call(AppACNavigation.SingleCaller(IntentListFragment::class))
+            MainContract.TestItemType.SCHEME_TEST -> activityCaller?.call(AppACNavigation.SingleCaller(IntentListFragment::class))
             MainContract.TestItemType.GIF_DECODER -> {
-                aC?.call(
+                activityCaller?.call(
                     ACPermission.Caller(
-                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
-                    onGranted = {
-                        Handler(Looper.getMainLooper()).post {
-                            aC?.call(
-                                AppACNavigation.SingleCaller(
-                                GifListFragment::class
-                            ))
+                        arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                        onGranted = {
+                            Handler(Looper.getMainLooper()).post {
+                                activityCaller?.call(
+                                    AppACNavigation.SingleCaller(
+                                        GifListFragment::class
+                                    )
+                                )
+                            }
                         }
-                    }
-                ))
+                    ))
             }
-            MainContract.TestItemType.CHECKER_LIST -> aC?.call(
+            MainContract.TestItemType.CHECKER_LIST -> activityCaller?.call(
                 AppACNavigation.SingleCaller(
-                DataCheckerMainFragment::class))
-            MainContract.TestItemType.LAYOUT_SAMPLE -> aC?.call(
+                    DataCheckerMainFragment::class
+                )
+            )
+            MainContract.TestItemType.LAYOUT_SAMPLE -> activityCaller?.call(
                 AppACNavigation.SingleCaller(
-                LayoutSampleFragment::class))
+                    LayoutSampleFragment::class
+                )
+            )
             MainContract.TestItemType.PICK_PHOTO -> {
-                activity?.callStartActivity(
+                val intent = Intent(Intent.ACTION_PICK).apply {
+                    setType(MediaStore.Images.Media.CONTENT_TYPE)
+                    data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                }
+                intent.resolveActivity(activity?.packageManager ?: return) ?: return
+
+                activityCaller?.call(
                     ACPermission.Caller(
                         arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                         onGranted = {
-                            activity?.callStartActivity(ACNavigation.IntentCaller(Intent(MediaStore.ACTION_IMAGE_CAPTURE)) { resultCode, _, _ ->
+                            activityCaller?.call(ACNavigation.IntentCaller(intent) { resultCode, intent, _ ->
                                 if (Activity.RESULT_OK == resultCode) {
-                                    ToastHelper.showToast(activity, "selected photo")
+                                    val selectedImage: Uri? = intent?.data
+
+                                    ToastHelper.showToast(activity, "selected photo: ")
                                 } else {
                                     ToastHelper.showToast(activity, "cancel photo selection")
                                 }
@@ -132,7 +143,7 @@ class MainFragment : BaseView<MainContract.View, MainContract.Presenter>(), Main
     private inner class TestItemForm : NodeForm<TestItemForm.Holder, MainContract.TestItemType>(Holder::class, MainContract.TestItemType::class) {
         inner class Holder(context: Context, view: View) : NodeHolder(context, view) {
             init {
-                view.setOnClickListener {
+                view.setOnProtectClickListener {
                     NodeRecyclerForm.getBindModel(this@TestItemForm, this@Holder)?.let {
                         presenter?.moveToScreen(it)
                     }

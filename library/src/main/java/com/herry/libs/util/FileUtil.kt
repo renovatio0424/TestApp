@@ -1,5 +1,9 @@
 package com.herry.libs.util
 
+import android.content.Context
+import android.database.Cursor
+import android.net.Uri
+import android.provider.MediaStore
 import android.text.TextUtils
 import java.io.*
 import java.nio.channels.FileChannel
@@ -218,4 +222,23 @@ object FileUtil {
         return count
     }
 
+    /**
+     * Gets path from Uri
+     */
+    fun getUriPath(context: Context?, uri: Uri?) : String {
+        context ?: return ""
+        uri ?: return ""
+
+        if (uri.toString().startsWith("content://")) {
+            val projection = arrayOf(MediaStore.MediaColumns.DATA)
+            val cursor: Cursor? = context.contentResolver?.query(uri, projection, null, null, null)
+            cursor?.use { cursor ->
+                if (cursor.moveToFirst()) {
+                    return cursor.getString(0)
+                }
+            }
+        }
+
+        return uri.path ?: ""
+    }
 }

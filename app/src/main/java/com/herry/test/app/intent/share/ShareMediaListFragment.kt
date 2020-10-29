@@ -74,7 +74,7 @@ class ShareMediaListFragment : BaseView<ShareMediaListContract.View, ShareMediaL
     }
 
     override fun onShare(content: MediaFileInfoData) {
-        aC?.call(
+        activityCaller?.call(
             ACNavigation.IntentCaller(
             Intent().apply {
                 action = Intent.ACTION_SEND

@@ -1,25 +1,19 @@
 package com.herry.test.app.base
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.ActivityInfo
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.provider.Settings
-import android.text.TextUtils
-import androidx.appcompat.app.AppCompatActivity
-import com.herry.libs.app.activity_caller.AC
-import com.herry.libs.app.activity_caller.ACBase
-import com.herry.libs.app.base.ActivityEx
-import com.herry.libs.helper.PopupHelper
+import com.herry.libs.app.activity_caller.activity.ACActivity
 import com.herry.libs.helper.ApiHelper
+import com.herry.libs.helper.PopupHelper
 import com.herry.libs.util.AppActivityManager
 
 @Suppress("PrivatePropertyName")
-abstract class BaseActivity : ActivityEx() {
+abstract class BaseActivity : ACActivity() {
 
     @SuppressLint("SourceLockedOrientationActivity")
     open fun onActivityOrientation() {
@@ -63,7 +57,7 @@ abstract class BaseActivity : ActivityEx() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (aC.activityResult(requestCode, resultCode, data)) {
+        if (activityCaller.activityResult(requestCode, resultCode, data)) {
             return
         }
         super.onActivityResult(requestCode, resultCode, data)

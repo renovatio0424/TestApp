@@ -15,7 +15,6 @@ import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.test.R
 import com.herry.test.app.base.BaseView
-import com.herry.libs.app.activity_caller.module.ACNavigation
 import com.herry.test.app.base.ac.AppACNavigation
 import com.herry.test.app.gif.decoder.GifDecoderFragment
 import com.herry.test.data.GifMediaFileInfoData
@@ -74,7 +73,7 @@ class GifListFragment : BaseView<GifListContract.View, GifListContract.Presenter
     }
 
     override fun onDetail(content: GifMediaFileInfoData) {
-        aC?.call(
+        activityCaller?.call(
             AppACNavigation.SingleCaller(
                 GifDecoderFragment::class,
                 Bundle().apply {

@@ -10,9 +10,16 @@ import android.view.View
 import androidx.core.app.ActivityOptionsCompat
 import com.herry.libs.app.activity_caller.AC
 import com.herry.libs.app.activity_caller.ACModule
+import com.herry.libs.app.activity_caller.activity.ACActivity
 import com.herry.libs.app.nav.NavDestination
 
 open class ACNavigation(private val caller: Caller, private val listener: ACModule.OnListener<ACNavigation>): ACModule {
+
+    open class Caller(
+        internal val useTransition: Boolean = true,
+        internal val transitions: Array<Transition>? = null,
+        internal val result: ((resultCode: Int, intent: Intent?, bundle: Bundle?) -> Unit)? = null
+    )
 
     class Transition(
         internal val view: View,
@@ -28,11 +35,14 @@ open class ACNavigation(private val caller: Caller, private val listener: ACModu
         result: ((resultCode: Int, intent: Intent?, bundle: Bundle?) -> Unit)? = null
     ) : Caller(useTransition, transitions, result)
 
-    open class Caller(
-        internal val useTransition: Boolean = true,
-        internal val transitions: Array<Transition>? = null,
-        internal val result: ((resultCode: Int, intent: Intent?, bundle: Bundle?) -> Unit)? = null
-    )
+    class NavCaller (
+        internal val cls: Class<out ACActivity>,
+        internal val bundle: Bundle? = null,
+        internal val startDestination: Int = 0,
+        useTransition: Boolean = true,
+        transitions: Array<Transition>? = null,
+        result: ((resultCode: Int, intent: Intent?, bundle: Bundle?) -> Unit)? = null
+    ) : Caller(useTransition, transitions, result)
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
         if (requestCode == AC.REQ_NAVIGATION) {
@@ -49,6 +59,16 @@ open class ACNavigation(private val caller: Caller, private val listener: ACModu
 
     open fun getCallerIntent(activity: Activity): Intent? {
         return when(caller) {
+            is NavCaller -> {
+                Intent(activity, caller.cls).apply {
+                    caller.bundle?.let {
+                        putExtra(NavDestination.NAV_BUNDLE, it)
+                    }
+                    if (caller.startDestination != 0) {
+                        putExtra(NavDestination.NAV_START_DESTINATION, caller.startDestination)
+                    }
+                }
+            }
             is IntentCaller -> {
                 caller.intent.apply {
                     caller.bundle?.let {
