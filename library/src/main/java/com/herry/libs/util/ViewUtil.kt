@@ -4,13 +4,16 @@ import android.app.Activity
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
+import android.os.ResultReceiver
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.LayoutRes
@@ -131,4 +134,66 @@ object ViewUtil {
         val color = ContextCompat.getColor(context, id)
         return ColorDrawable(color)
     }
+
+    fun hideSoftKeyboard(context: Context?, rootView: View?) {
+        if (isSoftKeyboardShown(rootView) && context != null) {
+            val inputMethodManager = context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager?
+            inputMethodManager?.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0)
+        }
+    }
+
+    fun hideSoftKeyboard(view: View?, activity: Activity?): Boolean {
+        return hideSoftKeyboard(view, activity, 0, null)
+    }
+
+    fun hideSoftKeyboard(view: View?, activity: Activity?, flag: Int): Boolean {
+        return hideSoftKeyboard(view, activity, flag, null)
+    }
+
+    fun hideSoftKeyboard(view: View?, activity: Activity?, resultReceiver: ResultReceiver?): Boolean {
+        return hideSoftKeyboard(view, activity, 0, resultReceiver)
+    }
+
+    fun hideSoftKeyboard(view: View?, activity: Activity?, flag: Int, resultReceiver: ResultReceiver?): Boolean {
+        if (null == activity || null == view) {
+            return false
+        }
+        val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+        return null != imm && imm.hideSoftInputFromWindow(view.applicationWindowToken, flag, resultReceiver)
+    }
+
+    fun showSoftKeyboard(view: View?, activity: Activity?, flag: Int): Boolean {
+        return showSoftKeyboard(view, activity, flag, null)
+    }
+
+    fun showSoftKeyboard(view: View?, activity: Activity?, resultReceiver: ResultReceiver?): Boolean {
+        return showSoftKeyboard(view, activity, 0, resultReceiver)
+    }
+
+    fun showSoftKeyboard(view: View?, activity: Activity?, flag: Int, resultReceiver: ResultReceiver?): Boolean {
+        if (null == activity || null == view) {
+            return false
+        }
+        val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+        return null != imm && imm.showSoftInput(view, flag, resultReceiver)
+    }
+
+    fun isSoftKeyboardShown(rootView: View?): Boolean {
+        if (null == rootView) {
+            return false
+        }
+
+        /* 128dp = 32dp * 4, minimum button height 32dp and generic 4 rows soft keyboard */
+        @Suppress("LocalVariableName")
+        val SOFT_KEYBOARD_HEIGHT_DP_THRESHOLD = 128
+        val r = Rect()
+        rootView.getWindowVisibleDisplayFrame(r)
+        val dm = rootView.resources.displayMetrics
+
+        /* heightDiff = rootView height - status bar height (r.top) - visible frame height (r.bottom - r.top) */
+        val heightDiff = rootView.bottom - r.bottom
+
+        /* Threshold size: dp to pixels, multiply with display density */return heightDiff > SOFT_KEYBOARD_HEIGHT_DP_THRESHOLD * dm.density
+    }
+
 }

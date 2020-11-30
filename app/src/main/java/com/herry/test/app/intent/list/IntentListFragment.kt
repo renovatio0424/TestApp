@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
@@ -14,20 +15,15 @@ import com.herry.libs.nodeview.model.NodeRoot
 import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.test.R
-import com.herry.test.app.base.BaseView
-import com.herry.test.app.base.ac.AppACNavigation
-import com.herry.test.app.intent.scheme.SchemeFragment
-import com.herry.test.app.intent.share.ShareMediaListFragment
+import com.herry.test.app.base.nav.NavView
 import com.herry.test.widget.TitleBarForm
-import kotlinx.android.synthetic.main.intent_list_fragment.view.*
-import kotlinx.android.synthetic.main.main_test_item.view.*
 
 /**
  * Created by herry.park on 2020/06/11.
  **/
-class IntentListFragment : BaseView<IntentListContract.View, IntentListContract.Presenter>(), IntentListContract.View {
+class IntentListFragment : NavView<IntentListContract.View, IntentListContract.Presenter>(), IntentListContract.View {
 
-    override fun onCreatePresenter(): IntentListContract.Presenter? = IntentListPresenter()
+    override fun onCreatePresenter(): IntentListContract.Presenter = IntentListPresenter()
 
     override fun onCreatePresenterView(): IntentListContract.View = this
 
@@ -52,11 +48,11 @@ class IntentListFragment : BaseView<IntentListContract.View, IntentListContract.
         TitleBarForm(
             activity = requireActivity()
         ).apply {
-            bindFormHolder(view.context, view.intent_list_fragment_title)
+            bindFormHolder(view.context, view.findViewById(R.id.intent_list_fragment_title))
             bindFormModel(view.context, TitleBarForm.Model(title = "Test List"))
         }
 
-        view.intent_list_fragment_list.apply {
+        view.findViewById<RecyclerView>(R.id.intent_list_fragment_list)?.apply {
             layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
             setHasFixedSize(true)
             if (itemAnimator is SimpleItemAnimator) {
@@ -74,13 +70,18 @@ class IntentListFragment : BaseView<IntentListContract.View, IntentListContract.
 
     override fun onScreen(type: IntentListContract.TestItemType) {
         when (type) {
-            IntentListContract.TestItemType.SCHEME_TEST -> activityCaller?.call(AppACNavigation.SingleCaller(SchemeFragment::class))
-            IntentListContract.TestItemType.MEDIA_SHARE_TEST -> activityCaller?.call(AppACNavigation.SingleCaller(ShareMediaListFragment::class))
+            IntentListContract.TestItemType.SCHEME_TEST -> {
+                navController()?.navigate(R.id.scheme_fragment)
+            }
+            IntentListContract.TestItemType.MEDIA_SHARE_TEST -> {
+                navController()?.navigate(R.id.share_media_list_fragment)
+            }
         }
     }
 
     private inner class TestItemForm : NodeForm<TestItemForm.Holder, IntentListContract.TestItemType>(Holder::class, IntentListContract.TestItemType::class) {
         inner class Holder(context: Context, view: View) : NodeHolder(context, view) {
+            val title: TextView? = view.findViewById(R.id.main_test_item_title)
             init {
                 view.setOnClickListener {
                     NodeRecyclerForm.getBindModel(this@TestItemForm, this@Holder)?.let {
@@ -95,7 +96,7 @@ class IntentListFragment : BaseView<IntentListContract.View, IntentListContract.
         override fun onLayout(): Int = R.layout.main_test_item
 
         override fun onBindModel(context: Context, holder: TestItemForm.Holder, model: IntentListContract.TestItemType) {
-            holder.view.main_test_item_title.text = when (model) {
+            holder.title?.text = when (model) {
                 IntentListContract.TestItemType.SCHEME_TEST -> "Scheme Intent"
                 IntentListContract.TestItemType.MEDIA_SHARE_TEST -> "Media Share Intent"
             }

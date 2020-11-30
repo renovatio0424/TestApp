@@ -26,7 +26,7 @@ object FileUtil {
      */
     @Throws(IOException::class)
     fun readFileToByteArray(file: File): ByteArray? {
-        val fileInputStream = openInputStream(file) ?: return null
+        val fileInputStream = openInputStream(file)
         val fileLength = file.length()
         // file.length() may return 0 for system-dependent entities, treat 0 as unknown length - see IO-453
         return if (fileLength > 0) toByteArray(
@@ -58,7 +58,7 @@ object FileUtil {
      * @since 1.3
      */
     @Throws(IOException::class)
-    fun openInputStream(file: File): FileInputStream? {
+    fun openInputStream(file: File): FileInputStream {
         if (file.exists()) {
             if (file.isDirectory) {
                 throw IOException("File '$file' exists but is a directory")
@@ -72,7 +72,7 @@ object FileUtil {
         return FileInputStream(file)
     }
 
-    fun deleteDirectory(directory: File?): Boolean {
+    private fun deleteDirectory(directory: File?): Boolean {
         if (null != directory) {
             if (directory.isDirectory) {
                 val children = directory.list()
@@ -160,7 +160,7 @@ object FileUtil {
      * @since 2.1
      */
     @Throws(IOException::class)
-    fun toByteArray(input: InputStream, size: Int): ByteArray? {
+    fun toByteArray(input: InputStream, size: Int): ByteArray {
         require(size >= 0) { "Size must be equal or greater than zero: $size" }
         if (size == 0) {
             return ByteArray(0)
@@ -230,11 +230,11 @@ object FileUtil {
         uri ?: return ""
 
         if (uri.toString().startsWith("content://")) {
-            val projection = arrayOf(MediaStore.MediaColumns.DATA)
+            @Suppress("DEPRECATION") val projection = arrayOf(MediaStore.MediaColumns.DATA)
             val cursor: Cursor? = context.contentResolver?.query(uri, projection, null, null, null)
-            cursor?.use { cursor ->
-                if (cursor.moveToFirst()) {
-                    return cursor.getString(0)
+            cursor?.use { _cursor ->
+                if (_cursor.moveToFirst()) {
+                    return _cursor.getString(0)
                 }
             }
         }

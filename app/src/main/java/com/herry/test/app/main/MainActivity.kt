@@ -1,9 +1,9 @@
 package com.herry.test.app.main
 
-import androidx.fragment.app.Fragment
-import com.herry.test.app.base.SingleActivity
+import com.herry.test.R
+import com.herry.test.app.base.nav.NavActivity
 
-class MainActivity : SingleActivity() {
+class MainActivity : NavActivity() {
 
-    override fun getBaseFragment(): Fragment? = MainFragment()
+    override fun getGraph(): Int = R.navigation.main_navigation
 }

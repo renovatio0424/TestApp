@@ -22,7 +22,7 @@ class ACBase(private val listener: ACBaseListener): AC {
         override fun onDone(module: ACInject) {
         }
     })
-    private val aCModules = mutableListOf<ACModule>()
+    private val activityResultableACModules = mutableListOf<ACModule>()
 
     override fun <T> call(caller: T) {
         if(Looper.myLooper() == Looper.getMainLooper()) {
@@ -76,14 +76,14 @@ class ACBase(private val listener: ACBaseListener): AC {
                         done(module)
                     }
                 })
-                aCModules.add(module)
+                activityResultableACModules.add(module)
                 module.call()
             }
         }
     }
 
     fun activityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
-        for(module in aCModules) {
+        for(module in activityResultableACModules) {
             if(module.onActivityResult(requestCode, resultCode, data)) {
                 return true
             }
@@ -92,6 +92,6 @@ class ACBase(private val listener: ACBaseListener): AC {
     }
 
     private fun done(module: ACModule) {
-        aCModules.remove(module)
+        activityResultableACModules.remove(module)
     }
 }

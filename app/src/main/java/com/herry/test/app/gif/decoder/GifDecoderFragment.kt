@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -23,9 +24,6 @@ import com.herry.test.R
 import com.herry.test.app.base.BaseView
 import com.herry.test.data.GifMediaFileInfoData
 import com.herry.test.widget.TitleBarForm
-import kotlinx.android.synthetic.main.gif_decoder_decoded_gif_frames.view.*
-import kotlinx.android.synthetic.main.gif_decoder_fragment.view.*
-import kotlinx.android.synthetic.main.gif_decoder_gif_frame.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -64,11 +62,11 @@ class GifDecoderFragment : BaseView<GifDecoderContract.View, GifDecoderContract.
             activity = requireActivity(),
             onClickBack = { AppUtil.pressBackKey(requireActivity(), view) }
         ).apply {
-            bindFormHolder(view.context, view.gif_decoder_fragment_title)
+            bindFormHolder(view.context, view.findViewById(R.id.gif_decoder_fragment_title))
             bindFormModel(view.context, TitleBarForm.Model(title = "Gif Decoder", backEnable = true))
         }
 
-        mediaInfoText = view.gif_decoder_fragment_media_info
+        mediaInfoText = view.findViewById(R.id.gif_decoder_fragment_media_info)
 
         decodedFrames = GifFramesForm(
             context = view.context,
@@ -76,7 +74,7 @@ class GifDecoderFragment : BaseView<GifDecoderContract.View, GifDecoderContract.
                 ToastHelper.showToast(activity, "$position frame (${model.delay})")
             }
         )
-        decodedFrames?.bindFormHolder(view.context, view.gif_decoder_fragment_decoded_gif_frames)
+        decodedFrames?.bindFormHolder(view.context, view.findViewById(R.id.gif_decoder_fragment_decoded_gif_frames))
     }
 
     override fun onResume() {
@@ -138,7 +136,7 @@ class GifDecoderFragment : BaseView<GifDecoderContract.View, GifDecoderContract.
 //            val indicator: LinearLayout = view.gif_decoder_decoded_gif_frames_indicator
 
             init {
-                val recyclerView = view.gif_decoder_decoded_gif_frames
+                val recyclerView = view.findViewById<RecyclerView>(R.id.gif_decoder_decoded_gif_frames)
                 recyclerView?.let {
                     it.setHasFixedSize(true)
                     it.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
@@ -188,6 +186,10 @@ class GifDecoderFragment : BaseView<GifDecoderContract.View, GifDecoderContract.
         private val onClick: ((position: Int, model: GifDecoderContract.DecodedGifFrame) -> Unit)?
     ) : NodeForm<GifFrameForm.Holder, GifDecoderContract.DecodedGifFrame>(Holder::class, GifDecoderContract.DecodedGifFrame::class) {
         inner class Holder(context: Context, view: View) : NodeHolder(context, view) {
+            val number: TextView? = view.findViewById(R.id.gif_decoder_gif_frame_number)
+            val duration: TextView? = view.findViewById(R.id.gif_decoder_gif_frame_duration)
+            val frame: ImageView? = view.findViewById(R.id.gif_decoder_gif_frame_image)
+
             init {
                 view.setOnProtectClickListener {
                     NodeRecyclerForm.getBindNode(this@GifFrameForm, this@Holder)?.let { node ->
@@ -203,9 +205,9 @@ class GifDecoderFragment : BaseView<GifDecoderContract.View, GifDecoderContract.
 
         @SuppressLint("SetTextI18n")
         override fun onBindModel(context: Context, holder: Holder, model: GifDecoderContract.DecodedGifFrame) {
-            holder.view.gif_decoder_gif_frame_number?.text = "${model.index + 1} frame"
-            holder.view.gif_decoder_gif_frame_duration?.text = "${model.delay} ms"
-            holder.view.gif_decoder_gif_frame_image?.setImageDrawable(BitmapDrawable(null, model.bitmap))
+            holder.number?.text = "${model.index + 1} frame"
+            holder.duration?.text = "${model.delay} ms"
+            holder.frame?.setImageDrawable(BitmapDrawable(null, model.bitmap))
         }
     }
 }

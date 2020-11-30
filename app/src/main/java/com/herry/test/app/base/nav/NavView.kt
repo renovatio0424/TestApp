@@ -68,4 +68,12 @@ abstract class NavView<V: IMvpView<P>, P: IMvpPresenter<V>>: NavFragment(), IMvp
             (presenter as NavPresent<*>).navTransitionEnd()
         }
     }
+
+    override fun showViewLoading() {
+        // implements show loading view to base fragment
+    }
+
+    override fun hideViewLoading(success: Boolean) {
+        // implements hide loading view to base fragment
+    }
 }

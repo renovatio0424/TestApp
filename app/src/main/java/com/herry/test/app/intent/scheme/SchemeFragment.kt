@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
@@ -20,15 +21,13 @@ import com.herry.libs.widget.extension.setOnProtectClickListener
 import com.herry.test.R
 import com.herry.test.app.base.BaseView
 import com.herry.test.widget.TitleBarForm
-import kotlinx.android.synthetic.main.main_test_item.view.*
-import kotlinx.android.synthetic.main.scheme_fragment.view.*
 
 /**
  * Created by herry.park on 2020/06/11.
  **/
 class SchemeFragment : BaseView<SchemeContract.View, SchemeContract.Presenter>(), SchemeContract.View {
 
-    override fun onCreatePresenter(): SchemeContract.Presenter? = SchemePresenter()
+    override fun onCreatePresenter(): SchemeContract.Presenter = SchemePresenter()
 
     override fun onCreatePresenterView(): SchemeContract.View = this
 
@@ -54,11 +53,11 @@ class SchemeFragment : BaseView<SchemeContract.View, SchemeContract.Presenter>()
             activity = requireActivity(),
             onClickBack = { AppUtil.pressBackKey(requireActivity(), view) }
         ).apply {
-            bindFormHolder(view.context, view.scheme_fragment_title)
+            bindFormHolder(view.context, view.findViewById(R.id.scheme_fragment_title))
             bindFormModel(view.context, TitleBarForm.Model(title = "Scheme Intent", backEnable = true))
         }
 
-        view.scheme_fragment_list.apply {
+        view.findViewById<RecyclerView>(R.id.scheme_fragment_list)?.apply {
             layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
             setHasFixedSize(true)
             if (itemAnimator is SimpleItemAnimator) {
@@ -80,6 +79,7 @@ class SchemeFragment : BaseView<SchemeContract.View, SchemeContract.Presenter>()
 
     private inner class SchemeItemForm : NodeForm<SchemeItemForm.Holder, SchemeContract.SchemeItemType>(Holder::class, SchemeContract.SchemeItemType::class) {
         inner class Holder(context: Context, view: View) : NodeHolder(context, view) {
+            val title: TextView? = view.findViewById(R.id.main_test_item_title)
             init {
                 view.setOnProtectClickListener {
                     NodeRecyclerForm.getBindModel(this@SchemeItemForm, this@Holder)?.let {
@@ -94,7 +94,7 @@ class SchemeFragment : BaseView<SchemeContract.View, SchemeContract.Presenter>()
         override fun onLayout(): Int = R.layout.main_test_item
 
         override fun onBindModel(context: Context, holder: Holder, model: SchemeContract.SchemeItemType) {
-            holder.view.main_test_item_title.text = when (model) {
+            holder.title?.text = when (model) {
                 SchemeContract.SchemeItemType.EFFECT -> "Effect"
                 SchemeContract.SchemeItemType.OVERLAY_STICKER -> "Overlay(Sticker)"
                 SchemeContract.SchemeItemType.OVERLAY_TEXT -> "Overlay(Text)"

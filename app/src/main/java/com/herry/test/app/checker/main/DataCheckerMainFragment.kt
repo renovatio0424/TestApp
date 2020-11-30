@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
@@ -18,15 +19,13 @@ import com.herry.libs.widget.extension.setOnProtectClickListener
 import com.herry.test.R
 import com.herry.test.app.base.BaseView
 import com.herry.test.widget.TitleBarForm
-import kotlinx.android.synthetic.main.data_checker_main_fragment.view.*
-import kotlinx.android.synthetic.main.data_checker_main_password.view.*
 
 /**
  * Created by herry.park on 2020/7/7
  **/
 class DataCheckerMainFragment : BaseView<DataCheckerMainContract.View, DataCheckerMainContract.Presenter>(), DataCheckerMainContract.View {
 
-    override fun onCreatePresenter(): DataCheckerMainContract.Presenter? =
+    override fun onCreatePresenter(): DataCheckerMainContract.Presenter =
         DataCheckerMainPresenter()
 
     override fun onCreatePresenterView(): DataCheckerMainContract.View = this
@@ -53,11 +52,11 @@ class DataCheckerMainFragment : BaseView<DataCheckerMainContract.View, DataCheck
             activity = requireActivity(),
             onClickBack = { AppUtil.pressBackKey(requireActivity(), view) }
         ).apply {
-            bindFormHolder(view.context, view.data_checker_main_fragment_title)
+            bindFormHolder(view.context, view.findViewById(R.id.data_checker_main_fragment_title))
             bindFormModel(view.context, TitleBarForm.Model(title = "Data Checker Main", backEnable = true))
         }
 
-        view.data_checker_main_fragment_container.apply {
+        view.findViewById<RecyclerView>(R.id.data_checker_main_fragment_container)?.apply {
             layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
             setHasFixedSize(true)
             if (itemAnimator is SimpleItemAnimator) {
@@ -76,6 +75,7 @@ class DataCheckerMainFragment : BaseView<DataCheckerMainContract.View, DataCheck
     private inner class DataCheckerPasswordItemForm : NodeForm<DataCheckerPasswordItemForm.Holder, DataCheckerMainContract.PasswordModel>(
         Holder::class, DataCheckerMainContract.PasswordModel::class) {
         inner class Holder(context: Context, view: View) : NodeHolder(context, view) {
+            val mainPasswordStatus: TextView? = view.findViewById(R.id.data_checker_main_password_status)
             init {
                 view.setOnProtectClickListener {
                     NodeRecyclerForm.getBindModel(this@DataCheckerPasswordItemForm, this@Holder)?.let {
@@ -90,7 +90,7 @@ class DataCheckerMainFragment : BaseView<DataCheckerMainContract.View, DataCheck
         override fun onLayout(): Int = R.layout.data_checker_main_password
 
         override fun onBindModel(context: Context, holder: Holder, model: DataCheckerMainContract.PasswordModel) {
-            holder.view.data_checker_main_password_status.text = if (model.password.isBlank()) "Not exit password" else "Exist password"
+            holder.mainPasswordStatus?.text = if (model.password.isBlank()) "Not exit password" else "Exist password"
         }
     }
 }

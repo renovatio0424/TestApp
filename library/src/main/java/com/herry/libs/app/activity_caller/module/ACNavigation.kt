@@ -83,7 +83,7 @@ open class ACNavigation(private val caller: Caller, private val listener: ACModu
     final override fun call() {
         val activity = listener.getActivity()
 
-        val intent = getCallerIntent(activity)
+        val intent = getCallerIntent(activity) ?: return
 
         if(caller.useTransition) {
             var options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity).toBundle()

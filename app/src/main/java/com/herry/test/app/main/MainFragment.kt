@@ -12,6 +12,7 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
@@ -25,23 +26,16 @@ import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.libs.widget.extension.setOnProtectClickListener
 import com.herry.test.R
-import com.herry.test.app.base.BaseView
-import com.herry.test.app.base.ac.AppACNavigation
-import com.herry.test.app.checker.main.DataCheckerMainFragment
-import com.herry.test.app.gif.list.GifListFragment
-import com.herry.test.app.intent.list.IntentListFragment
-import com.herry.test.app.layout.LayoutSampleFragment
+import com.herry.test.app.base.nav.NavView
 import com.herry.test.widget.TitleBarForm
-import kotlinx.android.synthetic.main.main_fragment.view.*
-import kotlinx.android.synthetic.main.main_test_item.view.*
 
 
 /**
  * Created by herry.park on 2020/06/11.
  **/
-class MainFragment : BaseView<MainContract.View, MainContract.Presenter>(), MainContract.View {
+class MainFragment : NavView<MainContract.View, MainContract.Presenter>(), MainContract.View {
 
-    override fun onCreatePresenter(): MainContract.Presenter? = MainPresenter()
+    override fun onCreatePresenter(): MainContract.Presenter = MainPresenter()
 
     override fun onCreatePresenterView(): MainContract.View = this
 
@@ -66,11 +60,11 @@ class MainFragment : BaseView<MainContract.View, MainContract.Presenter>(), Main
         TitleBarForm(
             activity = requireActivity()
         ).apply {
-            bindFormHolder(view.context, view.main_fragment_title)
+            bindFormHolder(view.context, view.findViewById(R.id.main_fragment_title))
             bindFormModel(view.context, TitleBarForm.Model(title = "Test List"))
         }
 
-        view.main_fragment_list.apply {
+        view.findViewById<RecyclerView>(R.id.main_fragment_list)?.apply {
             layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
             setHasFixedSize(true)
             if (itemAnimator is SimpleItemAnimator) {
@@ -88,32 +82,26 @@ class MainFragment : BaseView<MainContract.View, MainContract.Presenter>(), Main
 
     override fun onScreen(type: MainContract.TestItemType) {
         when (type) {
-            MainContract.TestItemType.SCHEME_TEST -> activityCaller?.call(AppACNavigation.SingleCaller(IntentListFragment::class))
+            MainContract.TestItemType.SCHEME_TEST -> {
+                navController()?.navigate(R.id.intent_list_fragment)
+            }
             MainContract.TestItemType.GIF_DECODER -> {
                 activityCaller?.call(
                     ACPermission.Caller(
                         arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
                         onGranted = {
                             Handler(Looper.getMainLooper()).post {
-                                activityCaller?.call(
-                                    AppACNavigation.SingleCaller(
-                                        GifListFragment::class
-                                    )
-                                )
+                                navController()?.navigate(R.id.gif_list_fragment)
                             }
                         }
                     ))
             }
-            MainContract.TestItemType.CHECKER_LIST -> activityCaller?.call(
-                AppACNavigation.SingleCaller(
-                    DataCheckerMainFragment::class
-                )
-            )
-            MainContract.TestItemType.LAYOUT_SAMPLE -> activityCaller?.call(
-                AppACNavigation.SingleCaller(
-                    LayoutSampleFragment::class
-                )
-            )
+            MainContract.TestItemType.CHECKER_LIST -> {
+                navController()?.navigate(R.id.data_checker_main_fragment)
+            }
+            MainContract.TestItemType.LAYOUT_SAMPLE -> {
+                navController()?.navigate(R.id.layout_sample_fragment)
+            }
             MainContract.TestItemType.PICK_PHOTO -> {
                 val intent = Intent(Intent.ACTION_PICK).apply {
                     setType(MediaStore.Images.Media.CONTENT_TYPE)
@@ -129,7 +117,7 @@ class MainFragment : BaseView<MainContract.View, MainContract.Presenter>(), Main
                                 if (Activity.RESULT_OK == resultCode) {
                                     val selectedImage: Uri? = intent?.data
 
-                                    ToastHelper.showToast(activity, "selected photo: ")
+                                    ToastHelper.showToast(activity, "selected photo: ${selectedImage.toString()}")
                                 } else {
                                     ToastHelper.showToast(activity, "cancel photo selection")
                                 }
@@ -142,6 +130,7 @@ class MainFragment : BaseView<MainContract.View, MainContract.Presenter>(), Main
 
     private inner class TestItemForm : NodeForm<TestItemForm.Holder, MainContract.TestItemType>(Holder::class, MainContract.TestItemType::class) {
         inner class Holder(context: Context, view: View) : NodeHolder(context, view) {
+            val title: TextView? = view.findViewById(R.id.main_test_item_title)
             init {
                 view.setOnProtectClickListener {
                     NodeRecyclerForm.getBindModel(this@TestItemForm, this@Holder)?.let {
@@ -156,7 +145,7 @@ class MainFragment : BaseView<MainContract.View, MainContract.Presenter>(), Main
         override fun onLayout(): Int = R.layout.main_test_item
 
         override fun onBindModel(context: Context, holder: TestItemForm.Holder, model: MainContract.TestItemType) {
-            holder.view.main_test_item_title.text = when (model) {
+            holder.title?.text = when (model) {
                 MainContract.TestItemType.SCHEME_TEST -> "Intent"
                 MainContract.TestItemType.GIF_DECODER -> "GIF Decoder"
                 MainContract.TestItemType.CHECKER_LIST -> "Data Checker"

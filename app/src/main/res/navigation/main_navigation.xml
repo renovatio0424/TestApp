@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_navigation"
+    app:startDestination="@+id/main_fragment">
+
+    <fragment
+        android:id="@+id/main_fragment"
+        android:name="com.herry.test.app.main.MainFragment"
+        tools:layout="@layout/main_fragment">
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/intent_list_fragment"
+        android:name="com.herry.test.app.intent.list.IntentListFragment"
+        tools:layout="@layout/intent_list_fragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/scheme_fragment"
+        android:name="com.herry.test.app.intent.scheme.SchemeFragment"
+        tools:layout="@layout/scheme_fragment">
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/share_media_list_fragment"
+        android:name="com.herry.test.app.intent.share.ShareMediaListFragment"
+        tools:layout="@layout/share_media_list_fragment"/>
+
+    <fragment
+        android:id="@+id/gif_decoder_fragment"
+        android:name="com.herry.test.app.gif.decoder.GifDecoderFragment"
+        tools:layout="@layout/gif_decoder_fragment"/>
+
+    <fragment
+        android:id="@+id/gif_list_fragment"
+        android:name="com.herry.test.app.gif.list.GifListFragment"
+        tools:layout="@layout/gif_list_fragment" />
+
+    <fragment
+        android:id="@+id/data_checker_main_fragment"
+        android:name="com.herry.test.app.checker.main.DataCheckerMainFragment"
+        tools:layout="@layout/data_checker_main_fragment" />
+
+    <fragment
+        android:id="@+id/password_setting_fragment"
+        android:name="com.herry.test.app.checker.password_setting.PasswordSettingFragment"
+        tools:layout="@layout/data_checker_main_password" />
+
+    <fragment
+        android:id="@+id/layout_sample_fragment"
+        android:name="com.herry.test.app.layout.LayoutSampleFragment"
+        tools:layout="@layout/layout_sample_fragment" />
+
+
+</navigation>

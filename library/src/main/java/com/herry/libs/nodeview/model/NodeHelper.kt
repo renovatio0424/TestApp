@@ -113,12 +113,12 @@ object NodeHelper {
 
     fun <T : Any> addModels(parent: Node<*>, vararg models: T) {
         val nodes = Array<Node<*>>(models.size) { createNode(models[it]) }
-        addNodes(parent, nodes = *nodes)
+        addNodes(parent, nodes = nodes)
     }
 
     fun <T : Any> addModels(parent: Node<*>, position: Int, vararg models: T) {
         val nodes = Array<Node<*>>(models.size) { createNode(models[it]) }
-        addNodes(parent, position, nodes = *nodes)
+        addNodes(parent, position, nodes = nodes)
     }
 
     fun addNode(parent: Node<*>, node: Node<*>) {

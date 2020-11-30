@@ -15,7 +15,7 @@ class AppACNavigation(private val caller: Caller, private val listener: ACModule
         internal val cls: KClass<out BaseFragment>,
         internal val bundle: Bundle? = null,
 //        internal val systemUiVisibility: Int = 0,
-//        internal val statusBarColor: Int = 0,
+//        internal val statusBarColor: Int = 0,vgb
         internal val transparentStatusBarFullScreen: Boolean = false,
         useTransition: Boolean = true,
         transitions: Array<Transition>? = null,

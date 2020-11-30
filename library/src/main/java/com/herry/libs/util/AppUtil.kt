@@ -57,7 +57,7 @@ object AppUtil {
         if (null == activity) {
             return false
         }
-//        ViewUtil.hideSoftKeyboard(activity, rootView)
+        ViewUtil.hideSoftKeyboard(activity, rootView)
         activity.runOnUiThread(
             Runnable { // pressed back
                 activity.dispatchKeyEvent(
@@ -101,7 +101,7 @@ object AppUtil {
     fun isScreenOn(context: Context?): Boolean {
         if (null != context) {
             val powerManager: PowerManager? =
-                context.getSystemService(Context.POWER_SERVICE) as PowerManager
+                context.getSystemService(Context.POWER_SERVICE) as PowerManager?
             powerManager?.isInteractive
         }
         return false
@@ -110,7 +110,7 @@ object AppUtil {
     fun wakeUpScreen(context: Context?, timeout: Long) {
         if (null != context) {
             val powerManager: PowerManager? =
-                context.getSystemService(Context.POWER_SERVICE) as PowerManager
+                context.getSystemService(Context.POWER_SERVICE) as PowerManager?
             if (null != powerManager) {
                 val wakeLock = powerManager.newWakeLock(
                     PowerManager.ACQUIRE_CAUSES_WAKEUP, "MyApp::MyWakelockTag"
@@ -159,7 +159,7 @@ object AppUtil {
         context ?: return false
         packageName ?: return false
 
-        var _context: Context = context
+        @Suppress("LocalVariableName") var _context: Context = context
         if (_context is Activity) {
             _context = context.applicationContext
         }
@@ -182,7 +182,7 @@ object AppUtil {
         if (null == context) {
             return null
         }
-        val am: ActivityManager? = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val am: ActivityManager? = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
         var topActivityName: String? = null
         if (null != am) {
             val tasks = am.runningAppProcesses
@@ -195,6 +195,7 @@ object AppUtil {
         return topActivityName
     }
 
+    @Suppress("DEPRECATION")
     fun isRunningActivity(
         context: Context?,
         activityClass: Class<*>?
@@ -202,14 +203,13 @@ object AppUtil {
         if (null == context || null == activityClass || null == activityClass.canonicalName) {
             return false
         }
-        val activityManager =
-            context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
                 ?: return false
         val tasks =
             activityManager.getRunningTasks(Int.MAX_VALUE)
         if (null != tasks) {
             for (task in tasks) {
-                if (null != task && null != task.baseActivity) {
+                if (task?.baseActivity != null) {
                     if (activityClass.canonicalName
                             .equals(task.baseActivity!!.className, ignoreCase = true)
                     ) return true
@@ -224,7 +224,7 @@ object AppUtil {
             return false
         }
         val activityManager =
-            context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+            context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
                 ?: return false
         val processInfo =
             activityManager.runningAppProcesses
@@ -271,10 +271,10 @@ object AppUtil {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private fun setTranslucentStatusBarLollipop(window: Window?) {
         if (null != window && null != window.context) {
-//            window.statusBarColor = ViewUtil.getColor(
-//                window.context,
-//                android.R.color.transparent
-//            )
+            window.statusBarColor = ViewUtil.getColor(
+                window.context,
+                android.R.color.transparent
+            )
         }
     }
 
@@ -339,8 +339,7 @@ object AppUtil {
         if (0 == containerViewId) {
             return
         }
-        val fragmentManager =
-            activity.supportFragmentManager ?: return
+        val fragmentManager = activity.supportFragmentManager
         val fragmentTransaction =
             fragmentManager.beginTransaction()
         if (setFragment(fragmentTransaction, containerViewId, fragment, option)) {
@@ -422,8 +421,7 @@ object AppUtil {
         if (null == activity || null == fragmentClass || null == tag) {
             return null
         }
-        val fragmentManager =
-            activity.supportFragmentManager ?: return null
+        val fragmentManager = activity.supportFragmentManager
         val fragment = fragmentManager.findFragmentByTag(tag)
         return if (null != fragment && fragmentClass.isInstance(fragment)) {
             fragmentClass.cast(fragment)
@@ -434,9 +432,9 @@ object AppUtil {
         if (null == activity || null == tag) {
             return null
         }
-        val fragmentManager =
-            activity.supportFragmentManager ?: return null
+        val fragmentManager = activity.supportFragmentManager
         val fragment = fragmentManager.findFragmentByTag(tag)
+        @Suppress("UNCHECKED_CAST")
         return if (null != fragment) {
             fragment as T
         } else null
