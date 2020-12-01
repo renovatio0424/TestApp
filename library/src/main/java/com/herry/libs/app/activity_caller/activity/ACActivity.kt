@@ -3,34 +3,56 @@ package com.herry.libs.app.activity_caller.activity
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Bundle
 import android.text.TextUtils
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.herry.libs.app.activity_caller.AC
 import com.herry.libs.app.activity_caller.ACBase
 import com.herry.libs.helper.ApiHelper
 
 abstract class ACActivity : AppCompatActivity(), AC {
 
-    protected val activityCaller = ACBase(object : ACBase.ACBaseListener {
-        override fun getActivity(): Activity = this@ACActivity
-        override fun checkPermission(
-            permission: Array<String>,
-            blockRequest: Boolean,
-            showBlockPopup: Boolean,
-            onGranted: ((permission: Array<String>) -> Unit)?,
-            onDenied: ((permission: Array<String>) -> Unit)?,
-            onBlocked: ((permission: Array<String>) -> Unit)?
-        ) {
-            checkPermission(permission, blockRequest, { _permission ->
-                onGranted?.let { it(_permission) }
-            }, { _permission ->
-                onDenied?.let { it(_permission) }
-            }, { _permission ->
-                if (showBlockPopup) showBlockedPermissionPopup()
-                onBlocked?.let { it(_permission) }
-            })
+    protected lateinit var activityCaller: ACBase
+
+    class ACBaseViewModelFactory(private val param: ACBase.ACBaseListener) : ViewModelProvider.Factory {
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            return if (modelClass.isAssignableFrom(ACBase::class.java)) {
+                @Suppress("UNCHECKED_CAST")
+                ACBase(param) as T
+            } else {
+                throw IllegalArgumentException()
+            }
         }
-    })
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        activityCaller = ViewModelProvider(this, ACBaseViewModelFactory(
+            object : ACBase.ACBaseListener {
+                override fun getActivity(): Activity = this@ACActivity
+                override fun checkPermission(
+                    permission: Array<String>,
+                    blockRequest: Boolean,
+                    showBlockPopup: Boolean,
+                    onGranted: ((permission: Array<String>) -> Unit)?,
+                    onDenied: ((permission: Array<String>) -> Unit)?,
+                    onBlocked: ((permission: Array<String>) -> Unit)?
+                ) {
+                    checkPermission(permission, blockRequest, { _permission ->
+                        onGranted?.let { it(_permission) }
+                    }, { _permission ->
+                        onDenied?.let { it(_permission) }
+                    }, { _permission ->
+                        if (showBlockPopup) showBlockedPermissionPopup()
+                        onBlocked?.let { it(_permission) }
+                    })
+                }
+            }
+        )).get(ACBase::class.java)
+    }
 
     override fun <T> call(caller: T) {
         activityCaller.call(caller)

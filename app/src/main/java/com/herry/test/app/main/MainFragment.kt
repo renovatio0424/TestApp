@@ -1,14 +1,10 @@
 package com.herry.test.app.main
 
 import android.Manifest
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,9 +12,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
-import com.herry.libs.app.activity_caller.module.ACNavigation
 import com.herry.libs.app.activity_caller.module.ACPermission
-import com.herry.libs.helper.ToastHelper
 import com.herry.libs.nodeview.NodeForm
 import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.nodeview.model.NodeRoot
@@ -102,28 +96,8 @@ class MainFragment : NavView<MainContract.View, MainContract.Presenter>(), MainC
             MainContract.TestItemType.LAYOUT_SAMPLE -> {
                 navController()?.navigate(R.id.layout_sample_fragment)
             }
-            MainContract.TestItemType.PICK_PHOTO -> {
-                val intent = Intent(Intent.ACTION_PICK).apply {
-                    setType(MediaStore.Images.Media.CONTENT_TYPE)
-                    data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-                }
-                intent.resolveActivity(activity?.packageManager ?: return) ?: return
-
-                activityCaller?.call(
-                    ACPermission.Caller(
-                        arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                        onGranted = {
-                            activityCaller?.call(ACNavigation.IntentCaller(intent) { resultCode, intent, _ ->
-                                if (Activity.RESULT_OK == resultCode) {
-                                    val selectedImage: Uri? = intent?.data
-
-                                    ToastHelper.showToast(activity, "selected photo: ${selectedImage.toString()}")
-                                } else {
-                                    ToastHelper.showToast(activity, "cancel photo selection")
-                                }
-                            })
-                        }
-                    ))
+            MainContract.TestItemType.PICK -> {
+                navController()?.navigate(R.id.pick_list_fragment)
             }
         }
     }
@@ -150,7 +124,7 @@ class MainFragment : NavView<MainContract.View, MainContract.Presenter>(), MainC
                 MainContract.TestItemType.GIF_DECODER -> "GIF Decoder"
                 MainContract.TestItemType.CHECKER_LIST -> "Data Checker"
                 MainContract.TestItemType.LAYOUT_SAMPLE -> "Layout Sample"
-                MainContract.TestItemType.PICK_PHOTO -> "Take photo"
+                MainContract.TestItemType.PICK -> "Pick"
             }
         }
     }

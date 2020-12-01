@@ -23,6 +23,6 @@ interface MainContract {
         GIF_DECODER,
         CHECKER_LIST,
         LAYOUT_SAMPLE,
-        PICK_PHOTO
+        PICK
     }
 }

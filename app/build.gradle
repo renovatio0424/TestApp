@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlinx-serialization'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
 android {
@@ -30,6 +29,10 @@ android {
 dependencies {
     api project(path: ':library')
     implementation fileTree(dir: "libs", include: ["*.jar"])
+
+    def lifecycle_version = "2.2.0"
+
+    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
 
     // navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$ktx_navigation_version"

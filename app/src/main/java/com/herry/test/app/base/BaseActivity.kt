@@ -7,13 +7,14 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.provider.Settings
+import androidx.lifecycle.LifecycleOwner
 import com.herry.libs.app.activity_caller.activity.ACActivity
 import com.herry.libs.helper.ApiHelper
 import com.herry.libs.helper.PopupHelper
 import com.herry.libs.util.AppActivityManager
 
 @Suppress("PrivatePropertyName")
-abstract class BaseActivity : ACActivity() {
+abstract class BaseActivity : ACActivity(), LifecycleOwner {
 
     @SuppressLint("SourceLockedOrientationActivity")
     open fun onActivityOrientation() {

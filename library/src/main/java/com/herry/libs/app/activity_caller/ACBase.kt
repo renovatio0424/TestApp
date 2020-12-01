@@ -4,15 +4,15 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
+import androidx.lifecycle.ViewModel
 import com.herry.libs.app.activity_caller.module.ACError
 import com.herry.libs.app.activity_caller.module.ACInject
 import com.herry.libs.app.activity_caller.module.ACNavigation
 import com.herry.libs.app.activity_caller.module.ACPermission
 import com.herry.libs.helper.PopupHelper
 
-class ACBase(private val listener: ACBaseListener): AC {
-
-    interface ACBaseListener: ACModule.OnPermissionListener {
+class ACBase(private val listener: ACBaseListener) : AC, ViewModel() {
+    interface ACBaseListener : ACModule.OnPermissionListener {
         fun getActivity(): Activity
     }
 
@@ -22,10 +22,11 @@ class ACBase(private val listener: ACBaseListener): AC {
         override fun onDone(module: ACInject) {
         }
     })
-    private val activityResultableACModules = mutableListOf<ACModule>()
+
+    private val activityResultEnableACModules = mutableListOf<ACModule>()
 
     override fun <T> call(caller: T) {
-        if(Looper.myLooper() == Looper.getMainLooper()) {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
             callOnMainLooper(caller)
         } else {
             Handler(Looper.getMainLooper()).post {
@@ -35,7 +36,7 @@ class ACBase(private val listener: ACBaseListener): AC {
     }
 
     private fun <T> callOnMainLooper(caller: T) {
-        when(caller) {
+        when (caller) {
             is ACPermission.Caller -> {
                 val module = ACPermission(caller, object : ACPermission.ACPermissionListener {
                     override fun getActivity(): Activity = listener.getActivity()
@@ -76,15 +77,15 @@ class ACBase(private val listener: ACBaseListener): AC {
                         done(module)
                     }
                 })
-                activityResultableACModules.add(module)
+                activityResultEnableACModules.add(module)
                 module.call()
             }
         }
     }
 
     fun activityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
-        for(module in activityResultableACModules) {
-            if(module.onActivityResult(requestCode, resultCode, data)) {
+        for (module in activityResultEnableACModules) {
+            if (module.onActivityResult(requestCode, resultCode, data)) {
                 return true
             }
         }
@@ -92,6 +93,6 @@ class ACBase(private val listener: ACBaseListener): AC {
     }
 
     private fun done(module: ACModule) {
-        activityResultableACModules.remove(module)
+        activityResultEnableACModules.remove(module)
     }
 }

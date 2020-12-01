@@ -56,5 +56,10 @@
         android:name="com.herry.test.app.layout.LayoutSampleFragment"
         tools:layout="@layout/layout_sample_fragment" />
 
+    <fragment
+        android:id="@+id/pick_list_fragment"
+        android:name="com.herry.test.app.pick.PickListFragment"
+        tools:layout="@layout/pick_list_fragment" />
+
 
 </navigation>
