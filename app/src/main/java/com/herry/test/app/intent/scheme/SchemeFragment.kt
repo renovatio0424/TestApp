@@ -19,13 +19,13 @@ import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.libs.util.AppUtil
 import com.herry.libs.widget.extension.setOnProtectClickListener
 import com.herry.test.R
-import com.herry.test.app.base.BaseView
+import com.herry.test.app.base.nav.NavView
 import com.herry.test.widget.TitleBarForm
 
 /**
  * Created by herry.park on 2020/06/11.
  **/
-class SchemeFragment : BaseView<SchemeContract.View, SchemeContract.Presenter>(), SchemeContract.View {
+class SchemeFragment : NavView<SchemeContract.View, SchemeContract.Presenter>(), SchemeContract.View {
 
     override fun onCreatePresenter(): SchemeContract.Presenter = SchemePresenter()
 

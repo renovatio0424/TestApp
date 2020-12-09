@@ -14,12 +14,12 @@ import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.util.AppUtil
 import com.herry.libs.widget.extension.setOnProtectClickListener
 import com.herry.test.R
-import com.herry.test.app.base.BaseView
+import com.herry.test.app.base.nav.NavView
 
 /**
  * Created by herry.park on 2020/08/19.
  **/
-class LayoutSampleFragment : BaseView<LayoutSampleContract.View, LayoutSampleContract.Presenter>(), LayoutSampleContract.View {
+class LayoutSampleFragment : NavView<LayoutSampleContract.View, LayoutSampleContract.Presenter>(), LayoutSampleContract.View {
 
     override fun onCreatePresenter(): LayoutSampleContract.Presenter = LayoutSamplePresenter()
 

@@ -1,4 +1,4 @@
-package com.herry.test.app.base.nav
+package com.herry.test.app.base.nested
 
 import android.content.Context
 import android.os.Bundle
@@ -7,14 +7,14 @@ import com.herry.libs.mvp.IMvpPresenter
 import com.herry.libs.mvp.IMvpView
 
 @Suppress("unused")
-abstract class NavView<V: IMvpView<P>, P: IMvpPresenter<V>>: NavFragment(), IMvpView<P> {
+abstract class NestedView<V: IMvpView<P>, P: IMvpPresenter<V>>: NestedFragment(), IMvpView<P> {
     override var presenter: P? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         this.presenter = this.presenter ?: onCreatePresenter()
-        this.presenter?.onAttach(onCreatePresenterView()) ?: finishAndResults(null)
+        this.presenter?.onAttach(onCreatePresenterView()) ?: finishAndResults(false)
     }
 
     override fun onDestroy() {
@@ -52,22 +52,6 @@ abstract class NavView<V: IMvpView<P>, P: IMvpPresenter<V>>: NavFragment(), IMvp
     abstract fun onCreatePresenter(): P?
 
     abstract fun onCreatePresenterView(): V
-
-    override fun onTransitionStart() {
-        super.onTransitionStart()
-
-        if(presenter is NavPresent<*>) {
-            (presenter as NavPresent<*>).navTransitionStart()
-        }
-    }
-
-    override fun onTransitionEnd() {
-        super.onTransitionEnd()
-
-        if(presenter is NavPresent<*>) {
-            (presenter as NavPresent<*>).navTransitionEnd()
-        }
-    }
 
     override fun showViewLoading() {
         // implements show loading view to base fragment

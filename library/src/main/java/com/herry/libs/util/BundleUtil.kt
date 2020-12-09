@@ -1,6 +1,7 @@
 package com.herry.libs.util
 
 import android.os.Bundle
+import com.herry.libs.app.nav.NavDestination
 import java.io.Serializable
 import kotlin.reflect.KClass
 import kotlin.reflect.full.cast
@@ -57,19 +58,19 @@ object BundleUtil {
         return default
     }
 
-//    fun createNavigationBundle(resultOk: Boolean): Bundle {
-//        val bundle = Bundle()
-//        bundle.putBoolean(NavDestination.NAV_UP_RESULT_OK, resultOk)
-//        return bundle
-//    }
-//
-//    fun isNavigationResultOk(bundle: Bundle?): Boolean {
-//        return bundle != null && bundle.getBoolean(NavDestination.NAV_UP_RESULT_OK, false)
-//    }
-//
-//    fun formNavigationId(bundle: Bundle?): Int {
-//        return bundle?.getInt(NavDestination.NAV_UP_FROM_ID, 0) ?: 0
-//    }
+    fun createNavigationBundle(resultOk: Boolean): Bundle {
+        val bundle = Bundle()
+        bundle.putBoolean(NavDestination.NAV_UP_RESULT_OK, resultOk)
+        return bundle
+    }
+
+    fun isNavigationResultOk(bundle: Bundle?): Boolean {
+        return bundle != null && bundle.getBoolean(NavDestination.NAV_UP_RESULT_OK, false)
+    }
+
+    fun formNavigationId(bundle: Bundle?): Int {
+        return bundle?.getInt(NavDestination.NAV_UP_FROM_ID, 0) ?: 0
+    }
 
     operator fun <T> get(bundle: Bundle?, key: String, tClass: Class<T>): T? {
         if (null != bundle) {

@@ -18,16 +18,16 @@ import com.herry.libs.nodeview.model.NodeRoot
 import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.test.R
-import com.herry.test.app.base.BaseView
+import com.herry.test.app.base.nav.NavView
 import com.herry.test.data.MediaFileInfoData
 import com.herry.test.widget.TitleBarForm
 
 /**
  * Created by herry.park on 2020/06/11.
  **/
-class ShareMediaListFragment : BaseView<ShareMediaListContract.View, ShareMediaListContract.Presenter>(), ShareMediaListContract.View {
+class ShareMediaListFragment : NavView<ShareMediaListContract.View, ShareMediaListContract.Presenter>(), ShareMediaListContract.View {
 
-    override fun onCreatePresenter(): ShareMediaListContract.Presenter? = ShareMediaListPresenter()
+    override fun onCreatePresenter(): ShareMediaListContract.Presenter = ShareMediaListPresenter()
 
     override fun onCreatePresenterView(): ShareMediaListContract.View = this
 

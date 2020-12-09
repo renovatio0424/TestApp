@@ -21,6 +21,7 @@ import androidx.annotation.IdRes
 import androidx.annotation.RawRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.herry.libs.helper.ApiHelper
 import java.io.ByteArrayOutputStream
@@ -329,22 +330,39 @@ object AppUtil {
 
     fun setFragment(
         activity: FragmentActivity?,
-        @IdRes containerViewId: Int,
+        @IdRes containerViewId: Int?,
         fragment: Fragment?,
         option: FragmentAddingOption?
-    ) {
+    ): Boolean {
         if (null == activity || null == fragment || null == option) {
-            return
+            return false
         }
-        if (0 == containerViewId) {
-            return
+        if (null == containerViewId || -1 == containerViewId) {
+            return false
         }
-        val fragmentManager = activity.supportFragmentManager
+        return setFragment(activity.supportFragmentManager, containerViewId, fragment, option)
+    }
+
+    fun setFragment(
+        fragmentManager: FragmentManager?,
+        @IdRes containerViewId: Int?,
+        fragment: Fragment?,
+        option: FragmentAddingOption
+    ): Boolean {
+        if (null == fragmentManager || null == fragment) {
+            return false
+        }
+        if (null == containerViewId || -1 == containerViewId) {
+            return false
+        }
         val fragmentTransaction =
             fragmentManager.beginTransaction()
         if (setFragment(fragmentTransaction, containerViewId, fragment, option)) {
             fragmentTransaction.commit()
+            return true
         }
+
+        return false
     }
 
     fun setFragment(
@@ -353,9 +371,12 @@ object AppUtil {
         fragment: Fragment?,
         option: FragmentAddingOption
     ): Boolean {
-        if (null == transaction) {
+        if (-1 == containerViewId) {
             return false
         }
+        transaction ?: return false
+        fragment ?: return false
+
         val customAnimations = option.customAnimations
         if (null != customAnimations) {
             val enter = customAnimations.enter
@@ -374,13 +395,15 @@ object AppUtil {
                 }
             }
         }
+
+        val tag = option.tag ?: fragment.javaClass.simpleName
         if (option.isReplace) {
-            transaction.replace(containerViewId, fragment!!, option.tag)
+            transaction.replace(containerViewId, fragment, tag)
         } else {
-            transaction.add(containerViewId, fragment!!, option.tag)
+            transaction.add(containerViewId, fragment, tag)
         }
         if (option.isAddToBackStack) {
-            transaction.addToBackStack(option.tag)
+            transaction.addToBackStack(tag)
         }
         return true
     }
@@ -484,5 +507,34 @@ object AppUtil {
             apiKey = bundle.getString(key, "")
         }
         return apiKey
+    }
+
+    data class BackStackFragment(
+        val fragmentManager: FragmentManager,
+        val fragment: Fragment,
+        val isChild: Boolean
+    )
+
+    fun getLastBackStackFragment(fragmentManager: FragmentManager?, checkChild: Boolean = false): BackStackFragment? {
+        fragmentManager ?: return null
+
+        val count: Int = fragmentManager.backStackEntryCount
+        if (0 < count) {
+            val topEntry: FragmentManager.BackStackEntry = fragmentManager.getBackStackEntryAt(fragmentManager.backStackEntryCount - 1)
+            val topFragmentTag = topEntry.name.toString()
+            val fragment = fragmentManager.findFragmentByTag(topFragmentTag)
+            if (null != fragment && fragment.isVisible) {
+                if (checkChild) {
+                    val childFragmentManager = fragment.childFragmentManager
+                    val backStackFragment = getLastBackStackFragment(childFragmentManager, checkChild)
+                    if (null != backStackFragment) {
+                        return BackStackFragment(backStackFragment.fragmentManager, backStackFragment.fragment, true)
+                    }
+                }
+                return BackStackFragment(fragmentManager, fragment, false)
+            }
+        }
+
+        return null
     }
 }

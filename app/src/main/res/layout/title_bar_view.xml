@@ -13,4 +13,14 @@
         android:background="?colorPrimary"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <TextView
+        android:id="@+id/title_bar_view_action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|center_vertical"
+        android:layout_marginEnd="@dimen/size16"
+        android:text=""
+        android:textSize="@dimen/size12"
+        android:textColor="@color/tbc_100" />
 </FrameLayout>

@@ -32,6 +32,9 @@
 
         <activity android:name=".app.base.SingleActivity"/>
 
+        <activity android:name=".app.multiple_fragments.MultipleFragmentsActivity"
+            android:configChanges="orientation"/>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"

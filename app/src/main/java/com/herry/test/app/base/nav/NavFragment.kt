@@ -8,9 +8,12 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.herry.libs.app.nav.NavDestination
 import com.herry.libs.helper.TransitionHelper
+import com.herry.libs.util.BundleUtil
+import com.herry.libs.util.ViewUtil
 import com.herry.test.app.base.BaseActivity
 import com.herry.test.app.base.BaseFragment
 
+@Suppress("SameParameterValue")
 open class NavFragment: BaseFragment(), NavDestination {
     override fun onNavUp(): Bundle? = null
 
@@ -31,23 +34,34 @@ open class NavFragment: BaseFragment(), NavDestination {
         transitionHelper.onDestroy(activity)
     }
 
+    /**
+     * finish fragment.
+     * If you want finish with to set result, creates [bundle] parameter.
+     * @see com.herry.libs.util.BundleUtil.createNavigationBundle(Boolean)
+     *
+     * - Sets result to RESULT_OK
+     *   finishActivity(BundleUtil.createNavigationBundle(true))
+     * - Sets result to RESULT_CANCEL
+     * finishActivity(null) or finishActivity(BundleUtil.createNavigationBundle(false))
+     * @param bundle result data
+     */
     protected fun finishAndResults(bundle: Bundle?) {
         val activity = this.activity
         if(activity is NavActivity) {
-//            activity.window?.let {
-//                ViewUtil.hideSoftKeyboard(context, activity.window.decorView.rootView)
-//            }
+            activity.window?.let {
+                ViewUtil.hideSoftKeyboard(context, activity.window.decorView.rootView)
+            }
             activity.finishAndResults(bundle)
         } else if (activity is BaseActivity) {
-            finishAndResultsAndNav(bundle)
+            super.finishAndResults(BundleUtil.isNavigationResultOk(bundle), bundle)
         }
     }
 
-    protected fun finishAndResultsAndNav(bundle: Bundle?) {
+    private fun finishAndResultsAndNav(bundle: Bundle?) {
         activity?.let { activity ->
-//            activity.window?.let {
-//                ViewUtil.hideSoftKeyboard(context, activity.window.decorView.rootView)
-//            }
+            activity.window?.let {
+                ViewUtil.hideSoftKeyboard(context, activity.window.decorView.rootView)
+            }
 
             bundle?.let {
                 val intent = Intent()
@@ -60,6 +74,8 @@ open class NavFragment: BaseFragment(), NavDestination {
             } ?: activity.finishAfterTransition()
         }
     }
+
+    fun navigateUp(): Boolean = navController()?.navigateUp() ?: false
 
     protected fun navController(): NavController? {
         val view = this.view ?: return null

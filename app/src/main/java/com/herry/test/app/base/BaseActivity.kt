@@ -6,15 +6,49 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.net.Uri
+import android.os.Bundle
 import android.provider.Settings
-import androidx.lifecycle.LifecycleOwner
+import androidx.annotation.IdRes
+import androidx.annotation.LayoutRes
+import androidx.fragment.app.Fragment
 import com.herry.libs.app.activity_caller.activity.ACActivity
 import com.herry.libs.helper.ApiHelper
 import com.herry.libs.helper.PopupHelper
 import com.herry.libs.util.AppActivityManager
+import com.herry.libs.util.AppUtil
+import com.herry.libs.util.FragmentAddingOption
+import com.herry.test.app.multiple_fragments.main.MultipleMainFragment
 
 @Suppress("PrivatePropertyName")
-abstract class BaseActivity : ACActivity(), LifecycleOwner {
+abstract class BaseActivity : ACActivity() {
+
+    @IdRes
+    open fun getHostViewID(): Int? = null
+
+    @LayoutRes
+    open fun getContentViewID(): Int = -1
+
+    open fun getStartFragment(): Fragment? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        if (getContentViewID() != -1) {
+            createContentView()
+        }
+    }
+
+    private fun createContentView() {
+        setContentView(getContentViewID())
+
+        getStartFragment()?.run {
+            AppUtil.setFragment(this@BaseActivity, getHostViewID(),
+                this,
+                FragmentAddingOption(isReplace = true, isAddToBackStack = true)
+            )
+        }
+    }
+
 
     @SuppressLint("SourceLockedOrientationActivity")
     open fun onActivityOrientation() {
@@ -110,5 +144,18 @@ abstract class BaseActivity : ACActivity(), LifecycleOwner {
         } else {
             null
         }
+    }
+
+    override fun onBackPressed() {
+        val backStackFragment = AppUtil.getLastBackStackFragment(supportFragmentManager)
+        if (null != backStackFragment && backStackFragment.fragment is BaseFragment) {
+            val fragment = backStackFragment.fragment as BaseFragment
+
+            if (fragment.onBackPressed()) {
+                return
+            }
+        }
+
+        super.onBackPressed()
     }
 }

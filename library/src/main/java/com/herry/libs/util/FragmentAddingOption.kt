@@ -5,7 +5,7 @@ import androidx.annotation.AnimRes
 class FragmentAddingOption(
     val isReplace: Boolean = true,
     val tag: String? = null,
-    val isAddToBackStack: Boolean = false,
+    val isAddToBackStack: Boolean = true,
     val customAnimations: CustomAnimations? = null,
     /**
      * FragmentTransaction.TRANSIT_UNSET = -1;

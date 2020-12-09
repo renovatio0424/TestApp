@@ -1,10 +1,13 @@
 package com.herry.test.app.main
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +15,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
+import com.herry.libs.app.activity_caller.module.ACNavigation
 import com.herry.libs.app.activity_caller.module.ACPermission
 import com.herry.libs.nodeview.NodeForm
 import com.herry.libs.nodeview.NodeHolder
@@ -21,6 +25,7 @@ import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.libs.widget.extension.setOnProtectClickListener
 import com.herry.test.R
 import com.herry.test.app.base.nav.NavView
+import com.herry.test.app.multiple_fragments.MultipleFragmentsActivity
 import com.herry.test.widget.TitleBarForm
 
 
@@ -52,10 +57,20 @@ class MainFragment : NavView<MainContract.View, MainContract.Presenter>(), MainC
         view ?: return
 
         TitleBarForm(
-            activity = requireActivity()
+            activity = requireActivity(),
+            onClickAction = {
+                activityCaller?.call(ACNavigation.IntentCaller(
+                    Intent(requireActivity(), MultipleFragmentsActivity::class.java), result = { resultCode, _, _ ->
+
+                        if (resultCode == Activity.RESULT_OK) {
+                            Log.d("Herry", "result = OK")
+                        }
+                    }
+                ))
+            }
         ).apply {
             bindFormHolder(view.context, view.findViewById(R.id.main_fragment_title))
-            bindFormModel(view.context, TitleBarForm.Model(title = "Test List"))
+            bindFormModel(view.context, TitleBarForm.Model(title = "Test List", action = "multiple"))
         }
 
         view.findViewById<RecyclerView>(R.id.main_fragment_list)?.apply {
