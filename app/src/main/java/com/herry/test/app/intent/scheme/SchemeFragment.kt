@@ -99,6 +99,14 @@ class SchemeFragment : NavView<SchemeContract.View, SchemeContract.Presenter>(),
                 SchemeContract.SchemeItemType.OVERLAY_STICKER -> "Overlay(Sticker)"
                 SchemeContract.SchemeItemType.OVERLAY_TEXT -> "Overlay(Text)"
                 SchemeContract.SchemeItemType.TEXT_ARABIC -> "Text(Arabic)"
+                SchemeContract.SchemeItemType.PROJECT_FEED_HOME -> "Project Feed Home (Deep Link)"
+                SchemeContract.SchemeItemType.PROJECT_FEED_HOME_DYNAMIC_LINK -> "Project Feed Home (Dynamic Link)"
+                SchemeContract.SchemeItemType.PROJECT_FEED_CATEGORY -> "Project Feed Category (Deep Link)"
+                SchemeContract.SchemeItemType.PROJECT_FEED_CATEGORY_DYNAMIC_LINK -> "Project Feed Category (Dynamic Link)"
+                SchemeContract.SchemeItemType.PROJECT_FEED_SEARCH -> "Project Feed Search (Deep Link)"
+                SchemeContract.SchemeItemType.PROJECT_FEED_SEARCH_DYNAMIC_LINK -> "Project Feed Search (Dynamic Link)"
+                SchemeContract.SchemeItemType.PROJECT_FEED_DETAIL -> "Project Feed Detail (Deep Link)"
+                SchemeContract.SchemeItemType.PROJECT_FEED_DETAIL_DYNAMIC_LINK -> "Project Feed Detail (Dynamic Link)"
             }
         }
     }
