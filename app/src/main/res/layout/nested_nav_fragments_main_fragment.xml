@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:ignore="HardcodedText" >
+
+    <FrameLayout
+        android:id="@+id/nested_nav_fragments_main_fragment_view_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@android:color/black"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintHorizontal_weight="2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/nested_nav_fragments_main_fragment_sub_container"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/nested_nav_fragments_main_fragment_sub_container" >
+
+        <View
+            android:id="@+id/nested_nav_fragments_main_fragment_view_container_expand"
+            android:layout_width="@dimen/size32"
+            android:layout_height="@dimen/size32"
+            android:layout_margin="@dimen/size08"
+            android:layout_gravity="end|bottom"
+            android:background="@android:color/holo_red_dark"/>
+
+        <View
+            android:id="@+id/nested_nav_fragments_main_fragment_view_container_collapse"
+            android:layout_width="@dimen/size32"
+            android:layout_height="@dimen/size32"
+            android:layout_margin="@dimen/size08"
+            android:layout_gravity="end|bottom"
+            android:visibility="gone"
+            android:background="@android:color/holo_red_light"/>
+    </FrameLayout>
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/nested_nav_fragments_main_fragment_sub_container"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/nested_nav_fragments_sub_navigation"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintVertical_weight="2"
+        app:layout_constraintStart_toEndOf="@id/nested_nav_fragments_main_fragment_view_container"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/nested_nav_fragments_main_fragment_bottom_container"/>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nested_nav_fragments_main_fragment_bottom_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintVertical_weight="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/nested_nav_fragments_main_fragment_sub_container"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/nested_nav_fragments_main_fragment_bottom_show_sub_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Show sub3 screen" />
+
+            <Button
+                android:id="@+id/nested_nav_fragments_main_fragment_bottom_popup_to_sub1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Popup to sub1 screen" />
+
+            <Button
+                android:id="@+id/nested_nav_fragments_main_fragment_bottom_close_overlay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Close overlay screen" />
+
+            <Button
+                android:id="@+id/nested_nav_fragments_main_fragment_bottom_show_second"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Show second screen" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <FrameLayout
+        android:id="@+id/nested_nav_fragments_main_fragment_overlay_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/nested_nav_fragments_main_fragment_bottom_container"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -15,7 +15,7 @@ import com.herry.libs.nodeview.model.NodeRoot
 import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.test.R
-import com.herry.test.app.base.nav.NavView
+import com.herry.test.app.base.nav.BaseNavView
 import com.herry.test.app.gif.decoder.GifDecoderFragment
 import com.herry.test.data.GifMediaFileInfoData
 import com.herry.test.widget.TitleBarForm
@@ -23,7 +23,7 @@ import com.herry.test.widget.TitleBarForm
 /**
  * Created by herry.park on 2020/06/11.
  **/
-class GifListFragment : NavView<GifListContract.View, GifListContract.Presenter>(), GifListContract.View {
+class GifListFragment : BaseNavView<GifListContract.View, GifListContract.Presenter>(), GifListContract.View {
 
     override fun onCreatePresenter(): GifListContract.Presenter = GifListPresenter()
 

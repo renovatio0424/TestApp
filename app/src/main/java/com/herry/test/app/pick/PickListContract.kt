@@ -1,13 +1,10 @@
 package com.herry.test.app.pick
 
 import android.net.Uri
-import android.os.Environment
 import com.herry.libs.mvp.IMvpView
 import com.herry.libs.nodeview.INodeRoot
-import com.herry.test.app.base.BasePresent
+import com.herry.test.app.base.mvp.BasePresent
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.*
 
 interface PickListContract {
     interface View : IMvpView<Presenter>, INodeRoot {

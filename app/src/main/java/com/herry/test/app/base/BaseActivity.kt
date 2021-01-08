@@ -17,7 +17,6 @@ import com.herry.libs.helper.PopupHelper
 import com.herry.libs.util.AppActivityManager
 import com.herry.libs.util.AppUtil
 import com.herry.libs.util.FragmentAddingOption
-import com.herry.test.app.multiple_fragments.main.MultipleMainFragment
 
 @Suppress("PrivatePropertyName")
 abstract class BaseActivity : ACActivity() {

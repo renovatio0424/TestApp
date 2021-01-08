@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nested_nav_fragments_navigation"
+    app:startDestination="@+id/nested_nav_fragments_main_fragment">
+
+    <fragment
+        android:id="@+id/nested_nav_fragments_main_fragment"
+        android:name="com.herry.test.app.nestedfragments.nav.main.NestedNavFragmentsMainFragment"
+        tools:layout="@layout/nested_nav_fragments_main_fragment" >
+
+        <action
+            android:id="@+id/action_nested_nav_fragments_main_to_second"
+            app:destination="@id/nested_nav_fragments_second_fragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/nested_nav_fragments_second_fragment"
+        android:name="com.herry.test.app.nestedfragments.nav.second.NestedNavFragmentsSecondFragment"
+        tools:layout="@layout/nested_nav_fragments_second_fragment" />
+</navigation>

@@ -15,13 +15,13 @@ import com.herry.libs.nodeview.model.NodeRoot
 import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.test.R
-import com.herry.test.app.base.nav.NavView
+import com.herry.test.app.base.nav.BaseNavView
 import com.herry.test.widget.TitleBarForm
 
 /**
  * Created by herry.park on 2020/06/11.
  **/
-class IntentListFragment : NavView<IntentListContract.View, IntentListContract.Presenter>(), IntentListContract.View {
+class IntentListFragment : BaseNavView<IntentListContract.View, IntentListContract.Presenter>(), IntentListContract.View {
 
     override fun onCreatePresenter(): IntentListContract.Presenter = IntentListPresenter()
 

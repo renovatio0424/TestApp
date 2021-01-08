@@ -19,13 +19,13 @@ import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.libs.util.AppUtil
 import com.herry.libs.widget.extension.setOnProtectClickListener
 import com.herry.test.R
-import com.herry.test.app.base.nav.NavView
+import com.herry.test.app.base.nav.BaseNavView
 import com.herry.test.widget.TitleBarForm
 
 /**
  * Created by herry.park on 2020/06/11.
  **/
-class SchemeFragment : NavView<SchemeContract.View, SchemeContract.Presenter>(), SchemeContract.View {
+class SchemeFragment : BaseNavView<SchemeContract.View, SchemeContract.Presenter>(), SchemeContract.View {
 
     override fun onCreatePresenter(): SchemeContract.Presenter = SchemePresenter()
 
@@ -99,6 +99,9 @@ class SchemeFragment : NavView<SchemeContract.View, SchemeContract.Presenter>(),
                 SchemeContract.SchemeItemType.OVERLAY_STICKER -> "Overlay(Sticker)"
                 SchemeContract.SchemeItemType.OVERLAY_TEXT -> "Overlay(Text)"
                 SchemeContract.SchemeItemType.TEXT_ARABIC -> "Text(Arabic)"
+                SchemeContract.SchemeItemType.ASSET_DYNAMIC_LINK -> "Asset dynamic link"
+                SchemeContract.SchemeItemType.KINEMASTER_DEEP_LINK -> "KineMaster (Deep Link)"
+                SchemeContract.SchemeItemType.KINEMASTER_DINAMIC_LINK -> "KineMaster (Dynamic Link)"
                 SchemeContract.SchemeItemType.PROJECT_FEED_HOME -> "Project Feed Home (Deep Link)"
                 SchemeContract.SchemeItemType.PROJECT_FEED_HOME_DYNAMIC_LINK -> "Project Feed Home (Dynamic Link)"
                 SchemeContract.SchemeItemType.PROJECT_FEED_CATEGORY -> "Project Feed Category (Deep Link)"

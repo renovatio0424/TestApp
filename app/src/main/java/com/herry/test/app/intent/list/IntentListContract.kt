@@ -2,8 +2,7 @@ package com.herry.test.app.intent.list
 
 import com.herry.libs.mvp.IMvpView
 import com.herry.libs.nodeview.INodeRoot
-import com.herry.test.app.base.BasePresent
-import com.herry.test.app.base.BaseView
+import com.herry.test.app.base.mvp.BasePresent
 
 /**
  * Created by herry.park on 2020/06/11.

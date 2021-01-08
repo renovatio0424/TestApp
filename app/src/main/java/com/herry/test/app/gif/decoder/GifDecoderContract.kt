@@ -2,7 +2,7 @@ package com.herry.test.app.gif.decoder
 
 import android.graphics.Bitmap
 import com.herry.libs.mvp.IMvpView
-import com.herry.test.app.base.BasePresent
+import com.herry.test.app.base.mvp.BasePresent
 import com.herry.test.data.GifMediaFileInfoData
 import java.io.Serializable
 

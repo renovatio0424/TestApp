@@ -32,8 +32,9 @@
 
         <activity android:name=".app.base.SingleActivity"/>
 
-        <activity android:name=".app.multiple_fragments.MultipleFragmentsActivity"
-            android:configChanges="orientation"/>
+        <activity android:name=".app.nestedfragments.normal.NestedFragmentsActivity" />
+
+        <activity android:name=".app.nestedfragments.nav.NestedNavFragmentsActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

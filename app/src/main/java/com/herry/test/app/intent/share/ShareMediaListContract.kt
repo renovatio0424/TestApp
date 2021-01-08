@@ -2,7 +2,7 @@ package com.herry.test.app.intent.share
 
 import com.herry.libs.mvp.IMvpView
 import com.herry.libs.nodeview.INodeRoot
-import com.herry.test.app.base.BasePresent
+import com.herry.test.app.base.mvp.BasePresent
 import com.herry.test.data.MediaFileInfoData
 
 /**

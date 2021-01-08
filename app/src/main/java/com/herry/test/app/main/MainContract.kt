@@ -2,8 +2,7 @@ package com.herry.test.app.main
 
 import com.herry.libs.mvp.IMvpView
 import com.herry.libs.nodeview.INodeRoot
-import com.herry.test.app.base.BasePresent
-import com.herry.test.app.base.BaseView
+import com.herry.test.app.base.mvp.BasePresent
 
 /**
  * Created by herry.park on 2020/06/11.
@@ -23,6 +22,7 @@ interface MainContract {
         GIF_DECODER,
         CHECKER_LIST,
         LAYOUT_SAMPLE,
-        PICK
+        PICK,
+        NESTED_FRAGMENTS
     }
 }
