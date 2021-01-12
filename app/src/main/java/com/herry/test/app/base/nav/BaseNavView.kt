@@ -3,17 +3,25 @@ package com.herry.test.app.base.nav
 import android.content.Context
 import android.os.Bundle
 import com.herry.libs.app.activity_caller.module.ACError
-import com.herry.libs.mvp.OnPresenter
-import com.herry.libs.mvp.IMvpView
+import com.herry.libs.mvp.MVPPresenter
+import com.herry.libs.mvp.MVPPresenterViewModelFactory
+import com.herry.libs.mvp.MVPView
+import com.herry.libs.mvp.MVPViewCreation
 
 @Suppress("unused")
-abstract class BaseNavView<V: IMvpView<P>, P: OnPresenter<V>>: BaseNavFragment(), IMvpView<P> {
+abstract class BaseNavView<V: MVPView<P>, P: MVPPresenter<V>>: BaseNavFragment(), MVPView<P>, MVPViewCreation<V, P> {
+
     override var presenter: P? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        this.presenter = this.presenter ?: onCreatePresenter()
+        this.presenter = this.presenter ?: run {
+            val viewModel = MVPPresenterViewModelFactory.create(this, this)
+            viewModel?.presenter?.apply {
+                reloaded(viewModel.reloaded)
+            }
+        }
         this.presenter?.onAttach(onCreatePresenterView()) ?: finishAndResults(null)
     }
 
@@ -48,10 +56,6 @@ abstract class BaseNavView<V: IMvpView<P>, P: OnPresenter<V>>: BaseNavFragment()
     open fun onError(throwable: Throwable) {
 
     }
-
-    abstract fun onCreatePresenter(): P?
-
-    abstract fun onCreatePresenterView(): V
 
     override fun onTransitionStart() {
         super.onTransitionStart()

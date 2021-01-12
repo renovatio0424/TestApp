@@ -26,6 +26,7 @@ class DataCheckerMainPresenter : DataCheckerMainContract.Presenter() {
     }
 
     override fun refresh() {
+        display()
     }
 
     private fun display() {

@@ -1,6 +1,6 @@
 package com.herry.test.app.gif.list
 
-import com.herry.libs.mvp.IMvpView
+import com.herry.libs.mvp.MVPView
 import com.herry.libs.nodeview.INodeRoot
 import com.herry.test.app.base.mvp.BasePresent
 import com.herry.test.data.GifMediaFileInfoData
@@ -10,7 +10,7 @@ import com.herry.test.data.GifMediaFileInfoData
  **/
 interface GifListContract {
 
-    interface View : IMvpView<Presenter>, INodeRoot {
+    interface View : MVPView<Presenter>, INodeRoot {
         fun onDetail(content: GifMediaFileInfoData)
     }
 

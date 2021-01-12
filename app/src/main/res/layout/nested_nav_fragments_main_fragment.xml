@@ -91,7 +91,14 @@
                 android:id="@+id/nested_nav_fragments_main_fragment_bottom_show_second"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Show second screen" />
+                android:text="Show second screen with action" />
+
+
+            <Button
+                android:id="@+id/nested_nav_fragments_main_fragment_bottom_show_second_with_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Show second screen with id" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 

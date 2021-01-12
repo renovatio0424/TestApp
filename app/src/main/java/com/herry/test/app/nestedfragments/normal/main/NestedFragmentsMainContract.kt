@@ -1,11 +1,11 @@
 package com.herry.test.app.nestedfragments.normal.main
 
-import com.herry.libs.mvp.IMvpView
+import com.herry.libs.mvp.MVPView
 import com.herry.test.app.base.mvp.BasePresent
 
 interface NestedFragmentsMainContract {
 
-    interface View: IMvpView<Presenter> {
+    interface View: MVPView<Presenter> {
 
     }
 

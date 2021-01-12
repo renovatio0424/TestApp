@@ -1,13 +1,13 @@
 package com.herry.test.app.base.mvp
 
-import com.herry.libs.mvp.OnPresenter
-import com.herry.libs.mvp.IMvpView
+import com.herry.libs.mvp.MVPPresenter
+import com.herry.libs.mvp.MVPView
 import com.herry.test.rx.RxSchedulerProvider
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 
-abstract class BasePresent<V>: OnPresenter<V> {
+abstract class BasePresent<V> : MVPPresenter<V>() {
 
     protected var view: V? = null
         private set
@@ -15,6 +15,8 @@ abstract class BasePresent<V>: OnPresenter<V> {
     protected val compositeDisposable = CompositeDisposable()
 
     private var launched = false
+
+    private var reloaded = false
 
     override fun onAttach(view: V) {
         this.view = view
@@ -26,11 +28,18 @@ abstract class BasePresent<V>: OnPresenter<V> {
         compositeDisposable.dispose()
     }
 
+    override fun reloaded(reloaded: Boolean) {
+        this.reloaded = reloaded
+    }
+
     override fun onLaunch() {
         this.view?.let {
-            if(!launched) {
+            if (!launched) {
                 launched = true
                 onLaunched(it)
+            } else if (reloaded) {
+                reloaded = false
+                onReloaded(it)
             } else {
                 onResume(it)
             }
@@ -42,6 +51,8 @@ abstract class BasePresent<V>: OnPresenter<V> {
     }
 
     abstract fun onLaunched(view: V)
+
+    protected open fun onReloaded(view: V) {}
 
     protected open fun onResume(view: V) {}
 
@@ -58,30 +69,31 @@ abstract class BasePresent<V>: OnPresenter<V> {
         onComplete: (() -> Unit)? = null,
         subscribeOn: Scheduler = RxSchedulerProvider.io(),
         observerOn: Scheduler = RxSchedulerProvider.ui(),
-        loadView: Boolean = true) {
+        loadView: Boolean = true
+    ) {
 
         val subscribeObservable = observable
             .subscribeOn(subscribeOn)
             .observeOn(observerOn)
             .doOnSubscribe {
                 if (loadView) {
-                    (view as? IMvpView<*>)?.showViewLoading()
+                    (view as? MVPView<*>)?.showViewLoading()
                 }
             }
             .doOnError {
-                (view as? IMvpView<*>)?.error(it)
+                (view as? MVPView<*>)?.error(it)
                 if (loadView) {
-                    (view as? IMvpView<*>)?.hideViewLoading(false)
+                    (view as? MVPView<*>)?.hideViewLoading(false)
                 }
             }
             .doOnComplete {
                 if (loadView) {
-                    (view as? IMvpView<*>)?.hideViewLoading(true)
+                    (view as? MVPView<*>)?.hideViewLoading(true)
                 }
             }
             .doOnDispose {
                 if (loadView) {
-                    (view as? IMvpView<*>)?.hideViewLoading(true)
+                    (view as? MVPView<*>)?.hideViewLoading(true)
                 }
             }
 

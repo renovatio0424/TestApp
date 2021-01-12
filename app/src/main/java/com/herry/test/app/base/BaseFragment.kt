@@ -2,18 +2,16 @@ package com.herry.test.app.base
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import androidx.annotation.IdRes
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.setFragmentResult
 import com.herry.libs.app.activity_caller.AC
-import com.herry.libs.app.nav.NavDestination
 import com.herry.libs.helper.ApiHelper
 import com.herry.libs.util.AppUtil
 import com.herry.libs.util.FragmentAddingOption
-import com.herry.libs.util.ViewUtil
 
 open class BaseFragment: Fragment() {
     internal open var activityCaller: AC? = null
@@ -69,35 +67,6 @@ open class BaseFragment: Fragment() {
 
     open fun onBackPressed(): Boolean = false
 
-    /**
-     * finish fragment.
-     * If you want finish with to set result, creates [bundle] parameter.
-     * @see com.herry.libs.util.BundleUtil.createNavigationBundle(Boolean)
-     * @param resultCode set result to ok or cancel
-     * @param bundle result data
-     */
-    protected open fun finishAndResults(resultOK: Boolean, bundle: Bundle? = null) {
-        activity?.let { activity ->
-            activity.window?.let {
-                ViewUtil.hideSoftKeyboard(context, activity.window.decorView.rootView)
-            }
-
-            val activityResult = if (resultOK) Activity.RESULT_OK else Activity.RESULT_CANCELED
-            val resultBundle = if (null != bundle) {
-                bundle.putBoolean(NavDestination.NAV_UP_RESULT_OK, resultOK)
-                bundle
-            } else {
-                Bundle().apply {
-                    putBoolean(NavDestination.NAV_UP_RESULT_OK, resultOK)
-                }
-            }
-            activity.setResult(activityResult, Intent().apply {
-                putExtra(NavDestination.NAV_BUNDLE, resultBundle)
-            })
-            activity.finishAfterTransition()
-        }
-    }
-
     protected open fun setResultListener(
         fragmentManager: FragmentManager?,
         requestKey: String,
@@ -109,10 +78,7 @@ open class BaseFragment: Fragment() {
     }
 
     protected open fun setResult(result: Bundle?) {
-        parentFragmentManager.setFragmentResult(
-            fragmentTag,
-            result ?: bundleOf()
-        )
+        setFragmentResult(fragmentTag, result ?: bundleOf())
     }
 
     protected fun addChildFragment(
@@ -145,7 +111,7 @@ open class BaseFragment: Fragment() {
         return AppUtil.setFragment(fragmentManager, containerViewId, fragment, option)
     }
 
-    protected fun addFragment(
+    protected fun addFragmentToActivity(
         fragment: Fragment?,
         option: FragmentAddingOption = FragmentAddingOption(isReplace = false),
         listener: ((resultKey: String, bundle: Bundle) -> Unit)? = null
@@ -159,7 +125,8 @@ open class BaseFragment: Fragment() {
         if (containerViewId == null || containerViewId == -1) return false
 
         fragment ?: return false
-        val fragmentManager: FragmentManager = parentFragmentManager
+
+        val fragmentManager: FragmentManager = activity.supportFragmentManager
 
         // sets result listener
         if (listener != null) {

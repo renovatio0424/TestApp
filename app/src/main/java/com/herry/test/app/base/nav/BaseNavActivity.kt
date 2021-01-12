@@ -6,9 +6,10 @@ import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
-import com.herry.libs.app.nav.NavDestination
+import com.herry.libs.app.nav.NavMovement
 import com.herry.test.R
 import com.herry.test.app.base.BaseActivity
 
@@ -16,7 +17,8 @@ abstract class BaseNavActivity: BaseActivity() {
 
     protected var navController: NavController? = null
 
-    protected var navHostFragment: NavHostFragment? = null
+    var navHostFragment: NavHostFragment? = null
+        private set
 
     private var results: Bundle? = null
 
@@ -25,32 +27,36 @@ abstract class BaseNavActivity: BaseActivity() {
         setContentView(getContentView())
 
         navHostFragment = supportFragmentManager.findFragmentById(getNavHostFragment()) as? NavHostFragment
+        addOnBackStackChangedListener(navHostFragment)
+
+        navController = Navigation.findNavController(this, getNavHostFragment())
+        navController?.let {
+            val navGraph = it.navInflater.inflate(getGraph())
+            if (getStartDestination() != 0) {
+                navGraph.startDestination = getStartDestination()
+            }
+            it.setGraph(navGraph, getDefaultBundle())
+        }
+    }
+
+    protected fun addOnBackStackChangedListener(navHostFragment: NavHostFragment?) {
         navHostFragment?.childFragmentManager?.addOnBackStackChangedListener {
             results?.let {
                 val fragment: Fragment? = getCurrentFragment()
-                if(fragment is NavDestination) {
-                    if (navController?.currentDestination != null) {
-                        if (it.getInt(NavDestination.NAV_UP_DES_ID, 0) != 0 && it.getInt(
-                                NavDestination.NAV_UP_DES_ID, 0) != navController?.currentDestination?.id) {
+                if (fragment is NavMovement) {
+                    val navDestination = navHostFragment.navController.currentDestination
+                    if (navDestination != null) {
+                        if (it.getInt(NavMovement.NAV_UP_DES_ID, 0) != 0 && it.getInt(
+                                NavMovement.NAV_UP_DES_ID, 0) != navController?.currentDestination?.id) {
                             if (!navigateUp()) {
                                 navFinish(it)
                             }
                         } else {
-                            fragment.onNavResults(it)
                             results = null
                         }
                     }
                 }
             }
-        }
-
-        navController = Navigation.findNavController(this, getNavHostFragment())
-        navController?.let {
-            val navGraph = it.navInflater.inflate(getGraph())
-            if(getStartDestination() != 0) {
-                navGraph.startDestination = getStartDestination()
-            }
-            it.setGraph(navGraph, getDefaultBundle())
         }
     }
 
@@ -71,35 +77,34 @@ abstract class BaseNavActivity: BaseActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        if(upAndResults()) {
+        if (navigateUpAndResults()) {
             return navigateUp()
         }
         return super.onSupportNavigateUp()
     }
 
     override fun onBackPressed() {
-        if(upAndResults() && !navigateUp()) {
+        if (navigateUpAndResults() && !navigateUp()) {
             navFinish(results)
         }
     }
 
-    private fun navigateUp(): Boolean = navController?.navigateUp() ?: false
+    protected open fun navigateUp(): Boolean = navController?.navigateUp() ?: false
 
-    private fun upAndResults(): Boolean {
+    private fun navigateUpAndResults(): Boolean {
         val fragment = getCurrentFragment()
-        if (fragment is NavDestination) {
-            if(fragment.isTransition()) {
+        if (fragment is NavMovement) {
+            if (fragment.isTransition()) {
                 return false
             }
 
-            results = fragment.onNavUp()
-            results?.let { _result ->
-                if(_result.getBoolean(NavDestination.NAV_UP_BLOCK, false)) {
+            results = fragment.onNavigateUp()?.apply {
+                if (getBoolean(NavMovement.NAV_UP_BLOCK, false)) {
                     results = null
                     return false
                 }
-                navController?.currentDestination?.let {
-                    _result.putInt(NavDestination.NAV_UP_FROM_ID, it.id)
+                getCurrentDestination()?.let {
+                    putInt(NavMovement.NAV_UP_FROM_ID, it.id)
                 }
             }
         }
@@ -107,7 +112,9 @@ abstract class BaseNavActivity: BaseActivity() {
         return true
     }
 
-    protected fun getCurrentFragment(): Fragment? {
+    protected open fun getCurrentDestination(): NavDestination? = navController?.currentDestination
+
+    protected open fun getCurrentFragment(): Fragment? {
         val list = navHostFragment?.childFragmentManager?.fragments
         if (list?.isNotEmpty() == true) {
             return list[0]
@@ -118,17 +125,17 @@ abstract class BaseNavActivity: BaseActivity() {
     abstract fun getGraph(): Int
 
     protected fun getDefaultBundle(): Bundle? {
-        return if (intent != null) intent.getBundleExtra(NavDestination.NAV_BUNDLE) else null
+        return if (intent != null) intent.getBundleExtra(NavMovement.NAV_BUNDLE) else null
     }
 
     protected fun getStartDestination(): Int {
-        return if (intent != null) intent.getIntExtra(NavDestination.NAV_START_DESTINATION, 0) else 0
+        return if (intent != null) intent.getIntExtra(NavMovement.NAV_START_DESTINATION, 0) else 0
     }
 
     fun finishAndResults(bundle: Bundle?) {
         results = bundle
         navController?.currentDestination?.let {
-            results?.putInt(NavDestination.NAV_UP_FROM_ID, it.id)
+            results?.putInt(NavMovement.NAV_UP_FROM_ID, it.id)
         }
         if(!navigateUp()) {
             navFinish(bundle)
@@ -138,9 +145,9 @@ abstract class BaseNavActivity: BaseActivity() {
     fun navFinish(bundle: Bundle?) {
         if (bundle != null) {
             val intent = Intent()
-            intent.putExtra(NavDestination.NAV_BUNDLE, bundle)
+            intent.putExtra(NavMovement.NAV_BUNDLE, bundle)
             setResult(
-                if (bundle.getBoolean(NavDestination.NAV_UP_RESULT_OK, false)) RESULT_OK else RESULT_CANCELED,
+                if (bundle.getBoolean(NavMovement.NAV_UP_RESULT_OK, false)) RESULT_OK else RESULT_CANCELED,
                 intent
             )
         }

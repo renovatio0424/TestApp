@@ -1,6 +1,6 @@
 package com.herry.test.app.intent.scheme
 
-import com.herry.libs.mvp.IMvpView
+import com.herry.libs.mvp.MVPView
 import com.herry.libs.nodeview.INodeRoot
 import com.herry.test.app.base.mvp.BasePresent
 
@@ -9,7 +9,7 @@ import com.herry.test.app.base.mvp.BasePresent
  **/
 interface SchemeContract {
 
-    interface View : IMvpView<Presenter>, INodeRoot {
+    interface View : MVPView<Presenter>, INodeRoot {
         fun onGotoScheme(scheme: String)
     }
 

@@ -1,10 +1,10 @@
 package com.herry.test.app.nestedfragments.normal.second
 
-import com.herry.libs.mvp.IMvpView
+import com.herry.libs.mvp.MVPView
 import com.herry.test.app.base.mvp.BasePresent
 
 interface NestedFragmentsSecondContract {
-    interface View: IMvpView<Presenter> {
+    interface View: MVPView<Presenter> {
 
     }
 

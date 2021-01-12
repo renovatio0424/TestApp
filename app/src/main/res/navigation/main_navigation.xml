@@ -49,7 +49,7 @@
     <fragment
         android:id="@+id/password_setting_fragment"
         android:name="com.herry.test.app.checker.password_setting.PasswordSettingFragment"
-        tools:layout="@layout/data_checker_main_password" />
+        tools:layout="@layout/password_setting_fragment" />
 
     <fragment
         android:id="@+id/layout_sample_fragment"

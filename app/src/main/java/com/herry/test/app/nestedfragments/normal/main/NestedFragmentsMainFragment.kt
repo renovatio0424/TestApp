@@ -65,7 +65,7 @@ class NestedFragmentsMainFragment : BaseNestedView<NestedFragmentsMainContract.V
 
         view.findViewById<View>(R.id.nested_fragment_main_fragment_bottom_second)?.setOnProtectClickListener {
             this@NestedFragmentsMainFragment.view?.rootView?.parent
-            addFragment(
+            addFragmentToActivity(
                 NestedFragmentsSecondFragment.newInstance()
             ) { requestKey, bundle ->
                 val isOk = BundleUtil.isNavigationResultOk(bundle)

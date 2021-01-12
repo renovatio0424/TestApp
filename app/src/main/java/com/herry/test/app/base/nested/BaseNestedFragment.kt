@@ -1,10 +1,13 @@
 package com.herry.test.app.base.nested
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
-import com.herry.libs.app.nav.NavDestination
+import com.herry.libs.app.nav.NavMovement
 import com.herry.libs.util.AppUtil
+import com.herry.libs.util.ViewUtil
 import com.herry.test.app.base.BaseFragment
 
 open class BaseNestedFragment: BaseFragment() {
@@ -19,16 +22,23 @@ open class BaseNestedFragment: BaseFragment() {
 
     protected fun setResult(resultOK: Boolean, bundle: Bundle?) {
         setResult(if (null != bundle) {
-            bundle.putBoolean(NavDestination.NAV_UP_RESULT_OK, resultOK)
+            bundle.putBoolean(NavMovement.NAV_UP_RESULT_OK, resultOK)
             bundle
         } else {
             Bundle().apply {
-                putBoolean(NavDestination.NAV_UP_RESULT_OK, resultOK)
+                putBoolean(NavMovement.NAV_UP_RESULT_OK, resultOK)
             }
         })
     }
 
-    override fun finishAndResults(resultOK: Boolean, bundle: Bundle?) {
+    /**
+     * finish fragment.
+     * If you want finish with to set result, creates [bundle] parameter.
+     * @see com.herry.libs.util.BundleUtil.createNavigationBundle(Boolean)
+     * @param resultCode set result to ok or cancel
+     * @param bundle result data
+     */
+    protected open fun finishAndResults(resultOK: Boolean, bundle: Bundle? = null) {
         this.parentFragment?.let { parentFragment ->
             val backStackFragment = AppUtil.getLastBackStackFragment(parentFragment.childFragmentManager, true)
 
@@ -49,6 +59,25 @@ open class BaseNestedFragment: BaseFragment() {
             }
             return@finishAndResults
         }
-        super.finishAndResults(resultOK, bundle)
+
+        activity?.let { activity ->
+            activity.window?.let {
+                ViewUtil.hideSoftKeyboard(context, activity.window.decorView.rootView)
+            }
+
+            val activityResult = if (resultOK) Activity.RESULT_OK else Activity.RESULT_CANCELED
+            val resultBundle = if (null != bundle) {
+                bundle.putBoolean(NavMovement.NAV_UP_RESULT_OK, resultOK)
+                bundle
+            } else {
+                Bundle().apply {
+                    putBoolean(NavMovement.NAV_UP_RESULT_OK, resultOK)
+                }
+            }
+            activity.setResult(activityResult, Intent().apply {
+                putExtra(NavMovement.NAV_BUNDLE, resultBundle)
+            })
+            activity.finishAfterTransition()
+        }
     }
 }

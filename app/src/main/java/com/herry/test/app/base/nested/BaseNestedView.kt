@@ -3,17 +3,25 @@ package com.herry.test.app.base.nested
 import android.content.Context
 import android.os.Bundle
 import com.herry.libs.app.activity_caller.module.ACError
-import com.herry.libs.mvp.OnPresenter
-import com.herry.libs.mvp.IMvpView
+import com.herry.libs.mvp.MVPPresenter
+import com.herry.libs.mvp.MVPPresenterViewModelFactory
+import com.herry.libs.mvp.MVPView
+import com.herry.libs.mvp.MVPViewCreation
 
 @Suppress("unused")
-abstract class BaseNestedView<V: IMvpView<P>, P: OnPresenter<V>>: BaseNestedFragment(), IMvpView<P> {
+abstract class BaseNestedView<V: MVPView<P>, P: MVPPresenter<V>>: BaseNestedFragment(), MVPView<P>, MVPViewCreation<V, P> {
+
     override var presenter: P? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        this.presenter = this.presenter ?: onCreatePresenter()
+        this.presenter = this.presenter ?: run {
+            val viewModel = MVPPresenterViewModelFactory.create(this, this)
+            viewModel?.presenter?.apply {
+                reloaded(viewModel.reloaded)
+            }
+        }
         this.presenter?.onAttach(onCreatePresenterView()) ?: finishAndResults(false)
     }
 
@@ -48,10 +56,6 @@ abstract class BaseNestedView<V: IMvpView<P>, P: OnPresenter<V>>: BaseNestedFrag
     open fun onError(throwable: Throwable) {
 
     }
-
-    abstract fun onCreatePresenter(): P?
-
-    abstract fun onCreatePresenterView(): V
 
     override fun showViewLoading() {
         // implements show loading view to base fragment

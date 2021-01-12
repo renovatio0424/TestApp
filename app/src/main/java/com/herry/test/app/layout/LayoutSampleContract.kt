@@ -1,6 +1,6 @@
 package com.herry.test.app.layout
 
-import com.herry.libs.mvp.IMvpView
+import com.herry.libs.mvp.MVPView
 import com.herry.test.app.base.mvp.BasePresent
 
 /**
@@ -8,9 +8,13 @@ import com.herry.test.app.base.mvp.BasePresent
  **/
 interface LayoutSampleContract {
 
-    interface View : IMvpView<Presenter>
+    interface View : MVPView<Presenter> {
+        fun onUpdateRatios(selected: AspectRatioType?)
+    }
 
-    abstract class Presenter : BasePresent<View>()
+    abstract class Presenter : BasePresent<View>() {
+        abstract fun selectRatio(type: AspectRatioType?)
+    }
 
     enum class AspectRatioType {
         RATIO_16v9,
@@ -21,4 +25,6 @@ interface LayoutSampleContract {
         RATIO_4v5,
         RATIO_2_35v1
     }
+
+    data class Model(val type: AspectRatioType, var selected: Boolean = false)
 }

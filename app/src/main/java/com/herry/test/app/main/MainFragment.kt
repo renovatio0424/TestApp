@@ -18,6 +18,7 @@ import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.nodeview.model.NodeRoot
 import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
+import com.herry.libs.widget.extension.navigate
 import com.herry.libs.widget.extension.setOnProtectClickListener
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
@@ -75,7 +76,7 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
     override fun onScreen(type: MainContract.TestItemType) {
         when (type) {
             MainContract.TestItemType.SCHEME_TEST -> {
-                navController()?.navigate(R.id.intent_list_fragment)
+                navigate(R.id.intent_list_fragment)
             }
             MainContract.TestItemType.GIF_DECODER -> {
                 activityCaller?.call(
@@ -83,22 +84,22 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
                         arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
                         onGranted = {
                             Handler(Looper.getMainLooper()).post {
-                                navController()?.navigate(R.id.gif_list_fragment)
+                                navigate(R.id.gif_list_fragment)
                             }
                         }
                     ))
             }
             MainContract.TestItemType.CHECKER_LIST -> {
-                navController()?.navigate(R.id.data_checker_main_fragment)
+                navigate(R.id.data_checker_main_fragment)
             }
             MainContract.TestItemType.LAYOUT_SAMPLE -> {
-                navController()?.navigate(R.id.layout_sample_fragment)
+                navigate(R.id.layout_sample_fragment)
             }
             MainContract.TestItemType.PICK -> {
-                navController()?.navigate(R.id.pick_list_fragment)
+                navigate(R.id.pick_list_fragment)
             }
             MainContract.TestItemType.NESTED_FRAGMENTS -> {
-                navController()?.navigate(R.id.nested_fragments_list_fragment)
+                navigate(R.id.nested_fragments_list_fragment)
             }
         }
     }

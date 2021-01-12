@@ -2,7 +2,7 @@ package com.herry.libs.app.nav
 
 import android.os.Bundle
 
-interface NavDestination {
+interface NavMovement {
     companion object {
         const val NAV_START_DESTINATION = "NAV_START_DESTINATION"
         const val NAV_BUNDLE = "NAV_BUNDLE"
@@ -13,9 +13,7 @@ interface NavDestination {
         const val NAV_UP_RESULT_OK = "NAV_UP_RESULT_OK"
     }
 
-    fun onNavUp(): Bundle?
-
-    fun onNavResults(bundle: Bundle)
+    fun onNavigateUp(): Bundle?
 
     fun isTransition(): Boolean
 }

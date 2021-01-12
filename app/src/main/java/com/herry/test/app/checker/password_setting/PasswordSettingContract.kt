@@ -1,7 +1,6 @@
 package com.herry.test.app.checker.password_setting
 
-import com.herry.libs.mvp.IMvpView
-import com.herry.libs.nodeview.INodeRoot
+import com.herry.libs.mvp.MVPView
 import com.herry.test.app.base.mvp.BasePresent
 
 /**
@@ -9,13 +8,12 @@ import com.herry.test.app.base.mvp.BasePresent
  **/
 interface PasswordSettingContract {
 
-    interface View : IMvpView<Presenter>, INodeRoot
-
-    abstract class Presenter : BasePresent<View>() {
-        abstract fun refresh()
+    interface View : MVPView<Presenter> {
+        fun onDisplayPassword(password: String)
     }
 
-    data class PasswordModel(
-        val password: String
-    )
+    abstract class Presenter : BasePresent<View>() {
+        abstract fun setPassword(password: String?)
+        abstract fun isChangedPassword(): Boolean
+    }
 }

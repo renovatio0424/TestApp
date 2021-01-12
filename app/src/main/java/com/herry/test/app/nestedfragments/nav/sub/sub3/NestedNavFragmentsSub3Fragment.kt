@@ -5,13 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.herry.libs.util.BundleUtil
 import com.herry.libs.widget.extension.getNavCurrentDestinationID
 import com.herry.libs.widget.extension.setNestedNavFragmentResult
+import com.herry.test.app.base.nestednav.BaseNestedNavFragment
 import com.herry.test.databinding.NestedNavFragmentsSub3FragmentBinding
 
-class NestedNavFragmentsSub3Fragment : Fragment() {
+class NestedNavFragmentsSub3Fragment : BaseNestedNavFragment() {
 
     private var _binding: NestedNavFragmentsSub3FragmentBinding? = null
     // This property is only valid between onCreateView and onDestroyView.
@@ -45,5 +46,9 @@ class NestedNavFragmentsSub3Fragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    override fun onNavigateUpResult(): Bundle {
+        return BundleUtil.createNavigationBundle(false)
     }
 }

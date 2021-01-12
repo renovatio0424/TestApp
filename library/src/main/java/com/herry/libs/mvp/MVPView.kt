@@ -3,7 +3,7 @@ package com.herry.libs.mvp
 import android.content.Context
 
 @Suppress("unused")
-interface IMvpView<P> {
+interface MVPView<P> {
     var presenter: P?
 
     /**

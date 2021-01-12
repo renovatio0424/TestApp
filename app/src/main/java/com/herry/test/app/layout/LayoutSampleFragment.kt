@@ -12,6 +12,7 @@ import com.herry.libs.helper.ToastHelper
 import com.herry.libs.nodeview.NodeForm
 import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.util.AppUtil
+import com.herry.libs.widget.extension.setImage
 import com.herry.libs.widget.extension.setOnProtectClickListener
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
@@ -21,11 +22,15 @@ import com.herry.test.app.base.nav.BaseNavView
  **/
 class LayoutSampleFragment : BaseNavView<LayoutSampleContract.View, LayoutSampleContract.Presenter>(), LayoutSampleContract.View {
 
-    override fun onCreatePresenter(): LayoutSampleContract.Presenter = LayoutSamplePresenter()
+    override fun onCreatePresenter(): LayoutSampleContract.Presenter {
+        return LayoutSamplePresenter()
+    }
 
     override fun onCreatePresenterView(): LayoutSampleContract.View = this
 
     private var container: View? = null
+
+    private val ratioForms: HashMap<LayoutSampleContract.AspectRatioType, AspectRatioItemFrom> = hashMapOf()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (null == this.container) {
@@ -49,7 +54,7 @@ class LayoutSampleFragment : BaseNavView<LayoutSampleContract.View, LayoutSample
                 ToastHelper.showToast(requireActivity(), "Selected: $model")
             }
             form.bindFormHolder(this.context, this)
-            form.bindFormModel(this.context, LayoutSampleContract.AspectRatioType.RATIO_16v9)
+            ratioForms[LayoutSampleContract.AspectRatioType.RATIO_16v9] = form
         }
 
         view.findViewById<View>(R.id.layout_sample_fragment_aspect_ratio_9x16)?.run {
@@ -57,7 +62,7 @@ class LayoutSampleFragment : BaseNavView<LayoutSampleContract.View, LayoutSample
                 ToastHelper.showToast(requireActivity(), "Selected: $model")
             }
             form.bindFormHolder(this.context, this)
-            form.bindFormModel(this.context, LayoutSampleContract.AspectRatioType.RATIO_9v16)
+            ratioForms[LayoutSampleContract.AspectRatioType.RATIO_9v16] = form
         }
 
         view.findViewById<View>(R.id.layout_sample_fragment_aspect_ratio_1x1)?.run {
@@ -65,7 +70,7 @@ class LayoutSampleFragment : BaseNavView<LayoutSampleContract.View, LayoutSample
                 ToastHelper.showToast(requireActivity(), "Selected: $model")
             }
             form.bindFormHolder(this.context, this)
-            form.bindFormModel(this.context, LayoutSampleContract.AspectRatioType.RATIO_1v1)
+            ratioForms[LayoutSampleContract.AspectRatioType.RATIO_1v1] = form
         }
 
         view.findViewById<View>(R.id.layout_sample_fragment_aspect_ratio_4x3)?.run {
@@ -73,7 +78,7 @@ class LayoutSampleFragment : BaseNavView<LayoutSampleContract.View, LayoutSample
                 ToastHelper.showToast(requireActivity(), "Selected: $model")
             }
             form.bindFormHolder(this.context, this)
-            form.bindFormModel(this.context, LayoutSampleContract.AspectRatioType.RATIO_4v3)
+            ratioForms[LayoutSampleContract.AspectRatioType.RATIO_4v3] = form
         }
 
         view.findViewById<View>(R.id.layout_sample_fragment_aspect_ratio_3x4)?.run {
@@ -81,7 +86,7 @@ class LayoutSampleFragment : BaseNavView<LayoutSampleContract.View, LayoutSample
                 ToastHelper.showToast(requireActivity(), "Selected: $model")
             }
             form.bindFormHolder(this.context, this)
-            form.bindFormModel(this.context, LayoutSampleContract.AspectRatioType.RATIO_3v4)
+            ratioForms[LayoutSampleContract.AspectRatioType.RATIO_3v4] = form
         }
 
         view.findViewById<View>(R.id.layout_sample_fragment_aspect_ratio_4x5)?.run {
@@ -89,7 +94,7 @@ class LayoutSampleFragment : BaseNavView<LayoutSampleContract.View, LayoutSample
                 ToastHelper.showToast(requireActivity(), "Selected: $model")
             }
             form.bindFormHolder(this.context, this)
-            form.bindFormModel(this.context, LayoutSampleContract.AspectRatioType.RATIO_4v5)
+            ratioForms[LayoutSampleContract.AspectRatioType.RATIO_4v5] = form
         }
 
         view.findViewById<View>(R.id.layout_sample_fragment_aspect_ratio_2_35x1)?.run {
@@ -97,22 +102,32 @@ class LayoutSampleFragment : BaseNavView<LayoutSampleContract.View, LayoutSample
                 ToastHelper.showToast(requireActivity(), "Selected: $model")
             }
             form.bindFormHolder(this.context, this)
-            form.bindFormModel(this.context, LayoutSampleContract.AspectRatioType.RATIO_2_35v1)
+            ratioForms[LayoutSampleContract.AspectRatioType.RATIO_2_35v1] = form
         }
 
         view.findViewById<TextView>(R.id.layout_sample_fragment_information)?.text = "프로젝트에 사용한 사진이나 동영상, 오디오를 기기에서 지우면 더 이상 편집에 사용할 수 없습니다."
     }
 
+    override fun onUpdateRatios(selected: LayoutSampleContract.AspectRatioType?) {
+        for (key in ratioForms.keys) {
+            ratioForms[key]?.bindFormModel(requireContext(), LayoutSampleContract.Model(key, key == selected))
+        }
+    }
+
     private inner class AspectRatioItemFrom(
-        private val onClick: ((model: LayoutSampleContract.AspectRatioType) -> Unit)?
-    ) : NodeForm<AspectRatioItemFrom.Holder, LayoutSampleContract.AspectRatioType>(Holder::class, LayoutSampleContract.AspectRatioType::class) {
+        private val onClick: ((model: LayoutSampleContract.Model) -> Unit)?
+    ) : NodeForm<AspectRatioItemFrom.Holder, LayoutSampleContract.Model>(Holder::class, LayoutSampleContract.Model::class) {
         inner class Holder(context: Context, view: View) : NodeHolder(context, view) {
             val iconView: ImageView = view.findViewById(R.id.layout_sample_aspect_ratio_icon)
             val textView: TextView = view.findViewById(R.id.layout_sample_aspect_ratio_text)
 
             init {
                 view.setOnProtectClickListener {
-                    model?.run { onClick?.let { it(this) } }
+                    model?.run { onClick?.let {
+                        it(this)
+                        presenter?.selectRatio(this.type)
+//                        bindFormModel(context, LayoutSampleContract.Model(this.type, true))
+                    } }
                 }
             }
         }
@@ -121,9 +136,10 @@ class LayoutSampleFragment : BaseNavView<LayoutSampleContract.View, LayoutSample
 
         override fun onLayout(): Int = R.layout.layout_sample_aspect_ratio
 
-        override fun onBindModel(context: Context, holder: Holder, model: LayoutSampleContract.AspectRatioType) {
-            holder.iconView.setImageResource(getRatioIcon(model))
-            holder.textView.text = getRatioText(model)
+        override fun onBindModel(context: Context, holder: Holder, model: LayoutSampleContract.Model) {
+            holder.iconView.setImage(getRatioIcon(model.type), R.color.selector_icon, R.color.selector_icon)
+            holder.textView.text = getRatioText(model.type)
+            holder.view.isSelected = model.selected
         }
 
         private fun getRatioIcon(model: LayoutSampleContract.AspectRatioType) : Int {

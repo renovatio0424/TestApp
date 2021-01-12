@@ -11,7 +11,7 @@ import androidx.core.app.ActivityOptionsCompat
 import com.herry.libs.app.activity_caller.AC
 import com.herry.libs.app.activity_caller.ACModule
 import com.herry.libs.app.activity_caller.activity.ACActivity
-import com.herry.libs.app.nav.NavDestination
+import com.herry.libs.app.nav.NavMovement
 
 open class ACNavigation(private val caller: Caller, private val listener: ACModule.OnListener<ACNavigation>): ACModule {
 
@@ -49,7 +49,7 @@ open class ACNavigation(private val caller: Caller, private val listener: ACModu
             done()
             Handler(Looper.getMainLooper()).post {
                 caller.result?.let {
-                    it(resultCode, data, data?.getBundleExtra(NavDestination.NAV_BUNDLE))
+                    it(resultCode, data, data?.getBundleExtra(NavMovement.NAV_BUNDLE))
                 }
             }
             return true
@@ -62,17 +62,17 @@ open class ACNavigation(private val caller: Caller, private val listener: ACModu
             is NavCaller -> {
                 Intent(activity, caller.cls).apply {
                     caller.bundle?.let {
-                        putExtra(NavDestination.NAV_BUNDLE, it)
+                        putExtra(NavMovement.NAV_BUNDLE, it)
                     }
                     if (caller.startDestination != 0) {
-                        putExtra(NavDestination.NAV_START_DESTINATION, caller.startDestination)
+                        putExtra(NavMovement.NAV_START_DESTINATION, caller.startDestination)
                     }
                 }
             }
             is IntentCaller -> {
                 caller.intent.apply {
                     caller.bundle?.let {
-                        putExtra(NavDestination.NAV_BUNDLE, it)
+                        putExtra(NavMovement.NAV_BUNDLE, it)
                     }
                 }
             }

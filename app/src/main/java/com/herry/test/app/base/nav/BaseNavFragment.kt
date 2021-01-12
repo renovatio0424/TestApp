@@ -1,12 +1,14 @@
 package com.herry.test.app.base.nav
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.annotation.TransitionRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.setFragmentResult
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import com.herry.libs.app.nav.NavDestination
+import com.herry.libs.app.nav.NavMovement
 import com.herry.libs.helper.TransitionHelper
 import com.herry.libs.util.BundleUtil
 import com.herry.libs.util.ViewUtil
@@ -14,11 +16,30 @@ import com.herry.test.app.base.BaseActivity
 import com.herry.test.app.base.BaseFragment
 
 @Suppress("SameParameterValue")
-open class BaseNavFragment: BaseFragment(), NavDestination {
-    override fun onNavUp(): Bundle? = null
+open class BaseNavFragment: BaseFragment(), NavMovement {
 
-    override fun onNavResults(bundle: Bundle) {
+    /**
+     * {@inheritDoc}
+     *
+     * @deprecated use
+     * {@link #onNavigateUp()}
+     */
+    final override fun onBackPressed(): Boolean = false
+
+    final override fun onNavigateUp(): Bundle? {
+        val bundle = onNavigateUpResult()
+
+        if (bundle != null) {
+            val currentDestinationId = navController()?.currentBackStackEntry?.destination?.id
+            if (currentDestinationId != null) {
+                setFragmentResult(currentDestinationId.toString(), bundle)
+            }
+        }
+
+        return bundle
     }
+
+    protected open fun onNavigateUpResult(): Bundle? = null
 
     override fun isTransition(): Boolean = transitionHelper.isTransition()
 
@@ -53,7 +74,36 @@ open class BaseNavFragment: BaseFragment(), NavDestination {
             }
             activity.finishAndResults(bundle)
         } else if (activity is BaseActivity) {
-            super.finishAndResults(BundleUtil.isNavigationResultOk(bundle), bundle)
+            finishAndResults(BundleUtil.isNavigationResultOk(bundle), bundle)
+        }
+    }
+
+    /**
+     * finish fragment.
+     * If you want finish with to set result, creates [bundle] parameter.
+     * @see com.herry.libs.util.BundleUtil.createNavigationBundle(Boolean)
+     * @param resultOK set result to ok or cancel
+     * @param bundle result data
+     */
+    protected open fun finishAndResults(resultOK: Boolean, bundle: Bundle? = null) {
+        activity?.let { activity ->
+            activity.window?.let {
+                ViewUtil.hideSoftKeyboard(context, activity.window.decorView.rootView)
+            }
+
+            val activityResult = if (resultOK) Activity.RESULT_OK else Activity.RESULT_CANCELED
+            val resultBundle = if (null != bundle) {
+                bundle.putBoolean(NavMovement.NAV_UP_RESULT_OK, resultOK)
+                bundle
+            } else {
+                Bundle().apply {
+                    putBoolean(NavMovement.NAV_UP_RESULT_OK, resultOK)
+                }
+            }
+            activity.setResult(activityResult, Intent().apply {
+                putExtra(NavMovement.NAV_BUNDLE, resultBundle)
+            })
+            activity.finishAfterTransition()
         }
     }
 
@@ -65,9 +115,9 @@ open class BaseNavFragment: BaseFragment(), NavDestination {
 
             bundle?.let {
                 val intent = Intent()
-                intent.putExtra(NavDestination.NAV_BUNDLE, it)
+                intent.putExtra(NavMovement.NAV_BUNDLE, it)
                 activity.setResult(
-                    if (it.getBoolean(NavDestination.NAV_UP_RESULT_OK, false)) AppCompatActivity.RESULT_OK else AppCompatActivity.RESULT_CANCELED,
+                    if (it.getBoolean(NavMovement.NAV_UP_RESULT_OK, false)) AppCompatActivity.RESULT_OK else AppCompatActivity.RESULT_CANCELED,
                     intent
                 )
                 activity.finishAfterTransition()
@@ -75,10 +125,9 @@ open class BaseNavFragment: BaseFragment(), NavDestination {
         }
     }
 
-//    fun navigateUp(): Boolean = navController()?.navigateUp() ?: false
-fun navigateUp(): Boolean = false
+    fun navigateUp(): Boolean = navController()?.navigateUp() ?: false
 
-    protected fun navController(): NavController? {
+    private fun navController(): NavController? {
         val view = this.view ?: return null
 
         return Navigation.findNavController(view)
@@ -88,7 +137,7 @@ fun navigateUp(): Boolean = false
         TransitionHelper(
             enterTransition = enterTransition,
             exitTransition = exitTransition,
-            listener = object: TransitionHelper.TransitionHelperListener {
+            listener = object : TransitionHelper.TransitionHelperListener {
                 override fun onTransitionStart() {
                     this@BaseNavFragment.onTransitionStart()
                 }

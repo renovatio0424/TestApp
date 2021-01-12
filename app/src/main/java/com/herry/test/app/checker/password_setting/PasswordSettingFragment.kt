@@ -1,21 +1,14 @@
 package com.herry.test.app.checker.password_setting
 
-import android.content.Context
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.SimpleItemAnimator
-import com.herry.libs.nodeview.NodeForm
-import com.herry.libs.nodeview.NodeHolder
-import com.herry.libs.nodeview.model.NodeRoot
-import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
-import com.herry.libs.nodeview.recycler.NodeRecyclerForm
+import android.widget.EditText
 import com.herry.libs.util.AppUtil
-import com.herry.libs.widget.extension.setOnProtectClickListener
+import com.herry.libs.util.BundleUtil
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
 import com.herry.test.widget.TitleBarForm
@@ -30,16 +23,13 @@ class PasswordSettingFragment : BaseNavView<PasswordSettingContract.View, Passwo
 
     override fun onCreatePresenterView(): PasswordSettingContract.View = this
 
-    override val root: NodeRoot
-        get() = adapter.root
-
-    private val adapter: Adapter = Adapter()
-
     private var container: View? = null
+
+    private var inputPassword: EditText? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (null == this.container) {
-            this.container = inflater.inflate(R.layout.data_checker_main_fragment, container, false)
+            this.container = inflater.inflate(R.layout.password_setting_fragment, container, false)
             init(this.container)
         }
         return this.container
@@ -52,45 +42,31 @@ class PasswordSettingFragment : BaseNavView<PasswordSettingContract.View, Passwo
             activity = requireActivity(),
             onClickBack = { AppUtil.pressBackKey(requireActivity(), view) }
         ).apply {
-            bindFormHolder(view.context, view.findViewById(R.id.data_checker_main_fragment_title))
-            bindFormModel(view.context, TitleBarForm.Model(title = "Data Checker Main", backEnable = true))
+            bindFormHolder(view.context, view.findViewById(R.id.password_setting_fragment_title))
+            bindFormModel(view.context, TitleBarForm.Model(title = "Input Password", backEnable = true))
         }
 
-        view.findViewById<RecyclerView>(R.id.data_checker_main_fragment_container)?.apply {
-            layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-            setHasFixedSize(true)
-            if (itemAnimator is SimpleItemAnimator) {
-                (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+        inputPassword = view.findViewById(R.id.password_setting_fragment_password_editor)
+        inputPassword?.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
-            adapter = this@PasswordSettingFragment.adapter
-        }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                presenter?.setPassword(s?.toString())
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+            }
+
+        })
     }
 
-    inner class Adapter: NodeRecyclerAdapter(::requireContext) {
-        override fun onBindForms(list: MutableList<NodeForm<out NodeHolder, *>>) {
-            list.add(DataCheckerPasswordItemForm())
-        }
+    override fun onDisplayPassword(password: String) {
+        inputPassword?.setText(password)
     }
 
-    private inner class DataCheckerPasswordItemForm : NodeForm<DataCheckerPasswordItemForm.Holder, PasswordSettingContract.PasswordModel>(
-        Holder::class, PasswordSettingContract.PasswordModel::class) {
-        inner class Holder(context: Context, view: View) : NodeHolder(context, view) {
-            val status: TextView? = view.findViewById(R.id.data_checker_main_password_status)
-            init {
-                view.setOnProtectClickListener {
-                    NodeRecyclerForm.getBindModel(this@DataCheckerPasswordItemForm, this@Holder)?.let {
-//                        presenter?.showPasswordSetting(it)
-                    }
-                }
-            }
-        }
 
-        override fun onCreateHolder(context: Context, view: View): Holder = Holder(context, view)
-
-        override fun onLayout(): Int = R.layout.data_checker_main_password
-
-        override fun onBindModel(context: Context, holder: Holder, model: PasswordSettingContract.PasswordModel) {
-            holder.status?.text = if (model.password.isBlank()) "Not exit password" else "Exist password"
-        }
+    override fun onNavigateUpResult(): Bundle {
+        return BundleUtil.createNavigationBundle(presenter?.isChangedPassword() ?: false)
     }
 }

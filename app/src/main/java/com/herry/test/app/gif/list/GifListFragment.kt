@@ -14,6 +14,7 @@ import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.nodeview.model.NodeRoot
 import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
+import com.herry.libs.widget.extension.navigate
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
 import com.herry.test.app.gif.decoder.GifDecoderFragment
@@ -71,7 +72,7 @@ class GifListFragment : BaseNavView<GifListContract.View, GifListContract.Presen
     }
 
     override fun onDetail(content: GifMediaFileInfoData) {
-        navController()?.navigate(R.id.gif_decoder_fragment, Bundle().apply {
+        navigate(R.id.gif_decoder_fragment, Bundle().apply {
             putSerializable(GifDecoderFragment.ARG_GIF_INFO_DATA, content)
         })
     }

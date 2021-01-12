@@ -6,6 +6,11 @@ import android.os.Bundle
 import androidx.annotation.IdRes
 import androidx.annotation.NavigationRes
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDirections
+import androidx.navigation.NavOptions
+import androidx.navigation.Navigator
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 
@@ -25,7 +30,13 @@ fun Fragment.addNestedNavHostFragment(@IdRes containerViewId: Int, navHostFragme
     return true
 }
 
-fun Fragment.addNestedNavHostFragment(@IdRes containerViewId: Int, @NavigationRes graphResId: Int, startDestinationArgs: Bundle? = null, tag: String? = null, listener: ((requestKey: String, bundle: Bundle) -> Unit)? = null): NavHostFragment {
+fun Fragment.addNestedNavHostFragment(
+    @IdRes containerViewId: Int,
+    @NavigationRes graphResId: Int,
+    startDestinationArgs: Bundle? = null,
+    tag: String? = null,
+    listener: ((requestKey: String, bundle: Bundle) -> Unit)? = null
+): NavHostFragment {
     val navHostFragment = NavHostFragment.create(graphResId, startDestinationArgs)
 
     addNestedNavHostFragment(containerViewId, navHostFragment, tag, listener)
@@ -37,7 +48,7 @@ fun Fragment.setNestedNavHostFragmentResultListener(navHostFragment: NavHostFrag
     navHostFragment.parentFragment?.childFragmentManager?.setFragmentResultListener(navHostFragment.id.toString(), this, listener)
 }
 
-private fun findParentNavHostFragment(fragment: Fragment?): NavHostFragment? {
+fun findParentNavHostFragment(fragment: Fragment?): NavHostFragment? {
     fragment ?: return null
 
     var parentFragment: Fragment? = fragment.parentFragment
@@ -62,4 +73,73 @@ fun Fragment.setNestedNavFragmentResult(result: Bundle) {
 
 fun Fragment.findNestedNavHostFragment(@IdRes id: Int): NavHostFragment? {
     return childFragmentManager.findFragmentById(id) as? NavHostFragment
+}
+
+fun Fragment.navigate(@IdRes resId: Int, onResult: ((bundle: Bundle) -> Unit)? = null) {
+    navigate(resId, null, onResult)
+}
+
+fun Fragment.navigate(@IdRes resId: Int, args: Bundle?, onResult: ((bundle: Bundle) -> Unit)? = null) {
+    navigate(resId, args, null, onResult)
+}
+
+fun Fragment.navigate(@IdRes resId: Int, args: Bundle?, navOptions: NavOptions?, onResult: ((bundle: Bundle) -> Unit)? = null) {
+    navigate(resId, args, navOptions, null, onResult)
+}
+
+/**
+ * Navigate via the given [NavDirections]
+ *
+ * @param directions directions that describe this navigation operation
+ */
+fun Fragment.navigate(directions: NavDirections, onResult: ((bundle: Bundle) -> Unit)? = null) {
+    navigate(directions.actionId, directions.arguments, onResult)
+}
+
+/**
+ * Navigate via the given [NavDirections]
+ *
+ * @param directions directions that describe this navigation operation
+ * @param navOptions special options for this navigation operation
+ */
+fun Fragment.navigate(directions: NavDirections, navOptions: NavOptions?, onResult: ((bundle: Bundle) -> Unit)? = null) {
+    navigate(directions.actionId, directions.arguments, navOptions, onResult)
+}
+
+/**
+ * Navigate via the given [NavDirections]
+ *
+ * @param directions directions that describe this navigation operation
+ * @param navigatorExtras extras to pass to the [Navigator]
+ */
+fun Fragment.navigate(directions: NavDirections, navigatorExtras: Navigator.Extras, onResult: ((bundle: Bundle) -> Unit)? = null) {
+    navigate(directions.actionId, directions.arguments, null, navigatorExtras, onResult)
+}
+
+/**
+ * Navigate to a destination from the current navigation graph. This supports both navigating
+ * via an {@link NavDestination#getAction(int) action} and directly navigating to a destination.
+ *
+ * @param resId an {@link NavDestination#getAction(int) action} id or a destination id to
+ *              navigate to
+ * @param args arguments to pass to the destination
+ * @param navOptions special options for this navigation operation
+ * @param navigatorExtras extras to pass to the Navigator
+ */
+fun Fragment.navigate(@IdRes resId: Int, args: Bundle?, navOptions: NavOptions?, navigatorExtras: Navigator.Extras?, onResult: ((bundle: Bundle) -> Unit)? = null) {
+    findNavController().navigate(resId, args, navOptions, navigatorExtras)
+
+    if (onResult != null) {
+        val backStack = findNavController().currentBackStackEntry ?: return
+        val navDestination: NavDestination = backStack.destination
+        @IdRes val destId: Int = navDestination.id
+        if (destId == 0) return
+
+        val navHostFragment = findParentNavHostFragment(this)
+        if (navHostFragment != null) {
+            this.setFragmentResultListener(destId.toString()) { _: String, bundle: Bundle ->
+                onResult(bundle)
+            }
+        }
+    }
 }
