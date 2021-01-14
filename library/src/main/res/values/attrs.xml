@@ -17,4 +17,182 @@
         <attr name="rfStrokeColor" format="reference|color"/>
         <attr name="rfStrokeWidth" format="dimension"/>
     </declare-styleable>
+
+    <attr format="reference" name="AppDialog"/>
+    <declare-styleable name="AppDialog">
+        <attr name="ad_width" format="dimension" />
+        <attr name="ad_widthMargin" format="dimension" />
+        <attr name="ad_background" format="reference|color" />
+        <attr name="ad_paddingTop" format="dimension" />
+        <attr name="ad_paddingBottom" format="dimension" />
+        <attr name="ad_paddingStart" format="dimension" />
+        <attr name="ad_paddingEnd" format="dimension" />
+
+        <attr name="ad_topBackground" format="reference|color" />
+        <attr name="ad_topMinHeight" format="dimension" />
+        <attr name="ad_topPaddingTop" format="dimension" />
+        <attr name="ad_topPaddingBottom" format="dimension" />
+        <attr name="ad_topPaddingStart" format="dimension" />
+        <attr name="ad_topPaddingEnd" format="dimension" />
+        <attr name="ad_topDivider" format="reference" />
+        <attr name="ad_topDividerHeight" format="dimension" />
+
+        <attr name="ad_titleTextColor" format="reference|color" />
+        <attr name="ad_titleTextSize" format="dimension" />
+        <!-- Default title text typeface style -->
+        <attr name="ad_titleTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+        </attr>
+        <attr name="ad_titleTextGravity">
+            <!-- Push object to the top of its container, not changing its size. -->
+            <flag name="top" value="0x01" />
+            <!-- Push object to the bottom of its container, not changing its size. -->
+            <flag name="bottom" value="0x02" />
+            <!-- Push object to the left of its container, not changing its size. -->
+            <flag name="start" value="0x04" />
+            <!-- Push object to the right of its container, not changing its size. -->
+            <flag name="end" value="0x08" />
+            <!-- Place object in the vertical center of its container, not changing its size. -->
+            <flag name="center_vertical" value="0x10" />
+            <!-- Place object in the horizontal center of its container, not changing its size. -->
+            <flag name="center_horizontal" value="0x20" />
+            <!-- Place the object in the center of its container in both the vertical and horizontal axis, not changing its size. -->
+            <flag name="center" value="0x30" />
+        </attr>
+        <attr name="ad_titleTextLines" format="integer" />
+        <attr name="ad_titleTextEllipsize" >
+            <enum name="none" value="0" />
+            <enum name="start" value="1" />
+            <enum name="middle" value="2" />
+            <enum name="end" value="3" />
+            <enum name="marquee" value="4" />
+        </attr>
+        <attr name="ad_titlePaddingTop" format="dimension" />
+        <attr name="ad_titlePaddingBottom" format="dimension" />
+        <attr name="ad_titlePaddingStart" format="dimension" />
+        <attr name="ad_titlePaddingEnd" format="dimension" />
+
+        <attr name="ad_contentsBackground" format="reference|color" />
+        <attr name="ad_contentsPaddingStart" format="dimension" />
+        <attr name="ad_contentsPaddingTop" format="dimension" />
+        <attr name="ad_contentsPaddingEnd" format="dimension" />
+        <attr name="ad_contentsPaddingBottom" format="dimension" />
+        <attr name="ad_contentsMinHeight" format="dimension" />
+        <attr name="ad_contentsMaxHeight" format="dimension" />
+
+        <attr name="ad_messageTextColor" format="reference|color" />
+        <attr name="ad_messageTextSize" format="dimension" />
+        <attr name="ad_messageTextLineSpacingExtra" format="dimension" />
+        <attr name="ad_messageTextGravity">
+            <!-- Push object to the top of its container, not changing its size. -->
+            <flag name="top" value="0x01" />
+            <!-- Push object to the bottom of its container, not changing its size. -->
+            <flag name="bottom" value="0x02" />
+            <!-- Push object to the left of its container, not changing its size. -->
+            <flag name="start" value="0x04" />
+            <!-- Push object to the right of its container, not changing its size. -->
+            <flag name="end" value="0x08" />
+            <!-- Place object in the vertical center of its container, not changing its size. -->
+            <flag name="center_vertical" value="0x10" />
+            <!-- Place object in the horizontal center of its container, not changing its size. -->
+            <flag name="center_horizontal" value="0x20" />
+            <!-- Place the object in the center of its container in both the vertical and horizontal axis, not changing its size. -->
+            <flag name="center" value="0x30" />
+        </attr>
+
+        <attr name="ad_bottomBackground" format="reference|color" />
+        <attr name="ad_bottomMinHeight" format="dimension" />
+        <attr name="ad_bottomPaddingStart" format="dimension" />
+        <attr name="ad_bottomPaddingTop" format="dimension" />
+        <attr name="ad_bottomPaddingEnd" format="dimension" />
+        <attr name="ad_bottomPaddingBottom" format="dimension" />
+        <attr name="ad_bottomDivider" format="reference" />
+        <attr name="ad_bottomDividerHeight" format="dimension" />
+
+        <!-- command button size -->
+        <attr name="ad_buttonHeight" format="dimension" />
+        <attr name="ad_buttonWidth" format="dimension">
+            <enum name="match_parent" value="-1" />
+            <enum name="wrap_content" value="-2" />
+        </attr>
+        <attr name="ad_buttonMinWidth" format="dimension" />
+        <attr name="ad_buttonWeight" format="float" />
+        <attr name="ad_buttonLayoutGravity">
+            <!-- Push object to the top of its container, not changing its size. -->
+            <flag name="top" value="0x01" />
+            <!-- Push object to the bottom of its container, not changing its size. -->
+            <flag name="bottom" value="0x02" />
+            <!-- Push object to the left of its container, not changing its size. -->
+            <flag name="start" value="0x04" />
+            <!-- Push object to the right of its container, not changing its size. -->
+            <flag name="end" value="0x08" />
+            <!-- Place object in the vertical center of its container, not changing its size. -->
+            <flag name="center_vertical" value="0x10" />
+            <!-- Place object in the horizontal center of its container, not changing its size. -->
+            <flag name="center_horizontal" value="0x20" />
+            <!-- Place the object in the center of its container in both the vertical and horizontal axis, not changing its size. -->
+            <flag name="center" value="0x30" />
+        </attr>
+        <attr name="ad_buttonTextSize" format="dimension" />
+        <attr name="ad_buttonTextColor" format="reference|color" />
+        <attr name="ad_buttonTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+        </attr>
+        <attr name="ad_buttonTextGravity" >
+            <!-- Push object to the top of its container, not changing its size. -->
+            <flag name="top" value="0x01" />
+            <!-- Push object to the bottom of its container, not changing its size. -->
+            <flag name="bottom" value="0x02" />
+            <!-- Push object to the left of its container, not changing its size. -->
+            <flag name="start" value="0x04" />
+            <!-- Push object to the right of its container, not changing its size. -->
+            <flag name="end" value="0x08" />
+            <!-- Place object in the vertical center of its container, not changing its size. -->
+            <flag name="center_vertical" value="0x10" />
+            <!-- Place object in the horizontal center of its container, not changing its size. -->
+            <flag name="center_horizontal" value="0x20" />
+            <!-- Place the object in the center of its container in both the vertical and horizontal axis, not changing its size. -->
+            <flag name="center" value="0x30" />
+        </attr>
+        <attr name="ad_buttonMargin" format="dimension" />
+
+        <attr name="ad_buttonDivider" format="reference|color" />
+        <attr name="ad_buttonDividerWidth" format="dimension" />
+
+        <!-- default command button background -->
+        <attr name="ad_buttonBackground" format="reference|color" />
+        <!-- default command button selectable background -->
+        <attr name="ad_buttonSelectableBackground" format="reference|color" />
+
+        <attr name="ad_leftButtonTextSize" format="dimension" />
+        <attr name="ad_leftButtonTextColor" format="reference|color" />
+
+        <!-- left command background -->
+        <attr name="ad_leftButtonBackground" format="reference|color" />
+        <!-- left command background -->
+        <attr name="ad_leftButtonIn3ButtonsBackground" format="reference|color" />
+        <attr name="ad_leftButtonSelectableBackground" format="reference|color" />
+
+        <!-- center command background -->
+        <attr name="ad_centerButtonBackground" format="reference|color" />
+        <attr name="ad_centerButtonSelectableBackground" format="reference|color" />
+
+        <attr name="ad_rightButtonTextSize" format="dimension" />
+        <attr name="ad_rightButtonTextColor" format="reference|color" />
+        <attr name="ad_rightButtonSelectableBackground" format="reference|color" />
+
+        <!-- right command background -->
+        <attr name="ad_rightButtonBackground" format="reference|color" />
+        <!-- left command background -->
+        <attr name="ad_rightButtonIn3ButtonsBackground" format="reference|color" />
+
+        <attr name="ad_listItemLayout" format="reference" />
+        <attr name="ad_listSingleChoiceItemLayout" format="reference" />
+        <attr name="ad_listItemDivider" format="reference" />
+        <attr name="ad_listItemDividerHeight" format="dimension" />
+        <attr name="ad_listItemSelector" format="color|reference" />
+        <attr name="ad_listItemScrollbarFadingEnabled" format="boolean" />
+    </declare-styleable>
 </resources>

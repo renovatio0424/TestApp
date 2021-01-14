@@ -101,6 +101,9 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
             MainContract.TestItemType.NESTED_FRAGMENTS -> {
                 navigate(R.id.nested_fragments_list_fragment)
             }
+            MainContract.TestItemType.APP_DIALOG -> {
+                navigate(R.id.app_dialog_list_fragment)
+            }
         }
     }
 
@@ -128,6 +131,7 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
                 MainContract.TestItemType.LAYOUT_SAMPLE -> "Layout Sample"
                 MainContract.TestItemType.PICK -> "Pick"
                 MainContract.TestItemType.NESTED_FRAGMENTS -> "Nested Fragments"
+                MainContract.TestItemType.APP_DIALOG -> "App Dialog"
             }
         }
     }
