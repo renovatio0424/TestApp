@@ -14,15 +14,18 @@ import android.util.DisplayMetrics
 import android.util.TypedValue
 import android.view.*
 import android.widget.*
-import androidx.annotation.ArrayRes
-import androidx.annotation.DrawableRes
-import androidx.annotation.StyleRes
+import androidx.annotation.*
+import androidx.core.view.isVisible
 import com.herry.libs.R
 import com.herry.libs.widget.extension.*
 import kotlin.math.roundToInt
 
 @Suppress("unused", "MemberVisibilityCanBePrivate", "LocalVariableName")
 open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleRes dialogThemeResId: Int = 0) : DialogInterface {
+
+    interface OnClicksListener : DialogInterface.OnClickListener {
+        fun onLongClick(dialog: DialogInterface, which: Int) : Boolean
+    }
 
     private var container: FrameLayout? = null
     private var topContainer: FrameLayout? = null
@@ -35,6 +38,8 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
     private var contentsContainer: FrameLayoutEx? = null
     private var messageContainer: View? = null
     private var messageTextView: TextView? = null
+    private var messageGapView: View? = null
+    private var subMessageTextView: TextView? = null
     private var listView: ListView? = null
 
     private var bottomContainer: FrameLayout? = null
@@ -55,7 +60,7 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
     private var positiveButtonOnClickListener: DialogInterface.OnClickListener? = null
     private var negativeButtonOnClickListener: DialogInterface.OnClickListener? = null
     private var neutraButtonOnClickListener: DialogInterface.OnClickListener? = null
-    private var exitButtonOnClickListener: DialogInterface.OnClickListener? = null
+
     private val nullOnClickListener = DialogInterface.OnClickListener { dialog, _ -> dialog.dismiss() }
     private var onCancelListener: DialogInterface.OnCancelListener? = null
     private var onDismissListener: DialogInterface.OnDismissListener? = null
@@ -101,6 +106,11 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
     private var messageTextSize = 0
     private var messageTextLineSpacingExtra = 0.0f
     private var messageTextGravity = Gravity.CENTER
+    private var subMessageTextColor: ColorStateList? = null
+    private var subMessageTextSize = 0
+    private var subMessageTextLineSpacingExtra = 0.0f
+    private var subMessageTextGravity = Gravity.CENTER
+    private var messageGapSize = 0
     private var bottomBackground: Drawable? = null
     private var bottomMinHeight = 0
     private var bottomPaddingStart = 0
@@ -149,6 +159,33 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
             R.id.app_dialog_button_right_container -> {
                 positiveButtonOnClickListener?.onClick(this@AppDialog, BUTTON_POSITIVE)
             }
+        }
+    }
+
+    private val buttonOnLongClickListener = View.OnLongClickListener { v ->
+        return@OnLongClickListener when (v?.id) {
+            R.id.app_dialog_button_left_container -> {
+                if (negativeButtonOnClickListener is OnClicksListener) {
+                    (negativeButtonOnClickListener as OnClicksListener).onLongClick(this@AppDialog, BUTTON_NEGATIVE)
+                } else {
+                    false
+                }
+            }
+            R.id.app_dialog_button_center_container -> {
+                if (neutraButtonOnClickListener is OnClicksListener) {
+                    (neutraButtonOnClickListener as OnClicksListener).onLongClick(this@AppDialog, BUTTON_NEUTRAL)
+                } else {
+                    false
+                }
+            }
+            R.id.app_dialog_button_right_container -> {
+                if (positiveButtonOnClickListener is OnClicksListener) {
+                    (positiveButtonOnClickListener as OnClicksListener).onLongClick(this@AppDialog, BUTTON_POSITIVE)
+                } else {
+                    false
+                }
+            }
+            else -> false
         }
     }
 
@@ -208,6 +245,13 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
             messageTextSize = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_messageTextSize, 0)
             messageTextLineSpacingExtra = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_messageTextLineSpacingExtra, 0).toFloat()
             messageTextGravity = getGravityValue(attrs.getInt(R.styleable.AppDialog_ad_messageTextGravity, 0x30))
+            messageGapSize = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_messageGapSize, 0)
+
+            // sets sub message attributes
+            subMessageTextColor = attrs.getColorStateList(R.styleable.AppDialog_ad_subMessageTextColor)
+            subMessageTextSize = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_subMessageTextSize, 0)
+            subMessageTextLineSpacingExtra = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_subMessageTextLineSpacingExtra, 0).toFloat()
+            subMessageTextGravity = getGravityValue(attrs.getInt(R.styleable.AppDialog_ad_subMessageTextGravity, 0x30))
 
             // sets bottom attributes
             bottomBackground = attrs.getDrawable(R.styleable.AppDialog_ad_bottomBackground)
@@ -223,7 +267,7 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
             buttonHeight = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_buttonHeight, 0)
             val buttonWidthDimension = attrs.getLayoutDimension(R.styleable.AppDialog_ad_buttonWidth, 0)
             buttonWidth = if (ViewGroup.LayoutParams.WRAP_CONTENT == buttonWidthDimension
-                    || ViewGroup.LayoutParams.MATCH_PARENT == buttonWidthDimension) {
+                || ViewGroup.LayoutParams.MATCH_PARENT == buttonWidthDimension) {
                 buttonWidthDimension
             } else {
                 buttonWidthDimension.toFloat().roundToInt()
@@ -305,19 +349,19 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
             if (0 < topMinHeight) {
                 this.minimumHeight = topMinHeight
             }
-            this.visibility = View.GONE
+            this.isVisible = false
             this.background = topBackground
             this.setPadding(topPaddingStart, topPaddingTop, topPaddingEnd, topPaddingBottom)
         }
 
         iconImageView = container.findViewById(R.id.app_dialog_icon)
         iconImageView?.run {
-            this.visibility = View.GONE
+            this.isVisible = false
         }
 
         titleContainer = container.findViewById(R.id.app_dialog_title_container)
         titleContainer?.run {
-            this.visibility = View.GONE
+            this.isVisible = false
         }
 
         titleTextView = container.findViewById(R.id.app_dialog_title)
@@ -353,7 +397,7 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
             }
             if (topDividerHeight >= 0) {
                 this.setViewHeight(topDividerHeight)
-                this.visibility = View.VISIBLE
+                this.isVisible = true
             }
         }
 
@@ -383,6 +427,26 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
                         this.setLineSpacing(messageTextLineSpacingExtra, 1.0f)
                     }
                 }
+                messageGapView = container.findViewById(R.id.app_dialog_contents_message_gap)
+                messageGapView?.run {
+                    if (0 < messageGapSize) {
+                        this.setViewHeight(messageGapSize)
+                    }
+                }
+
+                subMessageTextView = container.findViewById(R.id.app_dialog_contents_sub_message)
+                subMessageTextView?.run {
+                    if (subMessageTextColor != null) {
+                        this.setTextColor(subMessageTextColor)
+                    }
+                    this.gravity = subMessageTextGravity
+                    if (subMessageTextSize > 0) {
+                        this.setTextSize(TypedValue.COMPLEX_UNIT_PX, subMessageTextSize.toFloat())
+                    }
+                    if (subMessageTextLineSpacingExtra >= 0) {
+                        this.setLineSpacing(subMessageTextLineSpacingExtra, 1.0f)
+                    }
+                }
             }
 
             listView = container.findViewById(R.id.app_dialog_contents_list)
@@ -407,7 +471,7 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
             if (bottomMinHeight > 0) {
                 this.minimumHeight = bottomMinHeight
             } else {
-                this.visibility = View.GONE
+                this.isVisible = false
             }
 
             buttonContainer = container.findViewById(R.id.app_dialog_button_container)
@@ -518,17 +582,10 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
                 }
                 if (bottomDividerHeight >= 0) {
                     this.setViewHeight(bottomDividerHeight)
-                    this.visibility = View.VISIBLE
+                    this.isVisible = true
                 }
             }
         }
-    }
-
-    fun setExitButton(listener: DialogInterface.OnClickListener?) {
-        val headContainer = topContainer ?: return
-
-        headContainer.visibility = View.VISIBLE
-        exitButtonOnClickListener = listener ?: DialogInterface.OnClickListener { dialog, _ -> dialog.dismiss() }
     }
 
     /**
@@ -568,8 +625,8 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
      */
     fun setTitle(titleId: Int) {
         titleTextView?.setText(titleId)
-        titleContainer?.visibility = View.VISIBLE
-        topContainer?.visibility = View.VISIBLE
+        titleContainer?.isVisible = true
+        topContainer?.isVisible = true
     }
 
     /**
@@ -579,51 +636,107 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
      */
     fun setTitle(title: CharSequence?) {
         titleTextView?.text = title
-        titleContainer?.visibility = View.VISIBLE
-        topContainer?.visibility = View.VISIBLE
+        titleContainer?.isVisible = true
+        topContainer?.isVisible = true
     }
 
     fun setIcon(@DrawableRes resID: Int) {
         this.iconImageView?.run {
             if (resID != 0) {
                 this.setImageResource(resID)
-                this.visibility = View.VISIBLE
+                this.isVisible = true
             } else {
-                this.visibility = View.GONE
+                this.isVisible = false
             }
         }
     }
 
     fun setIcon(drawable: Drawable?) {
         iconImageView?.setImageDrawable(drawable)
-        iconImageView?.visibility = if (drawable != null) View.VISIBLE else View.GONE
+        iconImageView?.isVisible = drawable != null
     }
 
     fun setMessage(messageId: Int) {
-        listView?.visibility = View.GONE
+        setMessage(messageId, mutableListOf())
+    }
+
+    fun setMessage(messageId: Int, links: MutableList<TextLinkAttribute> = mutableListOf()) {
+        listView?.isVisible = false
 
         messageContainer?.let {
-            it.visibility = View.VISIBLE
-            messageTextView?.setText(messageId)
+            it.isVisible = true
+            messageTextView?.run {
+                this.isVisible = true
+                setText(messageId)
+
+                for (link in links) {
+                    this.addLink(link.target, link.url)
+                }
+            }
         }
+
+        updateMessageGap()
     }
 
     fun setMessage(message: CharSequence?) {
-        listView?.visibility = View.GONE
-
-        messageContainer?.let {
-            it.visibility = View.VISIBLE
-            messageTextView?.text = message
-        }
+        setMessage(message, mutableListOf())
     }
 
-    fun setPositiveButton(textId: Int, color: Int, listener: DialogInterface.OnClickListener? = null) {
+    fun setMessage(message: CharSequence?, links: MutableList<TextLinkAttribute> = mutableListOf()) {
+        listView?.isVisible = false
+
+        messageContainer?.let {
+            it.isVisible = true
+            messageTextView?.run {
+                this.isVisible = true
+                text = message
+
+                for (link in links) {
+                    this.addLink(link.target, link.url)
+                }
+            }
+        }
+
+        updateMessageGap()
+    }
+
+    fun setSubMessage(messageId: Int) {
+        listView?.isVisible = false
+
+        messageContainer?.let {
+            it.isVisible = true
+            subMessageTextView?.run {
+                this.isVisible = true
+                setText(messageId)
+            }
+        }
+
+        updateMessageGap()
+    }
+
+    fun setSubMessage(message: CharSequence?) {
+        listView?.isVisible = false
+
+        messageContainer?.let {
+            it.isVisible = true
+            subMessageTextView?.run {
+                this.isVisible = true
+                text = message
+            }
+        }
+
+        updateMessageGap()
+    }
+
+    private fun updateMessageGap() {
+        messageGapView?.isVisible = (messageTextView?.isVisible == true) && (subMessageTextView?.isVisible == true)
+    }
+
+    fun setPositiveButton(@StringRes textId: Int, @ColorInt color: Int, listener: DialogInterface.OnClickListener? = null) {
         setPositiveButton(textId, ColorStateList.valueOf(color), listener)
     }
 
-    fun setPositiveButton(textId: Int, color: ColorStateList? = null, listener: DialogInterface.OnClickListener? = null) {
-        bottomContainer?.visibility = View.VISIBLE
-
+    fun setPositiveButton(@StringRes textId: Int, color: ColorStateList? = null, listener: DialogInterface.OnClickListener? = null) {
         positiveButton?.run {
             this.setText(textId)
             if (color != null) {
@@ -631,45 +744,42 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
             }
         }
 
-        positiveButtonContainer?.run {
-            this.visibility = View.VISIBLE
-            this.setOnClickListener(buttonOnClickListener)
-        }
-
-        positiveButtonOnClickListener = listener ?: nullOnClickListener
-        setButtonStyles()
+        showPositiveButton(listener)
     }
 
-    fun setPositiveButton(text: CharSequence?, color: Int, listener: DialogInterface.OnClickListener? = null) {
+    fun setPositiveButton(text: CharSequence?, @ColorInt color: Int, listener: DialogInterface.OnClickListener? = null) {
         setPositiveButton(text, ColorStateList.valueOf(color), listener)
     }
 
     fun setPositiveButton(text: CharSequence?, color: ColorStateList? = null, listener: DialogInterface.OnClickListener? = null) {
-        bottomContainer?.visibility = View.VISIBLE
-
         positiveButton?.run {
             this.text = text
             if (color != null) {
                 this.setTextColor(color)
             }
         }
+        showPositiveButton(listener)
+    }
+
+    private fun showPositiveButton(listener: DialogInterface.OnClickListener? = null) {
+        bottomContainer?.isVisible = true
 
         positiveButtonContainer?.run {
-            this.visibility = View.VISIBLE
+            this.isVisible = true
             this.setOnClickListener(buttonOnClickListener)
+            if (listener is OnClicksListener) {
+                this.setOnLongClickListener(buttonOnLongClickListener)
+            }
         }
-
         positiveButtonOnClickListener = listener ?: nullOnClickListener
         setButtonStyles()
     }
 
-    fun setNegativeButton(textId: Int, color: Int, listener: DialogInterface.OnClickListener? = null) {
+    fun setNegativeButton(@StringRes textId: Int, @ColorInt color: Int, listener: DialogInterface.OnClickListener? = null) {
         setNegativeButton(textId, ColorStateList.valueOf(color), listener)
     }
 
-    fun setNegativeButton(textId: Int, color: ColorStateList? = null, listener: DialogInterface.OnClickListener? = null) {
-        bottomContainer?.visibility = View.VISIBLE
-
+    fun setNegativeButton(@StringRes textId: Int, color: ColorStateList? = null, listener: DialogInterface.OnClickListener? = null) {
         negativeButton?.run {
             this.setText(textId)
             if (color != null) {
@@ -677,22 +787,14 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
             }
         }
 
-        negativeButtonContainer?.run {
-            this.visibility = View.VISIBLE
-            this.setOnClickListener(buttonOnClickListener)
-        }
-
-        negativeButtonOnClickListener = listener ?: nullOnClickListener
-        setButtonStyles()
+        showNegativeButton(listener)
     }
 
-    fun setNegativeButton(text: CharSequence?, color: Int, listener: DialogInterface.OnClickListener? = null) {
+    fun setNegativeButton(text: CharSequence?, @ColorInt color: Int, listener: DialogInterface.OnClickListener? = null) {
         setNegativeButton(text, ColorStateList.valueOf(color), listener)
     }
 
     fun setNegativeButton(text: CharSequence?, color: ColorStateList? = null, listener: DialogInterface.OnClickListener? = null) {
-        bottomContainer?.visibility = View.VISIBLE
-
         negativeButton?.run {
             this.text = text
             if (color != null) {
@@ -700,22 +802,30 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
             }
         }
 
+        showNegativeButton(listener)
+    }
+
+    private fun showNegativeButton(listener: DialogInterface.OnClickListener? = null) {
+        bottomContainer?.isVisible = true
+
         negativeButtonContainer?.run {
-            this.visibility = View.VISIBLE
+            this.isVisible = true
             this.setOnClickListener(buttonOnClickListener)
+            if (listener is OnClicksListener) {
+                this.setOnLongClickListener(buttonOnLongClickListener)
+            }
         }
 
         negativeButtonOnClickListener = listener ?: nullOnClickListener
+
         setButtonStyles()
     }
 
-    fun setNeutralButton(textId: Int, color: Int, listener: DialogInterface.OnClickListener? = null) {
+    fun setNeutralButton(@StringRes textId: Int, @ColorInt color: Int, listener: DialogInterface.OnClickListener? = null) {
         setNeutralButton(textId, ColorStateList.valueOf(color), listener)
     }
 
-    fun setNeutralButton(textId: Int, color: ColorStateList? = null, listener: DialogInterface.OnClickListener? = null) {
-        bottomContainer?.visibility = View.VISIBLE
-
+    fun setNeutralButton(@StringRes textId: Int, color: ColorStateList? = null, listener: DialogInterface.OnClickListener? = null) {
         neutraButton?.run {
             this.setText(textId)
             if (color != null) {
@@ -723,22 +833,14 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
             }
         }
 
-        neutraButtonContainer?.run {
-            this.visibility = View.VISIBLE
-            this.setOnClickListener(buttonOnClickListener)
-        }
-
-        neutraButtonOnClickListener = listener ?: nullOnClickListener
-        setButtonStyles()
+        showNeutralButton(listener)
     }
 
-    fun setNeutralButton(text: CharSequence?, color: Int, listener: DialogInterface.OnClickListener? = null) {
+    fun setNeutralButton(text: CharSequence?, @ColorInt color: Int, listener: DialogInterface.OnClickListener? = null) {
         setNeutralButton(text, ColorStateList.valueOf(color), listener)
     }
 
     fun setNeutralButton(text: CharSequence?, color: ColorStateList? = null, listener: DialogInterface.OnClickListener? = null) {
-        bottomContainer?.visibility = View.VISIBLE
-
         neutraButton?.run {
             this.text = text
             if (color != null) {
@@ -746,17 +848,31 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
             }
         }
 
+        showNeutralButton(listener)
+    }
+
+    private fun showNeutralButton(listener: DialogInterface.OnClickListener? = null) {
+        bottomContainer?.isVisible = true
+
         neutraButtonContainer?.run {
-            this.visibility = View.VISIBLE
+            this.isVisible = true
             this.setOnClickListener(buttonOnClickListener)
+            if (listener is OnClicksListener) {
+                this.setOnLongClickListener(buttonOnLongClickListener)
+            }
         }
 
         neutraButtonOnClickListener = listener ?: nullOnClickListener
+
         setButtonStyles()
     }
 
     fun setCancelable(cancelable: Boolean) {
         dialog?.setCancelable(cancelable)
+    }
+
+    fun setCanceledOnTouchOutside(cancel: Boolean) {
+        dialog?.setCanceledOnTouchOutside(cancel)
     }
 
     fun setOnCancelListener(onCancelListener: DialogInterface.OnCancelListener?) {
@@ -842,10 +958,10 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
      * button, if no buttons are supplied it's up to the user to dismiss the dialog.
      */
     fun setSingleChoiceItems(items: Array<String>?, checkedItem: Int, listener: DialogInterface.OnClickListener? = null) {
-        messageContainer?.visibility = View.GONE
+        messageContainer?.isVisible = false
 
         listView?.run {
-            this.visibility = View.VISIBLE
+            this.isVisible = true
             this.choiceMode = ListView.CHOICE_MODE_SINGLE
             val adapter: ListAdapter = CheckedItemAdapter(context, singleChoiceItemLayout, android.R.id.text1, items ?: arrayOf())
             this.adapter = adapter
@@ -867,10 +983,10 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
     fun setListItems(items: Array<String>?, listener: DialogInterface.OnClickListener? = null) {
         val context = this.context ?: return
 
-        messageContainer?.visibility = View.GONE
+        messageContainer?.isVisible = false
 
         listView?.run {
-            this.visibility = View.VISIBLE
+            this.isVisible = true
             this.choiceMode = ListView.CHOICE_MODE_SINGLE
             this.adapter = CheckedItemAdapter(context, listItemLayout, android.R.id.text1, items ?: arrayOf())
             if (listener != null) {
@@ -889,10 +1005,10 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
     }
 
     fun setAdapter(adapter: ListAdapter?, listener: DialogInterface.OnClickListener? = null) {
-        messageContainer?.visibility = View.GONE
+        messageContainer?.isVisible = false
 
         listView?.run {
-            this.visibility = View.VISIBLE
+            this.isVisible = true
             this.choiceMode = ListView.CHOICE_MODE_NONE
             if (adapter != null) {
                 this.adapter = adapter
@@ -924,15 +1040,15 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
         var centerButtonVisible = false
         var rightButtonVisible = false
 
-        if (negativeButtonContainer?.visibility == View.VISIBLE) {
+        if (negativeButtonContainer?.isVisible == true) {
             leftButtonVisible = true
         }
 
-        if (neutraButtonContainer?.visibility == View.VISIBLE) {
+        if (neutraButtonContainer?.isVisible == true) {
             centerButtonVisible = true
         }
 
-        if (positiveButtonContainer?.visibility == View.VISIBLE) {
+        if (positiveButtonContainer?.isVisible == true) {
             rightButtonVisible = true
         }
 
@@ -1010,15 +1126,12 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
             buttonBackground?.let { drawable ->
                 if (rightButtonVisible) {
                     positiveButtonContainer?.background = drawable
-                    positiveButtonContainer?.foreground = buttonSelectableBackground
                 }
                 if (leftButtonVisible) {
                     negativeButtonContainer?.background = drawable
-                    negativeButtonContainer?.foreground = buttonSelectableBackground
                 }
                 if (centerButtonVisible) {
                     neutraButtonContainer?.background = drawable
-                    neutraButtonContainer?.foreground = buttonSelectableBackground
                 }
             }
 
@@ -1036,11 +1149,11 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
         }
 
         if (showLeftSeparator) {
-            buttonLeftSeparatorView?.visibility = View.VISIBLE
+            buttonLeftSeparatorView?.isVisible = true
         }
 
         if (showRightSeparator) {
-            buttonRightSeparatorView?.visibility = View.VISIBLE
+            buttonRightSeparatorView?.isVisible = true
         }
     }
 
@@ -1238,7 +1351,7 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
                                 val metrics = DisplayMetrics()
                                 display.getMetrics(metrics)
                                 val width = metrics.widthPixels
-        //                                val height = metrics.heightPixels
+                                //                                val height = metrics.heightPixels
                                 val lp = WindowManager.LayoutParams()
                                 lp.copyFrom(window.attributes)
                                 lp.width = width - 2 * dialogWidthMargin
@@ -1258,3 +1371,5 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
         }
     }
 }
+
+data class TextLinkAttribute(val target: String, val url: String?)

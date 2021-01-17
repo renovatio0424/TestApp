@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    tools:viewBindingIgnore="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -58,13 +59,36 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:fillViewport="true">
-                <TextView
-                    android:id="@+id/app_dialog_contents_message"
+                android:fillViewport="true"
+                android:visibility="gone">
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:layout_gravity="center"/>
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/app_dialog_contents_message"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_gravity="center"
+                        android:visibility="gone"/>
+
+                    <View
+                        android:id="@+id/app_dialog_contents_message_gap"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"/>
+
+                    <TextView
+                        android:id="@+id/app_dialog_contents_sub_message"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_gravity="center"
+                        android:visibility="gone"/>
+                </LinearLayout>
             </androidx.core.widget.NestedScrollView>
 
             <ListView

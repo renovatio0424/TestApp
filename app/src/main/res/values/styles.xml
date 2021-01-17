@@ -46,10 +46,15 @@
         <item name="ad_contentsPaddingBottom">@dimen/size24</item>
         <item name="ad_contentsMinHeight">@dimen/size68</item>
         <item name="ad_contentsMaxHeight">@dimen/size272</item>
-        <item name="ad_messageTextColor">@color/tbc_10</item>
+        <item name="ad_messageTextColor">@color/tbc_100</item>
         <item name="ad_messageTextGravity">center</item>
         <item name="ad_messageTextSize">@dimen/size15</item>
         <item name="ad_messageTextLineSpacingExtra">0dp</item>
+        <item name="ad_messageGapSize">@dimen/size16</item>
+        <item name="ad_subMessageTextColor">@color/tbc_50</item>
+        <item name="ad_subMessageTextGravity">center</item>
+        <item name="ad_subMessageTextSize">@dimen/size15</item>
+        <item name="ad_subMessageTextLineSpacingExtra">0dp</item>
         <item name="ad_bottomBackground">@null</item>
         <item name="ad_bottomMinHeight">@dimen/size44</item>
         <item name="ad_bottomPaddingStart">0dp</item>
@@ -71,7 +76,7 @@
         <item name="ad_buttonDivider">@null</item>
         <item name="ad_buttonDividerWidth">@dimen/size01</item>
         <item name="ad_buttonBackground">@color/tbc_70</item>
-<!--        <item name="ad_buttonSelectableBackground">?android:attr/selectableItemBackground</item>-->
+        <item name="ad_buttonSelectableBackground">?android:attr/selectableItemBackground</item>
 <!--        <item name="ad_leftButtonTextSize">@dimen/size17</item>-->
 <!--        <item name="ad_leftButtonTextColor">@color/colorPrimary</item>-->
 <!--        <item name="ad_leftButtonBackground">@null</item>-->

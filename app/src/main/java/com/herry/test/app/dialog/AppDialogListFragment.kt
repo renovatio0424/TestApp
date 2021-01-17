@@ -1,6 +1,8 @@
 package com.herry.test.app.dialog
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.content.DialogInterface
 import android.graphics.Color
 import android.os.Bundle
 import android.view.*
@@ -15,6 +17,7 @@ import com.herry.libs.nodeview.model.NodeRoot
 import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.libs.util.ViewUtil.getColorDrawable
+import com.herry.libs.widget.view.AppDialog
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
 import com.herry.test.widget.Popup
@@ -71,48 +74,77 @@ class AppDialogListFragment : BaseNavView<AppDialogListContract.View, AppDialogL
         }
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onScreen(type: AppDialogListContract.TestItemType) {
         when (type) {
             AppDialogListContract.TestItemType.TITLE_MESSAGE_BUTTON_1 -> {
                 Popup(requireActivity()).apply {
                     setTitle("title")
                     setMessage("message")
-                    setPositiveButton("ok") { dialog, _ ->
-                        dialog.dismiss()
-                    }
-                    setNegativeButton("cancel") { dialog, _ ->
-                        dialog.dismiss()
-                    }
-                    setNeutralButton("center") { dialog, _ ->
-                        dialog.dismiss()
-                    }
+                    setPositiveButton("ok") { dialog, _ -> dialog.dismiss() }
+                    setNegativeButton("cancel") { dialog, _ -> dialog.dismiss() }
+                    setNeutralButton("center") { dialog, _ -> dialog.dismiss() }
                 }.show()
             }
             AppDialogListContract.TestItemType.TITLE_MESSAGE_BUTTON_2 -> {
                 Popup(requireActivity()).apply {
                     setTitle("title")
                     setMessage("message")
-                    setNegativeButton("button1") { dialog, _ ->
-                        dialog.dismiss()
-                    }
-                    setPositiveButton("button3") { dialog, _ ->
-                        dialog.dismiss()
-                    }
+                    setNegativeButton("button1")
+                    setPositiveButton("button3")
                 }.show()
             }
             AppDialogListContract.TestItemType.TITLE_MESSAGE_BUTTON_3 -> {
                 Popup(requireActivity()).apply {
                     setTitle("title")
                     setMessage("message")
-                    setNegativeButton("button1") { dialog, _ ->
-                        dialog.dismiss()
-                    }
-                    setNeutralButton("button2") { dialog, _ ->
-                        dialog.dismiss()
-                    }
-                    setPositiveButton("button3") { dialog, _ ->
-                        dialog.dismiss()
-                    }
+                    setNegativeButton("button1")
+                    setNeutralButton("button2")
+                    setPositiveButton("button3")
+                }.show()
+            }
+            AppDialogListContract.TestItemType.TITLE_MESSAGE_CLICKS_BUTTONS -> {
+                Popup(requireActivity()).apply {
+                    setTitle("title")
+                    setMessage("button is long clickable")
+                    setPositiveButton("ok", listener = object : AppDialog.OnClicksListener {
+                        override fun onLongClick(dialog: DialogInterface, which: Int) : Boolean {
+                            ToastHelper.showToast(activity, "positive button long click")
+                            return true
+                        }
+
+                        override fun onClick(dialog: DialogInterface, which: Int) {
+                            dialog.dismiss()
+                        }
+                    })
+                    setNegativeButton("cancel", listener = object : AppDialog.OnClicksListener {
+                        override fun onLongClick(dialog: DialogInterface, which: Int) : Boolean {
+                            ToastHelper.showToast(activity, "negative button long click")
+                            return true
+                        }
+
+                        override fun onClick(dialog: DialogInterface, which: Int) {
+                            dialog.dismiss()
+                        }
+                    })
+                    setNeutralButton("center", listener = object : AppDialog.OnClicksListener {
+                        override fun onLongClick(dialog: DialogInterface, which: Int) : Boolean {
+                            ToastHelper.showToast(activity, "neutral button long click")
+                            return true
+                        }
+
+                        override fun onClick(dialog: DialogInterface, which: Int) {
+                            dialog.dismiss()
+                        }
+                    })
+                }.show()
+            }
+            AppDialogListContract.TestItemType.TITLE_MESSAGE_SUB_MESSAGE_BUTTON_1 -> {
+                Popup(requireActivity()).apply {
+                    setTitle("title")
+                    setMessage("message")
+                    setSubMessage("sub-message")
+                    setPositiveButton("ok")
                 }.show()
             }
             AppDialogListContract.TestItemType.TITLE_LIST_BUTTON_2 -> {
@@ -121,26 +153,16 @@ class AppDialogListFragment : BaseNavView<AppDialogListContract.View, AppDialogL
                     setSingleChoiceItems(arrayOf("1", "2"), 0) { _, witch ->
                         ToastHelper.showToast(requireActivity(), "$witch")
                     }
-                    setNegativeButton("button1") { dialog, _ ->
-                        dialog.dismiss()
-                    }
-                    setPositiveButton("button3") { dialog, _ ->
-                        dialog.dismiss()
-                    }
+                    setNegativeButton("button1")
+                    setPositiveButton("button3")
                 }.show()
             }
             AppDialogListContract.TestItemType.MESSAGE_BUTTON_3 -> {
                 Popup(requireActivity()).apply {
                     setMessage("message")
-                    setNegativeButton("button1") { dialog, _ ->
-                        dialog.dismiss()
-                    }
-                    setNeutralButton("button2") { dialog, _ ->
-                        dialog.dismiss()
-                    }
-                    setPositiveButton("button3") { dialog, _ ->
-                        dialog.dismiss()
-                    }
+                    setNegativeButton("button1")
+                    setNeutralButton("button2")
+                    setPositiveButton("button3")
                 }.show()
             }
             AppDialogListContract.TestItemType.TITLE_VIEW -> {
@@ -219,6 +241,8 @@ class AppDialogListFragment : BaseNavView<AppDialogListContract.View, AppDialogL
                 AppDialogListContract.TestItemType.TITLE_MESSAGE_BUTTON_1 -> "TITLE_MESSAGE_BUTTON_1"
                 AppDialogListContract.TestItemType.TITLE_MESSAGE_BUTTON_2 -> "TITLE_MESSAGE_BUTTON_2"
                 AppDialogListContract.TestItemType.TITLE_MESSAGE_BUTTON_3 -> "TITLE_MESSAGE_BUTTON_3"
+                AppDialogListContract.TestItemType.TITLE_MESSAGE_CLICKS_BUTTONS -> "TITLE_MESSAGE_CLICKS_BUTTONS"
+                AppDialogListContract.TestItemType.TITLE_MESSAGE_SUB_MESSAGE_BUTTON_1 -> "TITLE_MESSAGE_SUB_MESSAGE_BUTTON_1"
                 AppDialogListContract.TestItemType.TITLE_LIST_BUTTON_2 -> "TITLE_LIST_BUTTON_2"
                 AppDialogListContract.TestItemType.MESSAGE_BUTTON_3 -> "MESSAGE_BUTTON_3"
                 AppDialogListContract.TestItemType.TITLE_VIEW -> "TITLE_VIEW"

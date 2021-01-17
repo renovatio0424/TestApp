@@ -5,14 +5,17 @@ package com.herry.libs.widget.extension
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.os.SystemClock
+import android.text.util.Linkify
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import com.herry.libs.util.ViewUtil
+import java.util.regex.Pattern
 
 /**
  * Created by herry.park on 2020/06/17.
@@ -170,5 +173,11 @@ fun View.setLayoutGravity(gravity: Int) {
         val params = layoutParams as FrameLayout.LayoutParams
         params.gravity = gravity
         layoutParams = params
+    }
+}
+
+fun TextView.addLink(target: String, url: String?) {
+    if (target.isNotEmpty() && text?.toString()?.contains(target) == true) {
+        Linkify.addLinks(this, Pattern.compile(target), url, null, Linkify.TransformFilter { _, _ -> "" })
     }
 }
