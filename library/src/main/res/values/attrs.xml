@@ -211,6 +211,7 @@
 
         <attr name="ad_listItemLayout" format="reference" />
         <attr name="ad_listSingleChoiceItemLayout" format="reference" />
+        <attr name="ad_listMultiChoiceItemLayout" format="reference" />
         <attr name="ad_listItemDivider" format="reference" />
         <attr name="ad_listItemDividerHeight" format="dimension" />
         <attr name="ad_listItemSelector" format="color|reference" />

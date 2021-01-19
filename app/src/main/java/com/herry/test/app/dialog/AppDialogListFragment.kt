@@ -81,21 +81,24 @@ class AppDialogListFragment : BaseNavView<AppDialogListContract.View, AppDialogL
                 Popup(requireActivity()).apply {
                     setTitle("title")
                     setMessage("message")
-                    setPositiveButton("ok") { dialog, _ -> dialog.dismiss() }
+                    setPositiveButton("ok") { dialog, _ ->
+                        dialog.dismiss()
+                        ToastHelper.showToast(requireActivity(), "OK")
+                    }
                     setNegativeButton("cancel") { dialog, _ -> dialog.dismiss() }
                     setNeutralButton("center") { dialog, _ -> dialog.dismiss() }
                 }.show()
             }
             AppDialogListContract.TestItemType.TITLE_MESSAGE_BUTTON_2 -> {
-                Popup(requireActivity()).apply {
+                Popup(requireContext()).apply {
                     setTitle("title")
                     setMessage("message")
-                    setNegativeButton("button1")
                     setPositiveButton("button3")
+                    setNegativeButton("button1")
                 }.show()
             }
             AppDialogListContract.TestItemType.TITLE_MESSAGE_BUTTON_3 -> {
-                Popup(requireActivity()).apply {
+                Popup(requireContext()).apply {
                     setTitle("title")
                     setMessage("message")
                     setNegativeButton("button1")
@@ -104,7 +107,7 @@ class AppDialogListFragment : BaseNavView<AppDialogListContract.View, AppDialogL
                 }.show()
             }
             AppDialogListContract.TestItemType.TITLE_MESSAGE_CLICKS_BUTTONS -> {
-                Popup(requireActivity()).apply {
+                Popup(requireContext()).apply {
                     setTitle("title")
                     setMessage("button is long clickable")
                     setPositiveButton("ok", listener = object : AppDialog.OnClicksListener {
@@ -140,7 +143,7 @@ class AppDialogListFragment : BaseNavView<AppDialogListContract.View, AppDialogL
                 }.show()
             }
             AppDialogListContract.TestItemType.TITLE_MESSAGE_SUB_MESSAGE_BUTTON_1 -> {
-                Popup(requireActivity()).apply {
+                Popup(requireContext()).apply {
                     setTitle("title")
                     setMessage("message")
                     setSubMessage("sub-message")
@@ -148,17 +151,17 @@ class AppDialogListFragment : BaseNavView<AppDialogListContract.View, AppDialogL
                 }.show()
             }
             AppDialogListContract.TestItemType.TITLE_LIST_BUTTON_2 -> {
-                Popup(requireActivity()).apply {
+                Popup(requireContext()).apply {
                     setTitle("title")
-                    setSingleChoiceItems(arrayOf("1", "2"), 0) { _, witch ->
-                        ToastHelper.showToast(requireActivity(), "$witch")
+                    setMultiChoiceItems(arrayOf("1", "2"), arrayOf(false, true)) { _, witch, checked ->
+                        ToastHelper.showToast(requireActivity(), "$witch is checked = $checked")
                     }
                     setNegativeButton("button1")
                     setPositiveButton("button3")
                 }.show()
             }
             AppDialogListContract.TestItemType.MESSAGE_BUTTON_3 -> {
-                Popup(requireActivity()).apply {
+                Popup(requireContext()).apply {
                     setMessage("message")
                     setNegativeButton("button1")
                     setNeutralButton("button2")
@@ -166,7 +169,7 @@ class AppDialogListFragment : BaseNavView<AppDialogListContract.View, AppDialogL
                 }.show()
             }
             AppDialogListContract.TestItemType.TITLE_VIEW -> {
-                Popup(requireActivity()).apply {
+                Popup(requireContext()).apply {
                     setTitle("title")
                     setView(TextView(requireContext()).apply {
                         minimumHeight = 100
@@ -176,7 +179,7 @@ class AppDialogListFragment : BaseNavView<AppDialogListContract.View, AppDialogL
                 }.show()
             }
             AppDialogListContract.TestItemType.VIEW -> {
-                Popup(requireActivity()).apply {
+                Popup(requireContext()).apply {
                     setView(TextView(requireContext()).apply {
                         minimumHeight = 100
                         text = "set view"
@@ -185,10 +188,29 @@ class AppDialogListFragment : BaseNavView<AppDialogListContract.View, AppDialogL
                 }.show()
             }
             AppDialogListContract.TestItemType.VIEW_BUTTON_1 -> {
-                Popup(requireActivity()).apply {
+                Popup(requireContext()).apply {
+                    setTitle("title")
                     setView(TextView(requireContext()).apply {
                         minimumHeight = 100
-                        text = "set view"
+                        text = "set viewafeijalfj\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n" +
+                                "\n" +
+                                "\n" +
+                                "\n" +
+                                "\n" +
+                                "\n" +
+                                "\n\n" +
+                                "\n" +
+                                "\n" +
+                                "\n" +
+                                "\n" +
+                                "\n" +
+                                "\n\n" +
+                                "\n" +
+                                "\n" +
+                                "\n" +
+                                "\n" +
+                                "\n" +
+                                "\n\n\n\n\n\n\n\n\n\n\neialjfleaj"
                         setBackgroundColor(Color.argb(0xff, 0xff, 0, 0))
                     })
                     setPositiveButton("button3") { dialog, _ ->
@@ -197,7 +219,7 @@ class AppDialogListFragment : BaseNavView<AppDialogListContract.View, AppDialogL
                 }.show()
             }
             AppDialogListContract.TestItemType.CUSTOM_VIEW -> {
-                Popup(requireActivity()).apply {
+                Popup(requireContext()).apply {
                     setCustomView(TextView(requireContext()).apply {
                         minimumHeight = 400
                         text = "custom view"
@@ -207,7 +229,7 @@ class AppDialogListFragment : BaseNavView<AppDialogListContract.View, AppDialogL
 
             }
             AppDialogListContract.TestItemType.RESIZE_DIALOG -> {
-                Popup(requireActivity()).apply {
+                Popup(requireContext()).apply {
                     setCustomView(TextView(requireContext()).apply {
                         gravity = Gravity.CENTER
                         text = "full size custom view"

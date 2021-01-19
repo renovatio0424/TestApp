@@ -7,7 +7,7 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="PopupTheme">
+    <style name="PopupTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
         <!--<item name="android:windowIsTranslucent">true</item>-->
         <!--<item name="android:windowFrame">@null</item>-->
         <item name="android:windowBackground">@android:color/transparent</item>
@@ -45,7 +45,7 @@
         <item name="ad_contentsPaddingEnd">@dimen/size24</item>
         <item name="ad_contentsPaddingBottom">@dimen/size24</item>
         <item name="ad_contentsMinHeight">@dimen/size68</item>
-        <item name="ad_contentsMaxHeight">@dimen/size272</item>
+        <item name="ad_contentsMaxHeight">@dimen/size232</item>
         <item name="ad_messageTextColor">@color/tbc_100</item>
         <item name="ad_messageTextGravity">center</item>
         <item name="ad_messageTextSize">@dimen/size15</item>
@@ -87,5 +87,8 @@
 <!--        <item name="ad_rightButtonTextSize">@dimen/size17</item>-->
 <!--        <item name="ad_rightButtonTextColor">@color/colorPrimary</item>-->
         <item name="ad_rightButtonSelectableBackground">?android:attr/selectableItemBackground</item>
+        <item name="ad_listItemLayout">@layout/app_dialog_list_item</item>
+        <item name="ad_listSingleChoiceItemLayout">@layout/app_dialog_single_choice</item>
+        <item name="ad_listMultiChoiceItemLayout">@layout/app_dialog_multi_choice</item>
     </style>
 </resources>

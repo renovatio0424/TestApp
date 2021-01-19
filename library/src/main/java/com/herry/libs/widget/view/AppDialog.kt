@@ -1,6 +1,5 @@
 package com.herry.libs.widget.view
 
-import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
@@ -21,13 +20,16 @@ import com.herry.libs.widget.extension.*
 import kotlin.math.roundToInt
 
 @Suppress("unused", "MemberVisibilityCanBePrivate", "LocalVariableName")
-open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleRes dialogThemeResId: Int = 0) : DialogInterface {
+open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes dialogThemeResId: Int = 0) : DialogInterface {
 
     interface OnClicksListener : DialogInterface.OnClickListener {
         fun onLongClick(dialog: DialogInterface, which: Int) : Boolean
     }
 
-    private var container: FrameLayout? = null
+    private val context: ContextThemeWrapper = ContextThemeWrapper(context, themeResId)
+    private var dialog: Dialog? = null
+
+    private var container: ViewGroup? = null
     private var topContainer: FrameLayout? = null
 
     private var titleContainer: View? = null
@@ -65,9 +67,6 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
     private var onCancelListener: DialogInterface.OnCancelListener? = null
     private var onDismissListener: DialogInterface.OnDismissListener? = null
     private var onShowListener: DialogInterface.OnShowListener? = null
-    private var dialog: Dialog? = null
-    private var activity: Activity? = null
-    private var context: Context? = null
 
     // view information
     private var dialogWidth = 0
@@ -145,8 +144,9 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
     private var rightButtonBackground: Drawable? = null
     private var rightButtonIn3ButtonsBackground: Drawable? = null
     private var rightButtonSelectableBackground: Drawable? = null
-    private var listItemLayout = android.R.layout.simple_list_item_1
-    private var singleChoiceItemLayout = android.R.layout.simple_list_item_single_choice
+    private var listItemLayout = android.R.layout.select_dialog_item
+    private var singleChoiceItemLayout = android.R.layout.select_dialog_singlechoice
+    private var multiChoiceItemLayout = android.R.layout.select_dialog_multichoice
 
     private val buttonOnClickListener = View.OnClickListener { v ->
         when (v?.id) {
@@ -191,14 +191,13 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
 
     private fun initialize(@StyleRes themeResId: Int) {
         val container = this.container ?: return
-        val activity = this.activity ?: return
 
         var listItemDividerHeight = -1
         var listItemDivider: Drawable? = null
         var listItemSelector: Drawable? = null
         var listScrollbarFadingEnabled = true
 
-        val attrs = activity.theme?.obtainStyledAttributes(themeResId, R.styleable.AppDialog)
+        val attrs = context.theme?.obtainStyledAttributes(themeResId, R.styleable.AppDialog)
         if (attrs != null) {
             // sets dialog attributes
             dialogWidth = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_width, 0)
@@ -327,6 +326,7 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
             listItemLayout = attrs.getResourceId(R.styleable.AppDialog_ad_listItemLayout, listItemLayout)
             // set single choice item layout
             singleChoiceItemLayout = attrs.getResourceId(R.styleable.AppDialog_ad_listSingleChoiceItemLayout, singleChoiceItemLayout)
+            multiChoiceItemLayout = attrs.getResourceId(R.styleable.AppDialog_ad_listMultiChoiceItemLayout, multiChoiceItemLayout)
             // set list item divider
             listItemDivider = attrs.getDrawable(R.styleable.AppDialog_ad_listItemDivider)
             // set list item divider height
@@ -410,10 +410,11 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
             if (contentsMinHeight > 0) {
                 this.minimumHeight = contentsMinHeight
             }
-            this.setPadding(contentsPaddingStart, contentsPaddingTop, contentsPaddingEnd, contentsPaddingBottom)
 
             messageContainer = container.findViewById(R.id.app_dialog_contents_message_container)
             messageContainer?.run {
+                this.setPadding(contentsPaddingStart, contentsPaddingTop, contentsPaddingEnd, contentsPaddingBottom)
+
                 messageTextView = container.findViewById(R.id.app_dialog_contents_message)
                 messageTextView?.run {
                     if (messageTextColor != null) {
@@ -656,6 +657,18 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
         iconImageView?.isVisible = drawable != null
     }
 
+    fun setCustomTitle(view: View?) {
+        view ?: return
+
+        topContainer?.run {
+            this.removeAllViews()
+            this.addView(view)
+            this.setViewPadding(0)
+
+            isVisible = true
+        }
+    }
+
     fun setMessage(messageId: Int) {
         setMessage(messageId, mutableListOf())
     }
@@ -732,6 +745,14 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
         messageGapView?.isVisible = (messageTextView?.isVisible == true) && (subMessageTextView?.isVisible == true)
     }
 
+    fun setPositiveButton(@StringRes textId: Int) {
+        setPositiveButton(textId, null, null)
+    }
+
+    fun setPositiveButton(@StringRes textId: Int, listener: DialogInterface.OnClickListener? = null) {
+        setPositiveButton(textId, null, listener)
+    }
+
     fun setPositiveButton(@StringRes textId: Int, @ColorInt color: Int, listener: DialogInterface.OnClickListener? = null) {
         setPositiveButton(textId, ColorStateList.valueOf(color), listener)
     }
@@ -747,8 +768,16 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
         showPositiveButton(listener)
     }
 
+    fun setPositiveButton(text: CharSequence?) {
+        setPositiveButton(text, null, null)
+    }
+
     fun setPositiveButton(text: CharSequence?, @ColorInt color: Int, listener: DialogInterface.OnClickListener? = null) {
         setPositiveButton(text, ColorStateList.valueOf(color), listener)
+    }
+
+    fun setPositiveButton(text: CharSequence?, listener: DialogInterface.OnClickListener? = null) {
+        setPositiveButton(text, null, listener)
     }
 
     fun setPositiveButton(text: CharSequence?, color: ColorStateList? = null, listener: DialogInterface.OnClickListener? = null) {
@@ -775,6 +804,14 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
         setButtonStyles()
     }
 
+    fun setNegativeButton(@StringRes textId: Int) {
+        setNegativeButton(textId, null, null)
+    }
+
+    fun setNegativeButton(@StringRes textId: Int, listener: DialogInterface.OnClickListener? = null) {
+        setNegativeButton(textId, null, listener)
+    }
+
     fun setNegativeButton(@StringRes textId: Int, @ColorInt color: Int, listener: DialogInterface.OnClickListener? = null) {
         setNegativeButton(textId, ColorStateList.valueOf(color), listener)
     }
@@ -788,6 +825,14 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
         }
 
         showNegativeButton(listener)
+    }
+
+    fun setNegativeButton(text: CharSequence?) {
+        setNegativeButton(text, null, null)
+    }
+
+    fun setNegativeButton(text: CharSequence?, listener: DialogInterface.OnClickListener? = null) {
+        setNegativeButton(text, null, listener)
     }
 
     fun setNegativeButton(text: CharSequence?, @ColorInt color: Int, listener: DialogInterface.OnClickListener? = null) {
@@ -821,6 +866,14 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
         setButtonStyles()
     }
 
+    fun setNeutralButton(@StringRes textId: Int) {
+        setNeutralButton(textId, null, null)
+    }
+
+    fun setNeutralButton(@StringRes textId: Int, listener: DialogInterface.OnClickListener? = null) {
+        setNeutralButton(textId, null, listener)
+    }
+
     fun setNeutralButton(@StringRes textId: Int, @ColorInt color: Int, listener: DialogInterface.OnClickListener? = null) {
         setNeutralButton(textId, ColorStateList.valueOf(color), listener)
     }
@@ -834,6 +887,14 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
         }
 
         showNeutralButton(listener)
+    }
+
+    fun setNeutralButton(text: CharSequence?) {
+        setNeutralButton(text, null, null)
+    }
+
+    fun setNeutralButton(text: CharSequence?, listener: DialogInterface.OnClickListener? = null) {
+        setNeutralButton(text, null, listener)
     }
 
     fun setNeutralButton(text: CharSequence?, @ColorInt color: Int, listener: DialogInterface.OnClickListener? = null) {
@@ -917,7 +978,6 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
 
         contentsContainer?.run {
             this.setViewHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
-            this.setViewPadding(0)
             this.minimumHeight = 0
 
             this.removeAllViews()
@@ -926,6 +986,14 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
             view.layoutParams = params
             this.addView(view)
         }
+    }
+
+    fun setView(@LayoutRes resID: Int) {
+        val view = contentsContainer?.run {
+            LayoutInflater.from(this.context).inflate(resID, this, false)
+        }
+
+        setView(view)
     }
 
     /**
@@ -942,7 +1010,7 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
      * button, if no buttons are supplied it's up to the user to dismiss the dialog.
      */
     fun setSingleChoiceItems(@ArrayRes itemsId: Int, checkedItem: Int, listener: DialogInterface.OnClickListener? = null) {
-        setSingleChoiceItems(context?.resources?.getStringArray(itemsId), checkedItem, listener)
+        setSingleChoiceItems(context.resources?.getStringArray(itemsId), checkedItem, listener)
     }
 
     /**
@@ -975,14 +1043,35 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
         }
     }
 
+    fun setMultiChoiceItems(@ArrayRes itemsId: Int, checkedItems: Array<Boolean>?, listener: DialogInterface.OnMultiChoiceClickListener?) {
+        setMultiChoiceItems(context.resources?.getStringArray(itemsId), checkedItems, listener)
+    }
+
+    fun setMultiChoiceItems(items: Array<String>?, checkedItems: Array<Boolean>? = arrayOf(),listener: DialogInterface.OnMultiChoiceClickListener?) {
+        messageContainer?.isVisible = false
+
+        listView?.run {
+            this.isVisible = true
+            this.choiceMode = ListView.CHOICE_MODE_MULTIPLE
+            val adapter: ListAdapter = CheckedItemAdapter(context, multiChoiceItemLayout, android.R.id.text1, items ?: arrayOf())
+            this.adapter = adapter
+            checkedItems?.forEachIndexed { index, checked -> this.setItemChecked(index, checked)}
+            if (listener != null) {
+                this.onItemClickListener = AdapterView.OnItemClickListener { _, view, position, _ ->
+                    if (view is Checkable) {
+                        listener.onClick(this@AppDialog, position, view.isChecked)
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * Set a list of items to be displayed in the dialog as the content, you will be notified of the
      * selected item via the supplied listener. This should be an array type i.e. R.array.foo
      *
      */
-    fun setListItems(items: Array<String>?, listener: DialogInterface.OnClickListener? = null) {
-        val context = this.context ?: return
-
+    fun setItems(items: Array<String>?, listener: DialogInterface.OnClickListener? = null) {
         messageContainer?.isVisible = false
 
         listView?.run {
@@ -1000,8 +1089,8 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
      * selected item via the supplied listener. This should be an array type i.e. R.array.foo
      *
      */
-    fun setListItems(@ArrayRes itemsId: Int, listener: DialogInterface.OnClickListener? = null) {
-        setListItems(context?.resources?.getStringArray(itemsId), listener)
+    fun setItems(@ArrayRes itemsId: Int, listener: DialogInterface.OnClickListener? = null) {
+        setItems(context.resources?.getStringArray(itemsId), listener)
     }
 
     fun setAdapter(adapter: ListAdapter?, listener: DialogInterface.OnClickListener? = null) {
@@ -1229,6 +1318,12 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
         window.attributes = lp
     }
 
+    fun setDialogOnKeyListener(listener: DialogInterface.OnKeyListener?) {
+        dialog?.setOnKeyListener(listener)
+    }
+
+    fun getDialog(): Dialog? = dialog
+
     private class CheckedItemAdapter(
         context: Context, resource: Int, textViewResourceId: Int,
         objects: Array<String>
@@ -1319,55 +1414,45 @@ open class AppDialog(activity: Activity?, @StyleRes themeResId: Int = 0, @StyleR
     }
 
     init {
-        try {
-            val _activity = activity ?: throw IllegalArgumentException()
-            this.activity = _activity
+        val inflater = this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater?
+        container = inflater?.inflate(R.layout.app_dialog, FrameLayout(this.context), false) as ViewGroup?
+        container?.run {
+            this.clipToOutline = true
+        }
 
-            val _context = _activity.applicationContext ?: throw IllegalArgumentException()
-            this.context = _context
+        initialize(themeResId)
 
-            val inflater = this.activity?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater?
-            container = inflater?.inflate(R.layout.app_dialog, FrameLayout(_context), false) as FrameLayout?
-            container?.run {
-                this.clipToOutline = true
-            }
+        container?.let { container ->
+            this.dialog = Dialog(this.context, dialogThemeResId).apply {
+                requestWindowFeature(Window.FEATURE_NO_TITLE)
+                val window = this.window
+                window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                setCancelable(true)
+                setContentView(container)
 
-            initialize(themeResId)
-
-            container?.let { container ->
-                this.dialog = Dialog(_activity, dialogThemeResId).apply {
-                    requestWindowFeature(Window.FEATURE_NO_TITLE)
-                    val window = this.window
-                    window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                    setCancelable(true)
-                    setContentView(container)
-
-                    // set dialog size
-                    if (null != window) {
-                        if (0 < dialogWidthMargin) {
-                            val wm = _activity.getSystemService(Context.WINDOW_SERVICE) as WindowManager?
-                            if (wm != null) {
-                                val display = wm.defaultDisplay
-                                val metrics = DisplayMetrics()
-                                display.getMetrics(metrics)
-                                val width = metrics.widthPixels
-                                //                                val height = metrics.heightPixels
-                                val lp = WindowManager.LayoutParams()
-                                lp.copyFrom(window.attributes)
-                                lp.width = width - 2 * dialogWidthMargin
-                                window.attributes = lp
-                            }
-                        } else if (dialogWidth > 0) {
+                // set dialog size
+                if (null != window) {
+                    if (0 < dialogWidthMargin) {
+                        val wm = this.context.getSystemService(Context.WINDOW_SERVICE) as WindowManager?
+                        if (wm != null) {
+                            val display = wm.defaultDisplay
+                            val metrics = DisplayMetrics()
+                            display.getMetrics(metrics)
+                            val width = metrics.widthPixels
+                            // val height = metrics.heightPixels
                             val lp = WindowManager.LayoutParams()
                             lp.copyFrom(window.attributes)
-                            lp.width = dialogWidth
+                            lp.width = width - 2 * dialogWidthMargin
                             window.attributes = lp
                         }
+                    } else if (dialogWidth > 0) {
+                        val lp = WindowManager.LayoutParams()
+                        lp.copyFrom(window.attributes)
+                        lp.width = dialogWidth
+                        window.attributes = lp
                     }
                 }
             }
-        } catch (ex: IllegalArgumentException) {
-
         }
     }
 }
