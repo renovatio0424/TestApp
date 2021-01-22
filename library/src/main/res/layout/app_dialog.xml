@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<com.herry.libs.widget.view.FrameLayoutEx
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -52,7 +52,8 @@
         <com.herry.libs.widget.view.FrameLayoutEx
             android:id="@+id/app_dialog_contents_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
 
             <androidx.core.widget.NestedScrollView
                 android:id="@+id/app_dialog_contents_message_container"
@@ -180,4 +181,4 @@
                 android:visibility="gone"/>
         </FrameLayout>
     </LinearLayout>
-</FrameLayout>
+</com.herry.libs.widget.view.FrameLayoutEx>

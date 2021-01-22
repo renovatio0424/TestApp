@@ -33,7 +33,7 @@ interface SchemeContract {
         PROJECT_FEED_CATEGORY_DYNAMIC_LINK("https://qf58u.app.goo.gl/cwEz"),
         PROJECT_FEED_SEARCH ("kinemaster://kinemaster/projectfeed/search/background"),
         PROJECT_FEED_SEARCH_DYNAMIC_LINK("https://qf58u.app.goo.gl/NJ4K"),
-        PROJECT_FEED_DETAIL ("kinemaster://kinemaster/projectfeed/5fbf2fc430c58627044b3f0b"),
+        PROJECT_FEED_DETAIL ("kinemaster://kinemaster/projectfeed/5ffef0a09b485d21f62915e7"),
         PROJECT_FEED_DETAIL_DYNAMIC_LINK("https://qf58u.app.goo.gl/gBMK"),
     }
 }

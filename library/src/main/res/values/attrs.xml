@@ -20,8 +20,9 @@
 
     <attr format="reference" name="AppDialog"/>
     <declare-styleable name="AppDialog">
-        <attr name="ad_width" format="dimension" />
-        <attr name="ad_widthMargin" format="dimension" />
+        <attr name="ad_width" format="dimension|fraction" />
+        <attr name="ad_minWidth" format="dimension|fraction" />
+        <attr name="ad_maxWidth" format="dimension|fraction" />
         <attr name="ad_background" format="reference|color" />
         <attr name="ad_paddingTop" format="dimension" />
         <attr name="ad_paddingBottom" format="dimension" />

@@ -7,16 +7,11 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="PopupTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <!--<item name="android:windowIsTranslucent">true</item>-->
-        <!--<item name="android:windowFrame">@null</item>-->
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <!--<item name="android:windowTitleStyle">@null</item>-->
-        <!--<item name="android:backgroundDimEnabled">false</item>-->
-        <!--<item name="android:background">@android:color/transparent</item>-->
+    <style name="PopupTheme">
         <item name="ad_background">@drawable/shape_r05_bg_tbc10</item>
-        <item name="ad_width">@dimen/size320</item>
-        <!--<item name="ad_widthMargin">@dimen/size40</item>-->
+        <item name="ad_width">75%</item>
+<!--        <item name="ad_minWidth">@dimen/size320</item>-->
+<!--        <item name="ad_maxWidth">80%</item>-->
         <item name="ad_paddingTop">0dp</item>
         <item name="ad_paddingBottom">0dp</item>
         <item name="ad_paddingStart">0dp</item>
@@ -64,7 +59,7 @@
         <item name="ad_bottomDivider">@null</item>
         <item name="ad_bottomDividerHeight">0dp</item>
         <item name="ad_buttonHeight">@dimen/size44</item>
-        <item name="ad_buttonTextSize">@dimen/size17</item>
+        <item name="ad_buttonTextSize">@dimen/size15</item>
         <item name="ad_buttonTextColor">@color/tbc_10</item>
         <item name="ad_buttonTextStyle">normal</item>
         <item name="ad_buttonTextGravity">center</item>

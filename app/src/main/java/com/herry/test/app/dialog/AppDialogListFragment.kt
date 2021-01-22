@@ -1,6 +1,7 @@
 package com.herry.test.app.dialog
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.graphics.Color
@@ -78,10 +79,20 @@ class AppDialogListFragment : BaseNavView<AppDialogListContract.View, AppDialogL
     override fun onScreen(type: AppDialogListContract.TestItemType) {
         when (type) {
             AppDialogListContract.TestItemType.TITLE_MESSAGE_BUTTON_1 -> {
-                Popup(requireActivity()).apply {
+                AlertDialog.Builder(requireActivity()).apply {
                     setTitle("title")
-                    setMessage("message")
-                    setPositiveButton("ok") { dialog, _ ->
+                    setMessage("message\n\nfejailfejlaef\n\nfjeilafje\n" +
+                            "\n" +
+                            "fjeilafje\n" +
+                            "\n" +
+                            "fjeilafje\n" +
+                            "\n" +
+                            "fjeilafje\n" +
+                            "\n" +
+                            "fjeilafje\n" +
+                            "\n" +
+                            "fjeilafje")
+                    setPositiveButton("ok21313213213123128098129083209183092") { dialog, _ ->
                         dialog.dismiss()
                         ToastHelper.showToast(requireActivity(), "OK")
                     }
@@ -90,15 +101,32 @@ class AppDialogListFragment : BaseNavView<AppDialogListContract.View, AppDialogL
                 }.show()
             }
             AppDialogListContract.TestItemType.TITLE_MESSAGE_BUTTON_2 -> {
-                Popup(requireContext()).apply {
+                Popup(requireActivity()).apply {
                     setTitle("title")
-                    setMessage("message")
+                    setMessage("message1234567890\n12345678901234567890123456789012345678901234567890123456789012345678901234567890\n" +
+                            "1234567890\n" +
+                            "1234567890\n" +
+                            "1234567890\n" +
+                            "1234567890\n" +
+                            "1234567890\n" +
+                            "1234567890\n" +
+                            "1234567890\n" +
+                            "1234567890\n" +
+                            "1234567890\n" +
+                            "1234567890\n" +
+                            "1234567890\n" +
+                            "1234567890\n" +
+                            "1234567890\n" +
+                            "1234567890\n" +
+                            "1234567890\n" +
+                            "1234567890\n" +
+                            "1234567890")
                     setPositiveButton("button3")
                     setNegativeButton("button1")
                 }.show()
             }
             AppDialogListContract.TestItemType.TITLE_MESSAGE_BUTTON_3 -> {
-                Popup(requireContext()).apply {
+                Popup(requireActivity()).apply {
                     setTitle("title")
                     setMessage("message")
                     setNegativeButton("button1")
@@ -107,7 +135,7 @@ class AppDialogListFragment : BaseNavView<AppDialogListContract.View, AppDialogL
                 }.show()
             }
             AppDialogListContract.TestItemType.TITLE_MESSAGE_CLICKS_BUTTONS -> {
-                Popup(requireContext()).apply {
+                Popup(requireActivity()).apply {
                     setTitle("title")
                     setMessage("button is long clickable")
                     setPositiveButton("ok", listener = object : AppDialog.OnClicksListener {
@@ -143,7 +171,7 @@ class AppDialogListFragment : BaseNavView<AppDialogListContract.View, AppDialogL
                 }.show()
             }
             AppDialogListContract.TestItemType.TITLE_MESSAGE_SUB_MESSAGE_BUTTON_1 -> {
-                Popup(requireContext()).apply {
+                Popup(requireActivity()).apply {
                     setTitle("title")
                     setMessage("message")
                     setSubMessage("sub-message")
@@ -151,7 +179,7 @@ class AppDialogListFragment : BaseNavView<AppDialogListContract.View, AppDialogL
                 }.show()
             }
             AppDialogListContract.TestItemType.TITLE_LIST_BUTTON_2 -> {
-                Popup(requireContext()).apply {
+                Popup(requireActivity()).apply {
                     setTitle("title")
                     setMultiChoiceItems(arrayOf("1", "2"), arrayOf(false, true)) { _, witch, checked ->
                         ToastHelper.showToast(requireActivity(), "$witch is checked = $checked")
@@ -161,7 +189,7 @@ class AppDialogListFragment : BaseNavView<AppDialogListContract.View, AppDialogL
                 }.show()
             }
             AppDialogListContract.TestItemType.MESSAGE_BUTTON_3 -> {
-                Popup(requireContext()).apply {
+                Popup(requireActivity()).apply {
                     setMessage("message")
                     setNegativeButton("button1")
                     setNeutralButton("button2")
@@ -169,7 +197,7 @@ class AppDialogListFragment : BaseNavView<AppDialogListContract.View, AppDialogL
                 }.show()
             }
             AppDialogListContract.TestItemType.TITLE_VIEW -> {
-                Popup(requireContext()).apply {
+                Popup(requireActivity()).apply {
                     setTitle("title")
                     setView(TextView(requireContext()).apply {
                         minimumHeight = 100
@@ -179,8 +207,9 @@ class AppDialogListFragment : BaseNavView<AppDialogListContract.View, AppDialogL
                 }.show()
             }
             AppDialogListContract.TestItemType.VIEW -> {
-                Popup(requireContext()).apply {
+                Popup(requireActivity()).apply {
                     setView(TextView(requireContext()).apply {
+                        layoutParams = ViewGroup.LayoutParams(500, ViewGroup.LayoutParams.WRAP_CONTENT)
                         minimumHeight = 100
                         text = "set view"
                         setBackgroundColor(Color.argb(0xff, 0xff, 0, 0))
@@ -188,7 +217,7 @@ class AppDialogListFragment : BaseNavView<AppDialogListContract.View, AppDialogL
                 }.show()
             }
             AppDialogListContract.TestItemType.VIEW_BUTTON_1 -> {
-                Popup(requireContext()).apply {
+                Popup(requireActivity()).apply {
                     setTitle("title")
                     setView(TextView(requireContext()).apply {
                         minimumHeight = 100
@@ -219,7 +248,7 @@ class AppDialogListFragment : BaseNavView<AppDialogListContract.View, AppDialogL
                 }.show()
             }
             AppDialogListContract.TestItemType.CUSTOM_VIEW -> {
-                Popup(requireContext()).apply {
+                Popup(requireActivity()).apply {
                     setCustomView(TextView(requireContext()).apply {
                         minimumHeight = 400
                         text = "custom view"
@@ -229,14 +258,15 @@ class AppDialogListFragment : BaseNavView<AppDialogListContract.View, AppDialogL
 
             }
             AppDialogListContract.TestItemType.RESIZE_DIALOG -> {
-                Popup(requireContext()).apply {
+                Popup(requireActivity()).apply {
                     setCustomView(TextView(requireContext()).apply {
                         gravity = Gravity.CENTER
                         text = "full size custom view"
-                        setBackgroundColor(Color.argb(0xff, 0xff, 0xff, 0))
+//                        setBackgroundColor(Color.argb(0xff, 0xff, 0xff, 0))
                     })
                     setBackgroundDrawable(getColorDrawable(context, android.R.color.transparent))
                     setDialogSize(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT, Gravity.TOP or Gravity.CENTER_HORIZONTAL)
+                    setDialogDimAmount(0f)
                 }.show()
             }
         }

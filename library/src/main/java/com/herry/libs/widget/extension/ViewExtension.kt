@@ -68,7 +68,8 @@ fun ImageView.setImage(
 
     // sets color sate list
     imageTintList = ViewUtil.getColorStateList(
-        context, if (drawable.isStateful) statefulColorSateResId else notStatefulColorSateResId)
+        context, if (drawable.isStateful) statefulColorSateResId else notStatefulColorSateResId
+    )
 }
 
 fun ImageView.setImage(
@@ -104,7 +105,8 @@ fun View.setViewSize(width: Int, height: Int) {
 }
 
 fun View.setViewWidth(width: Int) {
-    val params = this.layoutParams
+    val params = this.layoutParams ?: ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+
     // set width
     if (0 <= width) {
         params.width = width
@@ -180,4 +182,20 @@ fun TextView.addLink(target: String, url: String?) {
     if (target.isNotEmpty() && text?.toString()?.contains(target) == true) {
         Linkify.addLinks(this, Pattern.compile(target), url, null, Linkify.TransformFilter { _, _ -> "" })
     }
+}
+
+fun View.getViewMeasuredWidth(): Int {
+    val displayMetrics = context?.resources?.displayMetrics ?: return 0
+    measure(displayMetrics.widthPixels, displayMetrics.heightPixels)
+    return measuredWidth
+}
+
+fun View.getViewMeasuredHeight(): Int {
+    val displayMetrics = context?.resources?.displayMetrics ?: return 0
+    measure(displayMetrics.widthPixels, displayMetrics.heightPixels)
+    return measuredHeight
+}
+
+fun View.measure() {
+    measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
 }

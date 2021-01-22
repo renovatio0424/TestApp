@@ -1,10 +1,12 @@
 package com.herry.libs.widget.view
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.Point
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
@@ -19,6 +21,7 @@ import com.herry.libs.R
 import com.herry.libs.widget.extension.*
 import kotlin.math.roundToInt
 
+@SuppressLint("InflateParams")
 @Suppress("unused", "MemberVisibilityCanBePrivate", "LocalVariableName")
 open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes dialogThemeResId: Int = 0) : DialogInterface {
 
@@ -29,7 +32,7 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
     private val context: ContextThemeWrapper = ContextThemeWrapper(context, themeResId)
     private var dialog: Dialog? = null
 
-    private var container: ViewGroup? = null
+    private var container: FrameLayoutEx? = null
     private var topContainer: FrameLayout? = null
 
     private var titleContainer: View? = null
@@ -70,7 +73,9 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
 
     // view information
     private var dialogWidth = 0
-    private var dialogWidthMargin = 0
+    private var dialogMinWidth = 0
+    private var dialogMaxWidth = 0
+    private var dialogHeightMargin = 0
     private var dialogBackground: Drawable? = null
     private var dialogPaddingStart = 0
     private var dialogPaddingTop = 0
@@ -147,6 +152,10 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
     private var listItemLayout = android.R.layout.select_dialog_item
     private var singleChoiceItemLayout = android.R.layout.select_dialog_singlechoice
     private var multiChoiceItemLayout = android.R.layout.select_dialog_multichoice
+    private var listItemDividerHeight = -1
+    private var listItemDivider: Drawable? = null
+    private var listItemSelector: Drawable? = null
+    private var listScrollbarFadingEnabled = true
 
     private val buttonOnClickListener = View.OnClickListener { v ->
         when (v?.id) {
@@ -189,19 +198,58 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
         }
     }
 
-    private fun initialize(@StyleRes themeResId: Int) {
-        val container = this.container ?: return
+    private fun getDisplaySize() : Point? {
+        val wm = this.context.getSystemService(Context.WINDOW_SERVICE) as WindowManager? ?: return null
+        val display = wm.defaultDisplay
+        val metrics = DisplayMetrics()
+        display.getMetrics(metrics)
+        val width = metrics.widthPixels
+        val height = metrics.heightPixels
 
-        var listItemDividerHeight = -1
-        var listItemDivider: Drawable? = null
-        var listItemSelector: Drawable? = null
-        var listScrollbarFadingEnabled = true
+        return Point(width, height)
+    }
 
-        val attrs = context.theme?.obtainStyledAttributes(themeResId, R.styleable.AppDialog)
+    private fun retrieveAttributes(@StyleRes themeResId: Int) {
+        val attrs = this.context.theme?.obtainStyledAttributes(themeResId, R.styleable.AppDialog)
         if (attrs != null) {
             // sets dialog attributes
-            dialogWidth = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_width, 0)
-            dialogWidthMargin = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_widthMargin, 0)
+
+            val dialogWidthStyleIndex = R.styleable.AppDialog_ad_width
+            val dialogWidthTypedValue = attrs.peekValue(dialogWidthStyleIndex)
+            when (dialogWidthTypedValue?.type) {
+                TypedValue.TYPE_FRACTION -> {
+                    val fraction = attrs.getFraction(dialogWidthStyleIndex, 1, 1, 0f)
+                    dialogWidth = ((getDisplaySize()?.x ?: 0) * ((fraction * 100f).roundToInt()) / 100f).toInt()
+                }
+                TypedValue.TYPE_DIMENSION -> {
+                    dialogWidth = attrs.getDimensionPixelSize(dialogWidthStyleIndex, 0)
+                }
+            }
+
+            val dialogMinWidthStyleIndex = R.styleable.AppDialog_ad_minWidth
+            val dialogMinWidthTypedValue = attrs.peekValue(dialogMinWidthStyleIndex)
+            when (dialogMinWidthTypedValue?.type) {
+                TypedValue.TYPE_FRACTION -> {
+                    val fraction = attrs.getFraction(dialogMinWidthStyleIndex, 1, 1, 0f)
+                    dialogMinWidth = ((getDisplaySize()?.x ?: 0) * ((fraction * 100f).roundToInt()) / 100f).toInt()
+                }
+                TypedValue.TYPE_DIMENSION -> {
+                    dialogMinWidth = attrs.getDimensionPixelSize(dialogMinWidthStyleIndex, 0)
+                }
+            }
+
+            val dialogMaxWidthStyleIndex = R.styleable.AppDialog_ad_maxWidth
+            val dialogMaxWidthTypedValue = attrs.peekValue(dialogMaxWidthStyleIndex)
+            when (dialogMaxWidthTypedValue?.type) {
+                TypedValue.TYPE_FRACTION -> {
+                    val fraction = attrs.getFraction(dialogMaxWidthStyleIndex, 1, 1, 0f)
+                    dialogMaxWidth = ((getDisplaySize()?.x ?: 0) * ((fraction * 100f).roundToInt()) / 100f).toInt()
+                }
+                TypedValue.TYPE_DIMENSION -> {
+                    dialogMaxWidth = attrs.getDimensionPixelSize(dialogMaxWidthStyleIndex, 0)
+                }
+            }
+
             dialogBackground = attrs.getDrawable(R.styleable.AppDialog_ad_background)
             dialogPaddingTop = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_paddingTop, 0)
             dialogPaddingBottom = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_paddingBottom, 0)
@@ -338,6 +386,10 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
 
             attrs.recycle()
         }
+    }
+
+    private fun initViews() {
+        val container = this.container ?: return
 
         // set dialog background
         dialogBackground?.run {
@@ -669,7 +721,7 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
         }
     }
 
-    fun setMessage(messageId: Int) {
+    open fun setMessage(messageId: Int) {
         setMessage(messageId, mutableListOf())
     }
 
@@ -691,7 +743,7 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
         updateMessageGap()
     }
 
-    fun setMessage(message: CharSequence?) {
+    open fun setMessage(message: CharSequence?) {
         setMessage(message, mutableListOf())
     }
 
@@ -952,9 +1004,19 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
     }
 
     fun setAnimationStyle(@StyleRes style: Int) {
-        val dialog = this.dialog ?: return
-        val window = dialog.window
-        window?.attributes?.windowAnimations = style
+        dialog?.window?.attributes?.windowAnimations = style
+    }
+
+    fun setWindowFlags(flags: Int, mask: Int) {
+        dialog?.window?.setFlags(flags, mask)
+    }
+
+    fun addWindowFlags(flags: Int) {
+        dialog?.window?.addFlags(flags)
+    }
+
+    fun clearWindowFlags(flags: Int) {
+        dialog?.window?.clearFlags(flags)
     }
 
     /**
@@ -1047,7 +1109,7 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
         setMultiChoiceItems(context.resources?.getStringArray(itemsId), checkedItems, listener)
     }
 
-    fun setMultiChoiceItems(items: Array<String>?, checkedItems: Array<Boolean>? = arrayOf(),listener: DialogInterface.OnMultiChoiceClickListener?) {
+    fun setMultiChoiceItems(items: Array<String>?, checkedItems: Array<Boolean>? = arrayOf(), listener: DialogInterface.OnMultiChoiceClickListener?) {
         messageContainer?.isVisible = false
 
         listView?.run {
@@ -1415,44 +1477,66 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
 
     init {
         val inflater = this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater?
-        container = inflater?.inflate(R.layout.app_dialog, FrameLayout(this.context), false) as ViewGroup?
-        container?.run {
-            this.clipToOutline = true
-        }
-
-        initialize(themeResId)
-
+        container = inflater?.inflate(R.layout.app_dialog, null, false) as FrameLayoutEx?
         container?.let { container ->
-            this.dialog = Dialog(this.context, dialogThemeResId).apply {
-                requestWindowFeature(Window.FEATURE_NO_TITLE)
-                val window = this.window
-                window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                setCancelable(true)
-                setContentView(container)
+            retrieveAttributes(themeResId)
+            initViews()
 
-                // set dialog size
-                if (null != window) {
-                    if (0 < dialogWidthMargin) {
-                        val wm = this.context.getSystemService(Context.WINDOW_SERVICE) as WindowManager?
-                        if (wm != null) {
-                            val display = wm.defaultDisplay
-                            val metrics = DisplayMetrics()
-                            display.getMetrics(metrics)
-                            val width = metrics.widthPixels
-                            // val height = metrics.heightPixels
-                            val lp = WindowManager.LayoutParams()
-                            lp.copyFrom(window.attributes)
-                            lp.width = width - 2 * dialogWidthMargin
-                            window.attributes = lp
-                        }
-                    } else if (dialogWidth > 0) {
-                        val lp = WindowManager.LayoutParams()
-                        lp.copyFrom(window.attributes)
-                        lp.width = dialogWidth
-                        window.attributes = lp
-                    }
+            container.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+                if (updateCurrentOrientation()) {
+                    retrieveAttributes(themeResId)
+                    updateDialogWidowSize()
                 }
             }
+        }
+
+        this.dialog = Dialog(this.context, dialogThemeResId).apply {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            val window = this.window
+            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            setCancelable(true)
+
+            container?.let { container ->
+                setContentView(container)
+
+                // sets container size
+                container.clipToOutline = true
+
+//                if (dialogMinWidth > 0) {
+//                    container.minimumWidth = dialogMinWidth
+//                }
+//                if (dialogMaxWidth > 0) {
+//                    container.setMaximumWidth(dialogMaxWidth)
+//                }
+            }
+        }
+
+        updateCurrentOrientation()
+        updateDialogWidowSize()
+    }
+
+    private var currentOrientation: Int? = null
+
+    private fun updateCurrentOrientation(): Boolean {
+        val orientation = this.context.resources.configuration.orientation
+        if (currentOrientation == orientation) {
+            return false
+        }
+
+        currentOrientation = orientation
+        return true
+    }
+
+    private fun updateDialogWidowSize() {
+        val window = this.dialog?.window ?: return
+
+        container?.invalidate()
+
+        if (dialogWidth > 0) {
+            val lp = WindowManager.LayoutParams()
+            lp.copyFrom(window.attributes)
+            lp.width = dialogWidth
+            window.attributes = lp
         }
     }
 }
