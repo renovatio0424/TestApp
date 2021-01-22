@@ -87,7 +87,8 @@ fun ImageView.setImage(
 
 
 fun View.setViewSize(width: Int, height: Int) {
-    val params = this.layoutParams
+    val params = this.layoutParams ?: ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+
     // set width
     if (width >= 0) {
         params.width = width
@@ -105,7 +106,7 @@ fun View.setViewSize(width: Int, height: Int) {
 }
 
 fun View.setViewWidth(width: Int) {
-    val params = this.layoutParams ?: ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+    val params = this.layoutParams ?: ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 
     // set width
     if (0 <= width) {
@@ -117,7 +118,7 @@ fun View.setViewWidth(width: Int) {
 }
 
 fun View.setViewHeight(height: Int) {
-    val params: ViewGroup.LayoutParams = this.layoutParams
+    val params = this.layoutParams ?: ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 
     if (0 <= height) {
         params.height = height
