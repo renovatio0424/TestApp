@@ -10,7 +10,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
 import com.herry.libs.widget.extension.findNestedNavHostFragment
 import com.herry.libs.widget.extension.navigate
-import com.herry.libs.widget.extension.setNestedNavHostFragmentResultListener
+import com.herry.libs.widget.extension.popToNavHost
+import com.herry.libs.widget.extension.setOnNavNotifyListener
 import com.herry.test.R
 import com.herry.test.app.base.nestednav.BaseNestedNavFragment
 import com.herry.test.app.nestedfragments.nav.second.NestedNavFragmentsSecondViewModel
@@ -45,13 +46,17 @@ class NestedNavFragmentsMainFragment : BaseNestedNavFragment() {
                 subNavHostFragment = subNavHost
                 addSubNavHostFragment(subNavHostFragment)
 
-                setNestedNavHostFragmentResultListener(subNavHost) { _, bundle ->
+                setOnNavNotifyListener(subNavHost) { _, bundle ->
                     onSubScreenResults(bundle)
                 }
             }
 
             binding.nestedNavFragmentsMainFragmentBottomShowSub3.setOnClickListener {
                 subNavHostFragment?.navigate(R.id.nested_nav_fragments_sub3_fragment)
+            }
+
+            binding.nestedNavFragmentsMainFragmentBottomPopupToSub1.setOnClickListener {
+                subNavHostFragment?.popToNavHost()
             }
 
             binding.nestedNavFragmentsMainFragmentBottomShowSecond.setOnClickListener {

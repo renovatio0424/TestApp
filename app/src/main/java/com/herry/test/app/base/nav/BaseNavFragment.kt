@@ -6,8 +6,7 @@ import android.os.Bundle
 import androidx.annotation.TransitionRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.setFragmentResult
-import androidx.navigation.NavController
-import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import com.herry.libs.app.nav.NavMovement
 import com.herry.libs.helper.TransitionHelper
 import com.herry.libs.util.BundleUtil
@@ -30,7 +29,7 @@ open class BaseNavFragment: BaseFragment(), NavMovement {
         val bundle = onNavigateUpResult()
 
         if (bundle != null) {
-            val currentDestinationId = navController()?.currentBackStackEntry?.destination?.id
+            val currentDestinationId = findNavController().currentBackStackEntry?.destination?.id
             if (currentDestinationId != null) {
                 setFragmentResult(currentDestinationId.toString(), bundle)
             }
@@ -125,13 +124,7 @@ open class BaseNavFragment: BaseFragment(), NavMovement {
         }
     }
 
-    fun navigateUp(): Boolean = navController()?.navigateUp() ?: false
-
-    private fun navController(): NavController? {
-        val view = this.view ?: return null
-
-        return Navigation.findNavController(view)
-    }
+    fun navigateUp(): Boolean = findNavController().navigateUp()
 
     private val transitionHelper by lazy {
         TransitionHelper(

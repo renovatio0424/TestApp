@@ -8,7 +8,8 @@ import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProvider
 import com.herry.libs.util.BundleUtil
 import com.herry.libs.widget.extension.getNavCurrentDestinationID
-import com.herry.libs.widget.extension.setNestedNavFragmentResult
+import com.herry.libs.widget.extension.notifyToNestedNavHost
+import com.herry.libs.widget.extension.popToNavHost
 import com.herry.test.app.base.nestednav.BaseNestedNavFragment
 import com.herry.test.databinding.NestedNavFragmentsSub3FragmentBinding
 
@@ -33,7 +34,7 @@ class NestedNavFragmentsSub3Fragment : BaseNestedNavFragment() {
             _binding = NestedNavFragmentsSub3FragmentBinding.inflate(inflater, container, false)
 
             binding.nestedNavFragmentsSub3FragmentShowSecondScreen.setOnClickListener { view ->
-                setNestedNavFragmentResult(
+                notifyToNestedNavHost(
                     bundleOf(
                         "from" to getNavCurrentDestinationID(),
                         "value" to ""
@@ -42,6 +43,7 @@ class NestedNavFragmentsSub3Fragment : BaseNestedNavFragment() {
             }
 
             binding.nestedNavFragmentsSub3FragmentPopupSubs.setOnClickListener {
+                popToNavHost()
             }
         }
 
