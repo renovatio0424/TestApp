@@ -20,7 +20,7 @@ class DataCheckerMainPresenter : DataCheckerMainContract.Presenter() {
         view.root.endTransition()
     }
 
-    override fun onLaunched(view: DataCheckerMainContract.View) {
+    override fun onLaunch(view: DataCheckerMainContract.View, recreated: Boolean) {
         // sets list items
         display()
     }

@@ -24,7 +24,11 @@ class ShareMediaListPresenter : ShareMediaListContract.Presenter() {
         view.root.endTransition()
     }
 
-    override fun onLaunched(view: ShareMediaListContract.View) {
+    override fun onLaunch(view: ShareMediaListContract.View, recreated: Boolean) {
+        if (recreated) {
+            return
+        }
+
         // sets list items
         loadGifList()
     }

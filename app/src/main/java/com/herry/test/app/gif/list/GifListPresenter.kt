@@ -25,7 +25,11 @@ class GifListPresenter : GifListContract.Presenter() {
         view.root.endTransition()
     }
 
-    override fun onLaunched(view: GifListContract.View) {
+    override fun onLaunch(view: GifListContract.View, recreated: Boolean) {
+        if (recreated) {
+            return
+        }
+
         // sets list items
         loadGifList()
     }

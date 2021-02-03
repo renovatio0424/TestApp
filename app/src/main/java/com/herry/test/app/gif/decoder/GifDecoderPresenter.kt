@@ -14,7 +14,7 @@ import java.io.File
  **/
 class GifDecoderPresenter(private val data: GifMediaFileInfoData) : GifDecoderContract.Presenter() {
 
-    override fun onLaunched(view: GifDecoderContract.View) {
+    override fun onLaunch(view: GifDecoderContract.View, recreated: Boolean) {
         Log.d("Herry", "filePath = ${data.path} ")
         decode()
     }

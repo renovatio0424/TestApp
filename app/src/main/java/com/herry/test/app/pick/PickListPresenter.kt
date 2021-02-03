@@ -23,7 +23,11 @@ class PickListPresenter : PickListContract.Presenter() {
         view.root.endTransition()
     }
 
-    override fun onLaunched(view: PickListContract.View) {
+    override fun onLaunch(view: PickListContract.View, recreated: Boolean) {
+        if (recreated) {
+            return
+        }
+
         loadList()
     }
 

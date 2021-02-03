@@ -12,7 +12,10 @@ abstract class BasePresent<V> : MVPPresenter<V>() {
     protected var view: V? = null
         private set
 
-    protected val compositeDisposable = CompositeDisposable()
+    private var _compositeDisposable: CompositeDisposable? = null
+
+    // This property is only valid between onAttach and onDetach.
+    protected val compositeDisposable get() = _compositeDisposable!!
 
     private var launched = false
 
@@ -20,6 +23,13 @@ abstract class BasePresent<V> : MVPPresenter<V>() {
 
     override fun onAttach(view: V) {
         this.view = view
+
+        if (_compositeDisposable == null || _compositeDisposable?.isDisposed == true) {
+            if (_compositeDisposable != null) {
+                _compositeDisposable = null
+            }
+            _compositeDisposable = CompositeDisposable()
+        }
     }
 
     override fun onDetach() {
@@ -32,14 +42,14 @@ abstract class BasePresent<V> : MVPPresenter<V>() {
         this.reloaded = reloaded
     }
 
-    override fun onLaunch() {
+    final override fun onLaunch() {
         this.view?.let {
             if (!launched) {
                 launched = true
-                onLaunched(it)
+                onLaunch(it, false)
             } else if (reloaded) {
                 reloaded = false
-                onReloaded(it)
+                onLaunch(it, true)
             } else {
                 onResume(it)
             }
@@ -50,9 +60,7 @@ abstract class BasePresent<V> : MVPPresenter<V>() {
         compositeDisposable.clear()
     }
 
-    abstract fun onLaunched(view: V)
-
-    protected open fun onReloaded(view: V) {}
+    protected abstract fun onLaunch(view: V, recreated: Boolean = false)
 
     protected open fun onResume(view: V) {}
 

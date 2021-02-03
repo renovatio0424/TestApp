@@ -18,7 +18,11 @@ class SchemePresenter : SchemeContract.Presenter() {
         view.root.endTransition()
     }
 
-    override fun onLaunched(view: SchemeContract.View) {
+    override fun onLaunch(view: SchemeContract.View, recreated: Boolean) {
+        if (recreated) {
+            return
+        }
+
         // sets list items
         setTestItems()
     }

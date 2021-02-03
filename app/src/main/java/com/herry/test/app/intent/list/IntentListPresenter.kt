@@ -19,7 +19,11 @@ class IntentListPresenter : IntentListContract.Presenter() {
         view.root.endTransition()
     }
 
-    override fun onLaunched(view: IntentListContract.View) {
+    override fun onLaunch(view: IntentListContract.View, recreated: Boolean) {
+        if (recreated) {
+            return
+        }
+
         // sets list items
         setTestItems()
     }

@@ -19,7 +19,11 @@ class MainPresenter : MainContract.Presenter() {
         view.root.endTransition()
     }
 
-    override fun onLaunched(view: MainContract.View) {
+    override fun onLaunch(view: MainContract.View, recreated: Boolean) {
+        if (recreated) {
+            return
+        }
+
         // sets list items
         setTestItems()
     }

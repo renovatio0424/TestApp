@@ -19,7 +19,11 @@ class NestedFragmentsListPresenter : NestedFragmentsListContract.Presenter() {
         view.root.endTransition()
     }
 
-    override fun onLaunched(view: NestedFragmentsListContract.View) {
+    override fun onLaunch(view: NestedFragmentsListContract.View, recreated: Boolean) {
+        if (recreated) {
+            return
+        }
+
         // sets list items
         setTestItems()
     }
