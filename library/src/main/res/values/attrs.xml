@@ -198,6 +198,8 @@
         <attr name="ad_leftButtonSelectableBackground" format="reference|color" />
 
         <!-- center command background -->
+        <attr name="ad_centerButtonTextSize" format="dimension" />
+        <attr name="ad_centerButtonTextColor" format="reference|color" />
         <attr name="ad_centerButtonBackground" format="reference|color" />
         <attr name="ad_centerButtonSelectableBackground" format="reference|color" />
 

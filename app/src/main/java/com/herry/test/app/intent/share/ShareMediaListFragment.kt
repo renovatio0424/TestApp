@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
@@ -17,10 +18,13 @@ import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.nodeview.model.NodeRoot
 import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
+import com.herry.test.BuildConfig
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
 import com.herry.test.data.MediaFileInfoData
+import com.herry.test.widget.Popup
 import com.herry.test.widget.TitleBarForm
+import java.io.File
 
 /**
  * Created by herry.park on 2020/06/11.
@@ -68,11 +72,37 @@ class ShareMediaListFragment : BaseNavView<ShareMediaListContract.View, ShareMed
 
     inner class Adapter: NodeRecyclerAdapter(::requireContext) {
         override fun onBindForms(list: MutableList<NodeForm<out NodeHolder, *>>) {
-            list.add(FileListItemForm())
+            list.add(FileListItemForm { data ->
+                Popup(requireActivity()).apply {
+                    setMessage("path: ${data.path}\n" +
+                            "mimetype: ${data.mimeType}")
+                    setNegativeButton("Cancel")
+                    setPositiveButton("View") { dialog, _ ->
+                        dialog.dismiss()
+                        actionView(data)
+                    }
+                }.show()
+            })
         }
     }
 
-    override fun onShare(content: MediaFileInfoData) {
+    private fun actionView(content: MediaFileInfoData) {
+        activityCaller?.call(
+            ACNavigation.IntentCaller(
+                Intent().apply {
+                    val uri = FileProvider.getUriForFile(
+                        requireContext(),
+                        BuildConfig.APPLICATION_ID + ".provider",
+                        File(content.path)
+                    )
+                    action = Intent.ACTION_VIEW
+                    setDataAndType(uri, content.mimeType)
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+            ))
+    }
+
+    private fun actionShare(content: MediaFileInfoData) {
         activityCaller?.call(
             ACNavigation.IntentCaller(
             Intent().apply {
@@ -83,14 +113,20 @@ class ShareMediaListFragment : BaseNavView<ShareMediaListContract.View, ShareMed
         ))
     }
 
-    private inner class FileListItemForm : NodeForm<FileListItemForm.Holder, MediaFileInfoData>(Holder::class, MediaFileInfoData::class) {
+    private inner class FileListItemForm(private val onInformation: ((data: MediaFileInfoData) -> Unit)? = null) : NodeForm<FileListItemForm.Holder, MediaFileInfoData>(Holder::class, MediaFileInfoData::class) {
         inner class Holder(context: Context, view: View) : NodeHolder(context, view) {
             val name: TextView? = view.findViewById(R.id.file_list_item_name)
             init {
                 view.setOnClickListener {
                     NodeRecyclerForm.getBindModel(this@FileListItemForm, this@Holder)?.let {
-                        presenter?.share(it)
+                        actionShare(it)
                     }
+                }
+                view.setOnLongClickListener {
+                    NodeRecyclerForm.getBindModel(this@FileListItemForm, this@Holder)?.let {
+                        onInformation?.invoke(it)
+                    }
+                    true
                 }
             }
         }

@@ -75,9 +75,9 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
 
     override fun onScreen(type: MainContract.TestItemType) {
         when (type) {
-            MainContract.TestItemType.SCHEME_TEST -> {
-                navigate(R.id.intent_list_fragment)
-            }
+//            MainContract.TestItemType.SCHEME_TEST -> {
+//                navigate(R.id.intent_list_fragment)
+//            }
             MainContract.TestItemType.GIF_DECODER -> {
                 activityCaller?.call(
                     ACPermission.Caller(
@@ -125,7 +125,7 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
 
         override fun onBindModel(context: Context, holder: TestItemForm.Holder, model: MainContract.TestItemType) {
             holder.title?.text = when (model) {
-                MainContract.TestItemType.SCHEME_TEST -> "Intent"
+//                MainContract.TestItemType.SCHEME_TEST -> "Intent"
                 MainContract.TestItemType.GIF_DECODER -> "GIF Decoder"
                 MainContract.TestItemType.CHECKER_LIST -> "Data Checker"
                 MainContract.TestItemType.LAYOUT_SAMPLE -> "Layout Sample"

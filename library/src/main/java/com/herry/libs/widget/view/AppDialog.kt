@@ -142,6 +142,8 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
     private var leftButtonBackground: Drawable? = null
     private var leftButtonIn3ButtonsBackground: Drawable? = null
     private var leftButtonSelectableBackground: Drawable? = null
+    private var centerButtonTextSize = 0
+    private var centerButtonTextColor: ColorStateList? = null
     private var centerButtonBackground: Drawable? = null
     private var centerButtonSelectableBackground: Drawable? = null
     private var rightButtonTextSize = 0
@@ -346,6 +348,14 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
             rightButtonTextColor = attrs.getColorStateList(R.styleable.AppDialog_ad_rightButtonTextColor)
             if (rightButtonTextColor == null) {
                 rightButtonTextColor = buttonTextColor
+            }
+            centerButtonTextSize = attrs.getDimensionPixelSize(R.styleable.AppDialog_ad_centerButtonTextSize, 0)
+            if (centerButtonTextSize == 0) {
+                centerButtonTextSize = buttonTextSize
+            }
+            centerButtonTextColor = attrs.getColorStateList(R.styleable.AppDialog_ad_centerButtonTextColor)
+            if (centerButtonTextColor == null) {
+                centerButtonTextColor = buttonTextColor
             }
 
             // set left button bg drawable
@@ -584,11 +594,11 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
                     neutraButton = container.findViewById(R.id.app_dialog_button_center)
                     neutraButton?.run {
                         this.minimumWidth = buttonMinWidth
-                        if (buttonTextColor != null) {
-                            this.setTextColor(buttonTextColor)
+                        if (centerButtonTextColor != null) {
+                            this.setTextColor(centerButtonTextColor)
                         }
-                        if (buttonTextSize > 0) {
-                            this.setTextSize(TypedValue.COMPLEX_UNIT_PX, buttonTextSize.toFloat())
+                        if (centerButtonTextSize > 0) {
+                            this.setTextSize(TypedValue.COMPLEX_UNIT_PX, centerButtonTextSize.toFloat())
                         }
                         this.typeface = textStyle
                         this.setLayoutGravity(buttonTextGravity)

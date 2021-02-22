@@ -18,7 +18,7 @@ interface MainContract {
     }
 
     enum class TestItemType {
-        SCHEME_TEST,
+//        SCHEME_TEST,
         GIF_DECODER,
         CHECKER_LIST,
         LAYOUT_SAMPLE,

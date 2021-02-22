@@ -91,13 +91,13 @@ class ShareMediaListPresenter : ShareMediaListContract.Presenter() {
 
             cursor?.let {
                 RxCursorIterable.from(cursor).forEach { c ->
-                    val id = c.getString(c.getColumnIndex(MediaStore.Files.FileColumns._ID))
-                    val path = c.getString(c.getColumnIndex(MediaStore.Files.FileColumns.DATA))
-                    val mimeType = c.getString(c.getColumnIndex(MediaStore.Files.FileColumns.MIME_TYPE))
+                    val id = c.getString(c.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID)) ?: ""
+                    val path = c.getString(c.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA)) ?: ""
+                    val mimeType = c.getString(c.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MIME_TYPE)) ?: ""
                     val displayName =
-                        c.getString(c.getColumnIndex(MediaStore.Files.FileColumns.DISPLAY_NAME))
-                    val size = c.getInt(c.getColumnIndex(MediaStore.Files.FileColumns.SIZE))
-                    val date = c.getLong(c.getColumnIndex(MediaStore.Video.Media.DATE_ADDED))
+                        c.getString(c.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DISPLAY_NAME)) ?: ""
+                    val size = c.getInt(c.getColumnIndexOrThrow(MediaStore.Files.FileColumns.SIZE))
+                    val date = c.getLong(c.getColumnIndexOrThrow(MediaStore.Video.Media.DATE_ADDED))
                     medias.add(
                         MediaFileInfoData(
                             id = id,
@@ -109,12 +109,10 @@ class ShareMediaListPresenter : ShareMediaListContract.Presenter() {
                         )
                     )
                 }
+
+                it.close()
             }
             medias
         }
-    }
-
-    override fun share(content: MediaFileInfoData) {
-        view?.onShare(content)
     }
 }
