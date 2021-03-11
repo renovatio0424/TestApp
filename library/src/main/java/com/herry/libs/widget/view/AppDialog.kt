@@ -1394,6 +1394,14 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
         dialog?.setOnKeyListener(listener)
     }
 
+    protected open fun onKeyDown(keyCode: Int, event: KeyEvent) : Boolean = false
+
+    protected open fun onKeyLongPress(keyCode: Int, event: KeyEvent): Boolean = false
+
+    protected open fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean = false
+
+    protected open fun onKeyMultiple(keyCode: Int, repeatCount: Int, event: KeyEvent): Boolean = false
+
     fun getDialog(): Dialog? = dialog
 
     private class CheckedItemAdapter(
@@ -1500,7 +1508,39 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
             }
         }
 
-        this.dialog = Dialog(this.context, dialogThemeResId).apply {
+        this.dialog = object : Dialog(this.context, dialogThemeResId) {
+            override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+                if (this@AppDialog.onKeyDown(keyCode, event)) {
+                    return true
+                }
+
+                return super.onKeyDown(keyCode, event)
+            }
+
+            override fun onKeyLongPress(keyCode: Int, event: KeyEvent): Boolean {
+                if (this@AppDialog.onKeyLongPress(keyCode, event)) {
+                    return true
+                }
+
+                return super.onKeyLongPress(keyCode, event)
+            }
+
+            override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
+                if (this@AppDialog.onKeyUp(keyCode, event)) {
+                    return true
+                }
+
+                return super.onKeyUp(keyCode, event)
+            }
+
+            override fun onKeyMultiple(keyCode: Int, repeatCount: Int, event: KeyEvent): Boolean {
+                if (this@AppDialog.onKeyMultiple(keyCode, repeatCount, event)) {
+                    return true
+                }
+
+                return super.onKeyMultiple(keyCode, repeatCount, event)
+            }
+        }.apply {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             val window = this.window
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))

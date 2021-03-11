@@ -59,7 +59,10 @@ class ViewAnimPlayer {
         //        Interpolator interpolator = null;
         var startDelay: Long = 0
         val playerAnimators: MutableList<Animator> = ArrayList()
+        val isResetAnimation = animations.firstOrNull { !it.keepEnd } != null
+
         for (viewAnim in animations) {
+            viewAnim.keepEnd
             val animators = viewAnim.getAnimators()
             playerAnimators.addAll(animators)
             if (duration < viewAnim.duration) {
@@ -91,6 +94,21 @@ class ViewAnimPlayer {
             }
 
             override fun onAnimationEnd(animation: Animator) {
+                if (isResetAnimation) {
+                    val reversePlayerAnimators: MutableList<Animator> = ArrayList()
+                    animations.filter { !it.keepEnd }.forEach {
+                        val animators = it.getReverses()
+                        if (animators.isNotEmpty()) {
+                            reversePlayerAnimators.addAll(animators)
+                        }
+                    }
+
+                    AnimatorSet().apply {
+                        playTogether(reversePlayerAnimators)
+                        duration = 100
+                    }.start()
+                }
+
                 if (null == next) {
                     if (isCanceled) {
                         val cancelListener = _getOnCancelListener()
@@ -136,5 +154,10 @@ class ViewAnimPlayer {
 
     fun setRepeatMode(mode: Int) {
         repeatMode = mode
+    }
+
+    fun clear() {
+        cancel()
+        animations.clear()
     }
 }
