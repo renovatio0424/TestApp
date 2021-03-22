@@ -1,10 +1,7 @@
 package com.herry.libs.app.activity_caller.activity
 
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.net.Uri
 import android.text.TextUtils
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResult
@@ -14,7 +11,6 @@ import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.herry.libs.app.activity_caller.module.ACNavigation
-import com.herry.libs.app.activity_caller.module.ACTake
 import com.herry.libs.app.nav.NavMovement
 
 class ActivityResultLaunchers(private val activity: ComponentActivity) {
@@ -22,8 +18,6 @@ class ActivityResultLaunchers(private val activity: ComponentActivity) {
     internal class ActivityResultViewModel : ViewModel() {
         val launchActivityResult = LaunchActivityResults()
         val requestPermissionResults = RequestPermissionResults()
-        val takePictureResult = TakePictureResults()
-        val takeVideoResult = TakePictureResults()
     }
 
     private val activityResultViewModel: ActivityResultViewModel = ViewModelProvider(activity).get(ActivityResultViewModel::class.java)
@@ -38,36 +32,6 @@ class ActivityResultLaunchers(private val activity: ComponentActivity) {
         ActivityResultContracts.RequestMultiplePermissions()
     ) { grantResults: Map<String, Boolean> ->
         onRequestPermissionResult(grantResults)
-    }
-
-    private val takePictureLauncher: ActivityResultLauncher<Uri> = activity.registerForActivityResult(
-        object: ActivityResultContracts.TakePicture() {
-            override fun createIntent(context: Context, input: Uri): Intent {
-                val intent = super.createIntent(context, input)
-                // adds permission to other app
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-
-                return intent
-            }
-        }
-    ) { success ->
-        onTakePictureResult(success)
-    }
-
-    private val takeVideoLauncher: ActivityResultLauncher<Uri> = activity.registerForActivityResult(
-        object: ActivityResultContracts.TakeVideo() {
-            override fun createIntent(context: Context, input: Uri): Intent {
-                val intent = super.createIntent(context, input)
-                // adds permission to other app
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-
-                return intent
-            }
-        }
-    ) { thumbnail ->
-        onTakeVideoResult(thumbnail)
     }
 
     fun processRequestPermission(
@@ -176,50 +140,8 @@ class ActivityResultLaunchers(private val activity: ComponentActivity) {
         activityResultViewModel.requestPermissionResults.onResult = null
     }
 
-    fun processTakePicture(uri: Uri, onResult: ((result: ACTake.Result) -> Unit)?) {
-        activityResultViewModel.takePictureResult.uri = uri
-        activityResultViewModel.takePictureResult.onResult = onResult
-
-        takePictureLauncher.launch(uri)
-    }
-
-    private fun onTakePictureResult(success: Boolean) {
-        activityResultViewModel.takePictureResult.onResult?.invoke(
-            ACTake.Result(
-                callActivity = activity,
-                uri = activityResultViewModel.takePictureResult.uri,
-                success = success
-            )
-        )
-
-        activityResultViewModel.takePictureResult.uri = null
-        activityResultViewModel.takePictureResult.onResult = null
-    }
-
-    fun processTakeVideo(uri: Uri, onResult: ((result: ACTake.Result) -> Unit)?) {
-        activityResultViewModel.takeVideoResult.uri = uri
-        activityResultViewModel.takeVideoResult.onResult = onResult
-
-        takeVideoLauncher.launch(uri)
-    }
-
-    private fun onTakeVideoResult(thumbnail: Bitmap?) {
-        activityResultViewModel.takeVideoResult.onResult?.invoke(
-            ACTake.Result(
-                callActivity = activity,
-                uri = activityResultViewModel.takeVideoResult.uri,
-                success = thumbnail != null
-            )
-        )
-
-        activityResultViewModel.takeVideoResult.uri = null
-        activityResultViewModel.takeVideoResult.onResult = null
-    }
-
     fun unregisterAll() {
         requestPermissionLauncher.unregister()
         activityLauncher.unregister()
-        takePictureLauncher.unregister()
-        takeVideoLauncher.unregister()
     }
 }

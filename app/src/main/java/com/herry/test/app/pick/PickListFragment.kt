@@ -1,7 +1,6 @@
 package com.herry.test.app.pick
 
 import android.Manifest
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -16,7 +15,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
-import com.herry.libs.app.activity_caller.module.ACNavigation
 import com.herry.libs.app.activity_caller.module.ACPermission
 import com.herry.libs.app.activity_caller.module.ACTake
 import com.herry.libs.helper.ToastHelper
@@ -87,10 +85,9 @@ class PickListFragment: BaseNavView<PickListContract.View, PickListContract.Pres
                     ACPermission.Caller(
                         arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                         onGranted = {
-                            activityCaller?.call(ACNavigation.IntentCaller(intent) { result ->
-                                if (Activity.RESULT_OK == result.resultCode) {
-                                    val picked: Uri? = result.intent?.data
-
+                            activityCaller?.call(ACTake.PickPicture { result ->
+                                if (result.success) {
+                                    val picked: Uri? = result.uris.firstOrNull()
                                     ToastHelper.showToast(activity, "selected photo: ${picked.toString()}")
                                 } else {
                                     ToastHelper.showToast(activity, "cancel photo selection")
@@ -110,13 +107,12 @@ class PickListFragment: BaseNavView<PickListContract.View, PickListContract.Pres
                     ACPermission.Caller(
                         arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                         onGranted = {
-                            activityCaller?.call(ACNavigation.IntentCaller(intent) { result ->
-                                if (Activity.RESULT_OK == result.resultCode) {
-                                    val picked: Uri? = result.intent?.data
-
-                                    ToastHelper.showToast(activity, "selected photo: ${picked.toString()}")
+                            activityCaller?.call(ACTake.PickVideo { result ->
+                                if (result.success) {
+                                    val picked: Uri? = result.uris.firstOrNull()
+                                    ToastHelper.showToast(activity, "selected video: ${picked.toString()}")
                                 } else {
-                                    ToastHelper.showToast(activity, "cancel photo selection")
+                                    ToastHelper.showToast(activity, "cancel video selection")
                                 }
                             })
                         }
@@ -142,7 +138,7 @@ class PickListFragment: BaseNavView<PickListContract.View, PickListContract.Pres
                                     val activity = result.callActivity
                                     activity.lifecycleScope.launchWhenResumed {
                                         if (result.success) {
-                                            val picked: Uri? = result.uri
+                                            val picked: Uri? = result.uris.firstOrNull()
                                             if (picked == null) {
                                                 MediaScanner.newInstance(requireContext()).run {
                                                     mediaScanning(tempFile.absolutePath)
@@ -167,7 +163,7 @@ class PickListFragment: BaseNavView<PickListContract.View, PickListContract.Pres
                                     activity.lifecycleScope.launchWhenResumed {
                                         Log.d("Herry", "path: ${activity.lifecycle.currentState}")
                                         if (result.success) {
-                                            val picked: Uri? = result.uri
+                                            val picked: Uri? = result.uris.firstOrNull()
                                             if (picked == null) {
                                                 MediaScanner.newInstance(requireContext()).run {
                                                     mediaScanning(tempFile.absolutePath)

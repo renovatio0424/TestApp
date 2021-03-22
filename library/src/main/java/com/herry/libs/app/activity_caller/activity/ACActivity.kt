@@ -2,7 +2,6 @@ package com.herry.libs.app.activity_caller.activity
 
 import android.app.Dialog
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatActivity
@@ -10,7 +9,6 @@ import androidx.core.app.ActivityOptionsCompat
 import com.herry.libs.app.activity_caller.AC
 import com.herry.libs.app.activity_caller.ACBase
 import com.herry.libs.app.activity_caller.module.ACNavigation
-import com.herry.libs.app.activity_caller.module.ACTake
 
 abstract class ACActivity : AppCompatActivity(), AC {
 
@@ -47,14 +45,6 @@ abstract class ACActivity : AppCompatActivity(), AC {
                             onBlocked(_permission)
                         }
                     })
-            }
-
-            override fun takePicture(uri: Uri, onResult: ((result: ACTake.Result) -> Unit)?) {
-                activityResultLaunchers.processTakePicture(uri, onResult)
-            }
-
-            override fun takeVideo(uri: Uri, onResult: ((result: ACTake.Result) -> Unit)?) {
-                activityResultLaunchers.processTakeVideo(uri, onResult)
             }
         })
     }

@@ -1,7 +1,6 @@
 package com.herry.libs.app.activity_caller
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import androidx.activity.ComponentActivity
@@ -12,7 +11,7 @@ import com.herry.libs.app.activity_caller.module.ACPermission
 import com.herry.libs.app.activity_caller.module.ACTake
 
 class ACBase(private val listener: ACBaseListener) : AC {
-    interface ACBaseListener : ACModule.OnPermissionListener, ACModule.OnTakeListener {
+    interface ACBaseListener : ACModule.OnPermissionListener {
         fun getActivity(): ComponentActivity
 
         fun launchActivity(intent: Intent,
@@ -54,16 +53,7 @@ class ACBase(private val listener: ACBaseListener) : AC {
             }
             is ACTake.Caller -> {
                 val module = ACTake(caller, object : ACTake.ACTakeListener {
-
                     override fun getActivity(): ComponentActivity = listener.getActivity()
-
-                    override fun takePicture(uri: Uri, onResult: ((result: ACTake.Result) -> Unit)?) {
-                        listener.takePicture(uri, onResult)
-                    }
-
-                    override fun takeVideo(uri: Uri, onResult: ((result: ACTake.Result) -> Unit)?) {
-                        listener.takeVideo(uri, onResult)
-                    }
                 })
                 module.call()
             }

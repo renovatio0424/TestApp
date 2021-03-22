@@ -1,11 +1,9 @@
 package com.herry.libs.app.activity_caller
 
 import android.content.Intent
-import android.net.Uri
 import androidx.activity.ComponentActivity
 import androidx.core.app.ActivityOptionsCompat
 import com.herry.libs.app.activity_caller.module.ACNavigation
-import com.herry.libs.app.activity_caller.module.ACTake
 
 interface ACModule {
     interface OnListener<T : ACModule> {
@@ -26,12 +24,6 @@ interface ACModule {
             onDenied: ((permission: Array<String>) -> Unit)?,
             onBlocked: ((permission: Array<String>) -> Unit)?
         )
-    }
-
-    interface OnTakeListener {
-        fun takePicture(uri: Uri, onResult: ((result: ACTake.Result) -> Unit)? = null)
-
-        fun takeVideo(uri: Uri, onResult: ((result: ACTake.Result) -> Unit)? = null)
     }
 
     fun call()
