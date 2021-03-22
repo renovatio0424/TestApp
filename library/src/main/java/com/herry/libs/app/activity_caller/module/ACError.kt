@@ -1,24 +1,16 @@
 package com.herry.libs.app.activity_caller.module
 
-import android.content.Intent
 import com.herry.libs.app.activity_caller.ACModule
-import com.herry.libs.helper.PopupHelper
 import java.util.concurrent.ExecutionException
 
 class ACError(private val caller: Caller, private val listener: ACErrorListener): ACModule {
 
-    interface ACErrorListener: ACModule.OnListener<ACError> {
-        fun getPopupHelper(): PopupHelper
-    }
+    interface ACErrorListener: ACModule.OnListener<ACError>
 
     open class Caller(
         internal val throwable: Throwable,
         internal val listener: ((throwable: Throwable) -> Unit)? = null
     )
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
-        return false
-    }
 
     override fun call() {
         when(caller.throwable) {

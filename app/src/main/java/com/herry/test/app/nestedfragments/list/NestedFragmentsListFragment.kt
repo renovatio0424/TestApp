@@ -79,8 +79,8 @@ class NestedFragmentsListFragment : BaseNavView<NestedFragmentsListContract.View
             NestedFragmentsListContract.TestItemType.NORMAL -> {
                 activityCaller?.call(
                     ACNavigation.IntentCaller(
-                    Intent(requireActivity(), NestedFragmentsActivity::class.java), result = { resultCode, _, _ ->
-                        if (resultCode == Activity.RESULT_OK) {
+                    Intent(requireActivity(), NestedFragmentsActivity::class.java), onResult = { result ->
+                        if (result.resultCode == Activity.RESULT_OK) {
                             Log.d("Herry", "result = OK")
                         }
                     }
@@ -90,8 +90,8 @@ class NestedFragmentsListFragment : BaseNavView<NestedFragmentsListContract.View
 //                navController()?.navigate(R.id.nested_nav_fragments_navigation)
                 activityCaller?.call(
                     ACNavigation.IntentCaller(
-                        Intent(requireActivity(), NestedNavFragmentsActivity::class.java), result = { resultCode, _, _ ->
-                            if (resultCode == Activity.RESULT_OK) {
+                        Intent(requireActivity(), NestedNavFragmentsActivity::class.java), onResult = { result ->
+                            if (result.resultCode == Activity.RESULT_OK) {
                                 Log.d("Herry", "result = OK")
                             }
                         }

@@ -1,6 +1,5 @@
 package com.herry.libs.app.activity_caller.module
 
-import android.content.Intent
 import com.herry.libs.app.activity_caller.ACModule
 import com.herry.libs.helper.PopupHelper
 import kotlin.reflect.KClass
@@ -15,10 +14,6 @@ class ACInject(private val listener: ACModule.OnListener<ACInject>): ACModule {
         internal val cls: KClass<T>,
         internal val inject: ((inject: T) -> Unit)
     )
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
-        return false
-    }
 
     override fun call() {
     }

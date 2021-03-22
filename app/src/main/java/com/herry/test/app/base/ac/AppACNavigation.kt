@@ -17,10 +17,9 @@ class AppACNavigation(private val caller: Caller, private val listener: ACModule
 //        internal val systemUiVisibility: Int = 0,
 //        internal val statusBarColor: Int = 0,vgb
         internal val transparentStatusBarFullScreen: Boolean = false,
-        useTransition: Boolean = true,
         transitions: Array<Transition>? = null,
-        result: ((resultCode: Int, intent: Intent?, bundle: Bundle?) -> Unit)? = null
-    ) : Caller(useTransition, transitions, result)
+        onResult: ((result: Result) -> Unit)? = null
+    ) : Caller(transitions, onResult)
 
     override fun getCallerIntent(activity: Activity): Intent? {
         return when(caller) {

@@ -1,169 +1,90 @@
 package com.herry.libs.app.activity_caller.activity
 
-import android.app.Activity
+import android.app.Dialog
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
-import android.text.TextUtils
+import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.core.app.ActivityOptionsCompat
 import com.herry.libs.app.activity_caller.AC
 import com.herry.libs.app.activity_caller.ACBase
-import com.herry.libs.helper.ApiHelper
+import com.herry.libs.app.activity_caller.module.ACNavigation
+import com.herry.libs.app.activity_caller.module.ACTake
 
 abstract class ACActivity : AppCompatActivity(), AC {
 
-    protected lateinit var activityCaller: ACBase
+    lateinit var activityCaller: ACBase
+        private set
 
-    class ACBaseViewModelFactory(private val param: ACBase.ACBaseListener) : ViewModelProvider.Factory {
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return if (modelClass.isAssignableFrom(ACBase::class.java)) {
-                @Suppress("UNCHECKED_CAST")
-                ACBase(param) as T
-            } else {
-                throw IllegalArgumentException()
-            }
-        }
-    }
+    private lateinit var activityResultLaunchers: ActivityResultLaunchers
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        activityCaller = ViewModelProvider(this, ACBaseViewModelFactory(
-            object : ACBase.ACBaseListener {
-                override fun getActivity(): Activity = this@ACActivity
-                override fun checkPermission(
-                    permission: Array<String>,
-                    blockRequest: Boolean,
-                    showBlockPopup: Boolean,
-                    onGranted: ((permission: Array<String>) -> Unit)?,
-                    onDenied: ((permission: Array<String>) -> Unit)?,
-                    onBlocked: ((permission: Array<String>) -> Unit)?
-                ) {
-                    checkPermission(permission, blockRequest, { _permission ->
-                        onGranted?.let { it(_permission) }
-                    }, { _permission ->
-                        onDenied?.let { it(_permission) }
-                    }, { _permission ->
-                        if (showBlockPopup) showBlockedPermissionPopup()
-                        onBlocked?.let { it(_permission) }
-                    })
-                }
+        activityResultLaunchers = ActivityResultLaunchers(this)
+
+        activityCaller = ACBase(object : ACBase.ACBaseListener {
+            override fun getActivity(): ComponentActivity = this@ACActivity
+
+            override fun launchActivity(intent: Intent, options: ActivityOptionsCompat?, onResult: ((result: ACNavigation.Result) -> Unit)?) {
+                activityResultLaunchers.processLaunchActivity(intent, options, onResult)
             }
-        )).get(ACBase::class.java)
+
+            override fun requestPermission(permission: Array<String>, onGranted: ((permission: Array<String>) -> Unit)?, onDenied: ((permission: Array<String>) -> Unit)?, onBlocked: ((permission: Array<String>) -> Unit)?) {
+                activityResultLaunchers.processRequestPermission(
+                    permission,
+                    onGranted = { _permission ->
+                        onGranted?.let { it(_permission) }
+                    },
+                    onDenied = { _permission ->
+                        onDenied?.let { it(_permission) }
+                    },
+                    onBlocked = { _permission ->
+                        if (onBlocked == null) {
+                            showBlockedPermissionPopup(_permission)
+                        } else {
+                            onBlocked(_permission)
+                        }
+                    })
+            }
+
+            override fun takePicture(uri: Uri, onResult: ((result: ACTake.Result) -> Unit)?) {
+                activityResultLaunchers.processTakePicture(uri, onResult)
+            }
+
+            override fun takeVideo(uri: Uri, onResult: ((result: ACTake.Result) -> Unit)?) {
+                activityResultLaunchers.processTakeVideo(uri, onResult)
+            }
+        })
+    }
+
+    override fun onPause() {
+        hideBlockedPermissionPopup()
+
+        super.onPause()
     }
 
     override fun <T> call(caller: T) {
         activityCaller.call(caller)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (activityCaller.activityResult(requestCode, resultCode, data)) {
-            return
-        }
-        super.onActivityResult(requestCode, resultCode, data)
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        if (requestCode == PERMISSIONS_REQUEST_RESULT) {
-            permissionResults?.let {
-                val deniedPermissions = mutableListOf<String>()
-                for (i in grantResults.indices) {
-                    if (i < permissions.size) {
-                        when (grantResults[i]) {
-                            PackageManager.PERMISSION_GRANTED -> it.grantedPermissions.add(
-                                permissions[i]
-                            )
-                            PackageManager.PERMISSION_DENIED -> deniedPermissions.add(permissions[i])
-                        }
-                    }
-                }
-
-                it.onResults(
-                    it.grantedPermissions.toTypedArray(),
-                    deniedPermissions.toTypedArray(),
-                    it.blockedPermissions.toTypedArray()
-                )
-            }
-        } else {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    private var blockedPermissionPopup: Dialog? = null
+    private fun showBlockedPermissionPopup(permissions: Array<String>) {
+        hideBlockedPermissionPopup()
+        blockedPermissionPopup = getBlockedPermissionPopup(permissions)?.also {
+            it.show()
         }
     }
 
-    abstract fun showBlockedPermissionPopup()
-
-    private class PermissionResults(
-        val onResults: (granted: Array<String>, denied: Array<String>, blocked: Array<String>) -> Unit
-    ) {
-        val grantedPermissions = mutableListOf<String>()
-        val blockedPermissions = mutableListOf<String>()
+    private fun hideBlockedPermissionPopup() {
+        blockedPermissionPopup?.dismiss()
     }
 
-    private var permissionResults: PermissionResults? = null
+    protected open fun getBlockedPermissionPopup(permissions: Array<String>): Dialog? = null
 
-    companion object {
-        private const val PERMISSIONS_REQUEST_RESULT = 1000
+    override fun onDestroy() {
+        activityResultLaunchers.unregisterAll()
+        super.onDestroy()
     }
-
-    fun checkPermission(
-        permissions: Array<String>,
-        blockRequest: Boolean,
-        onGranted: ((permission: Array<String>) -> Unit)? = null,
-        onDenied: ((permission: Array<String>) -> Unit)? = null,
-        onBlocked: ((permission: Array<String>) -> Unit)? = null
-    ) {
-        if (permissions.isEmpty()) {
-            onGranted?.let { it(permissions) }
-            return
-        }
-
-        if (ApiHelper.hasMarshmallow()) {
-            val requestPermissions = mutableListOf<String>()
-
-            val permissionResults =
-                PermissionResults { granted: Array<String>, denied: Array<String>, blocked: Array<String> ->
-                    when {
-                        denied.isNotEmpty() -> onDenied?.let { it(denied) }
-                        blocked.isNotEmpty() -> onBlocked?.let { it(blocked) }
-                        else -> onGranted?.let { it(granted) }
-                    }
-                }
-
-            for (permission in permissions) {
-                if (TextUtils.isEmpty(permission)) {
-                    continue
-                }
-
-                if (checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED) {
-                    permissionResults.grantedPermissions.add(permission)
-                } else if (shouldShowRequestPermissionRationale(permission) && !blockRequest) {
-                    permissionResults.blockedPermissions.add(permission)
-                } else {
-                    requestPermissions.add(permission)
-                }
-            }
-
-            if (requestPermissions.isNotEmpty()) {
-                this@ACActivity.permissionResults = permissionResults
-                requestPermissions(
-                    requestPermissions.toTypedArray(),
-                    PERMISSIONS_REQUEST_RESULT
-                )
-            } else {
-                permissionResults.onResults(
-                    permissionResults.grantedPermissions.toTypedArray(),
-                    arrayOf(),
-                    permissionResults.blockedPermissions.toTypedArray()
-                )
-            }
-        } else {
-            onGranted?.let { it(permissions) }
-        }
-    }
-
 }

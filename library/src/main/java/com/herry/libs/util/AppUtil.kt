@@ -537,4 +537,16 @@ object AppUtil {
 
         return null
     }
+
+    fun showAppInfoSettingScreen(context: Context?) {
+        context ?: return
+        try {
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                .setData(Uri.parse("package:" + context.packageName))
+            context.startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            e.printStackTrace()
+            context.startActivity(Intent(Settings.ACTION_MANAGE_APPLICATIONS_SETTINGS))
+        }
+    }
 }

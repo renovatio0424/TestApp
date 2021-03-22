@@ -12,11 +12,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.herry.libs.app.activity_caller.module.ACNavigation
 import com.herry.libs.app.activity_caller.module.ACPermission
+import com.herry.libs.app.activity_caller.module.ACTake
 import com.herry.libs.helper.ToastHelper
 import com.herry.libs.media.media_scanner.MediaScanner
 import com.herry.libs.nodeview.NodeForm
@@ -85,13 +87,13 @@ class PickListFragment: BaseNavView<PickListContract.View, PickListContract.Pres
                     ACPermission.Caller(
                         arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                         onGranted = {
-                            activityCaller?.call(ACNavigation.IntentCaller(intent) { resultCode, intent, _ ->
-                                if (Activity.RESULT_OK == resultCode) {
-                                    val picked: Uri? = intent?.data
+                            activityCaller?.call(ACNavigation.IntentCaller(intent) { result ->
+                                if (Activity.RESULT_OK == result.resultCode) {
+                                    val picked: Uri? = result.intent?.data
 
-                                    ToastHelper.showToast(requireActivity(), "selected photo: ${picked.toString()}")
+                                    ToastHelper.showToast(activity, "selected photo: ${picked.toString()}")
                                 } else {
-                                    ToastHelper.showToast(requireActivity(), "cancel photo selection")
+                                    ToastHelper.showToast(activity, "cancel photo selection")
                                 }
                             })
                         }
@@ -108,13 +110,13 @@ class PickListFragment: BaseNavView<PickListContract.View, PickListContract.Pres
                     ACPermission.Caller(
                         arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                         onGranted = {
-                            activityCaller?.call(ACNavigation.IntentCaller(intent) { resultCode, intent, _ ->
-                                if (Activity.RESULT_OK == resultCode) {
-                                    val picked: Uri? = intent?.data
+                            activityCaller?.call(ACNavigation.IntentCaller(intent) { result ->
+                                if (Activity.RESULT_OK == result.resultCode) {
+                                    val picked: Uri? = result.intent?.data
 
-                                    ToastHelper.showToast(requireActivity(), "selected photo: ${picked.toString()}")
+                                    ToastHelper.showToast(activity, "selected photo: ${picked.toString()}")
                                 } else {
-                                    ToastHelper.showToast(requireActivity(), "cancel photo selection")
+                                    ToastHelper.showToast(activity, "cancel photo selection")
                                 }
                             })
                         }
@@ -126,15 +128,6 @@ class PickListFragment: BaseNavView<PickListContract.View, PickListContract.Pres
                     ACPermission.Caller(
                         arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                         onGranted = {
-                            val takeIntent = Intent(if (type == PickListContract.PickType.TAKE_PHOTO) MediaStore.ACTION_IMAGE_CAPTURE else MediaStore.ACTION_VIDEO_CAPTURE)
-                            // Ensure that there's a camera activity to handle the intent
-                            takeIntent.resolveActivity(requireActivity().packageManager ?: return@Caller) ?: return@Caller
-
-
-                            // adds permission to other app
-                            takeIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                            takeIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-
                             val tempFile = try {
                                 presenter?.getToTakeTempFile(type)
                             } catch (ex: IOException) {
@@ -144,26 +137,55 @@ class PickListFragment: BaseNavView<PickListContract.View, PickListContract.Pres
                             // Create the File where the photo should go
                             val saveFileURI: Uri = presenter?.getUriForFileProvider(tempFile) ?: return@Caller
 
-                            takeIntent.putExtra(MediaStore.EXTRA_OUTPUT, saveFileURI)
-                            activityCaller?.call(ACNavigation.IntentCaller(takeIntent, useTransition = false) { resultCode, intent, _ ->
-                                if (Activity.RESULT_OK == resultCode) {
-                                    val picked: Uri? = intent?.data
-                                    if (picked == null) {
-                                        MediaScanner.newInstance(requireContext()).run {
-                                            mediaScanning(tempFile.absolutePath)
+                            if (type == PickListContract.PickType.TAKE_PHOTO) {
+                                activityCaller?.call(ACTake.TakePicture(saveFileURI) { result ->
+                                    val activity = result.callActivity
+                                    activity.lifecycleScope.launchWhenResumed {
+                                        if (result.success) {
+                                            val picked: Uri? = result.uri
+                                            if (picked == null) {
+                                                MediaScanner.newInstance(requireContext()).run {
+                                                    mediaScanning(tempFile.absolutePath)
+                                                }
+
+                                                Log.d("Herry", "path: ${tempFile.absolutePath}")
+
+                                                ToastHelper.showToast(activity, "taked ${tempFile.absolutePath}")
+                                            } else {
+                                                ToastHelper.showToast(activity, "taked $picked")
+                                            }
+                                        } else {
+                                            deleteTempFile(tempFile)
+                                            ToastHelper.showToast(activity, "cancel taking")
                                         }
-
-                                        Log.d("Herry", "path: ${tempFile.absolutePath}")
-
-                                        ToastHelper.showToast(requireActivity(), "taked ${tempFile.absolutePath}")
-                                    } else {
-                                        ToastHelper.showToast(requireActivity(), "taked $picked")
                                     }
-                                } else {
-                                    deleteTempFile(tempFile)
-                                    ToastHelper.showToast(requireActivity(), "cancel taking")
-                                }
-                            })
+                                })
+                            } else {
+                                activityCaller?.call(ACTake.TakeVideo(saveFileURI) { result ->
+                                    val activity = result.callActivity
+
+                                    activity.lifecycleScope.launchWhenResumed {
+                                        Log.d("Herry", "path: ${activity.lifecycle.currentState}")
+                                        if (result.success) {
+                                            val picked: Uri? = result.uri
+                                            if (picked == null) {
+                                                MediaScanner.newInstance(requireContext()).run {
+                                                    mediaScanning(tempFile.absolutePath)
+                                                }
+
+                                                Log.d("Herry", "path: ${tempFile.absolutePath}")
+
+                                                ToastHelper.showToast(activity, "taked ${tempFile.absolutePath}")
+                                            } else {
+                                                ToastHelper.showToast(activity, "taked $picked")
+                                            }
+                                        } else {
+                                            deleteTempFile(tempFile)
+                                            ToastHelper.showToast(activity, "cancel taking")
+                                        }
+                                    }
+                                })
+                            }
                         }
                     ))
             }

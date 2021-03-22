@@ -4,21 +4,26 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
+import androidx.activity.ComponentActivity
 import androidx.core.app.ActivityOptionsCompat
-import com.herry.libs.app.activity_caller.AC
 import com.herry.libs.app.activity_caller.ACModule
 import com.herry.libs.app.activity_caller.activity.ACActivity
 import com.herry.libs.app.nav.NavMovement
+import java.io.Serializable
 
 open class ACNavigation(private val caller: Caller, private val listener: ACModule.OnListener<ACNavigation>): ACModule {
 
+    data class Result(
+        val callActivity: ComponentActivity,
+        val resultCode: Int,
+        val intent: Intent?,
+        val data: Bundle?
+    ) : Serializable
+
     open class Caller(
-        internal val useTransition: Boolean = true,
-        internal val transitions: Array<Transition>? = null,
-        internal val result: ((resultCode: Int, intent: Intent?, bundle: Bundle?) -> Unit)? = null
+        internal val transitionSharedElements: Array<Transition>? = null,
+        internal val onResult: ((result: Result) -> Unit)? = null
     )
 
     class Transition(
@@ -30,32 +35,17 @@ open class ACNavigation(private val caller: Caller, private val listener: ACModu
     class IntentCaller (
         internal val intent: Intent,
         internal val bundle: Bundle? = null,
-        useTransition: Boolean = true,
         transitions: Array<Transition>? = null,
-        result: ((resultCode: Int, intent: Intent?, bundle: Bundle?) -> Unit)? = null
-    ) : Caller(useTransition, transitions, result)
+        onResult: ((result: Result) -> Unit)? = null
+    ) : Caller(transitions, onResult)
 
     class NavCaller (
         internal val cls: Class<out ACActivity>,
         internal val bundle: Bundle? = null,
         internal val startDestination: Int = 0,
-        useTransition: Boolean = true,
         transitions: Array<Transition>? = null,
-        result: ((resultCode: Int, intent: Intent?, bundle: Bundle?) -> Unit)? = null
-    ) : Caller(useTransition, transitions, result)
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
-        if (requestCode == AC.REQ_NAVIGATION) {
-            done()
-            Handler(Looper.getMainLooper()).post {
-                caller.result?.let {
-                    it(resultCode, data, data?.getBundleExtra(NavMovement.NAV_BUNDLE))
-                }
-            }
-            return true
-        }
-        return false
-    }
+        onResult: ((result: Result) -> Unit)? = null
+    ) : Caller(transitions, onResult)
 
     open fun getCallerIntent(activity: Activity): Intent? {
         return when(caller) {
@@ -80,18 +70,20 @@ open class ACNavigation(private val caller: Caller, private val listener: ACModu
         }
     }
 
-    final override fun call() {
+    override fun call() {
         val activity = listener.getActivity()
 
         val intent = getCallerIntent(activity) ?: return
 
-        if(caller.useTransition) {
-            var options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity).toBundle()
-            if (caller.transitions?.isNotEmpty() == true) {
+        val onResult = caller.onResult
+
+        if (caller.transitionSharedElements != null) {
+            var options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity)
+            if (caller.transitionSharedElements.isNotEmpty()) {
                 val pairs = mutableListOf<androidx.core.util.Pair<View, String>>()
                 val bitmaps = mutableListOf<Pair<String, Bitmap>>()
 
-                for (transition in caller.transitions) {
+                for (transition in caller.transitionSharedElements) {
                     pairs.add(androidx.core.util.Pair.create(transition.view, transition.name))
                     bitmaps.add(Pair(transition.name, transition.bitmap))
                 }
@@ -100,31 +92,24 @@ open class ACNavigation(private val caller: Caller, private val listener: ACModu
                     options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                         activity,
                         *pairs.toTypedArray()
-                    ).toBundle()
+                    )
                     for (bitmap in bitmaps) {
                         ACTransitionUtil.BitmapStorage.put(bitmap.first, bitmap.second)
                     }
                 }
-            }
 
-
-            if (caller.result != null) {
-                activity.startActivityForResult(intent, AC.REQ_NAVIGATION, options)
-            } else {
-                activity.startActivity(intent, options)
-                done()
+                if (onResult != null) {
+                    listener.launchActivity(intent, options, onResult)
+                } else {
+                    activity.startActivity(intent, options.toBundle())
+                }
             }
         } else {
-            if (caller.result != null) {
-                activity.startActivityForResult(intent, AC.REQ_NAVIGATION)
+            if (onResult != null) {
+                listener.launchActivity(intent, null, onResult)
             } else {
                 activity.startActivity(intent)
-                done()
             }
         }
-    }
-
-    private fun done() {
-        listener.onDone(this)
     }
 }

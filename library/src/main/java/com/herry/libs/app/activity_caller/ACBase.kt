@@ -1,29 +1,25 @@
 package com.herry.libs.app.activity_caller
 
-import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Handler
 import android.os.Looper
-import androidx.lifecycle.ViewModel
+import androidx.activity.ComponentActivity
+import androidx.core.app.ActivityOptionsCompat
 import com.herry.libs.app.activity_caller.module.ACError
-import com.herry.libs.app.activity_caller.module.ACInject
 import com.herry.libs.app.activity_caller.module.ACNavigation
 import com.herry.libs.app.activity_caller.module.ACPermission
-import com.herry.libs.helper.PopupHelper
+import com.herry.libs.app.activity_caller.module.ACTake
 
-class ACBase(private val listener: ACBaseListener) : AC, ViewModel() {
-    interface ACBaseListener : ACModule.OnPermissionListener {
-        fun getActivity(): Activity
+class ACBase(private val listener: ACBaseListener) : AC {
+    interface ACBaseListener : ACModule.OnPermissionListener, ACModule.OnTakeListener {
+        fun getActivity(): ComponentActivity
+
+        fun launchActivity(intent: Intent,
+                           options: ActivityOptionsCompat?,
+                           onResult: ((result: ACNavigation.Result) -> Unit)?
+        )
     }
-
-    private var aCInject = ACInject(object : ACModule.OnListener<ACInject> {
-        override fun getActivity(): Activity = listener.getActivity()
-
-        override fun onDone(module: ACInject) {
-        }
-    })
-
-    private val activityResultEnableACModules = mutableListOf<ACModule>()
 
     override fun <T> call(caller: T) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -37,62 +33,51 @@ class ACBase(private val listener: ACBaseListener) : AC, ViewModel() {
 
     private fun <T> callOnMainLooper(caller: T) {
         when (caller) {
-            is ACPermission.Caller -> {
-                val module = ACPermission(caller, object : ACPermission.ACPermissionListener {
-                    override fun getActivity(): Activity = listener.getActivity()
-
-                    override fun onDone(module: ACPermission) {
-                    }
-
-                    override fun checkPermission(
-                        permission: Array<String>,
-                        blockRequest: Boolean,
-                        showBlockPopup: Boolean,
-                        onGranted: ((permission: Array<String>) -> Unit)?,
-                        onDenied: ((permission: Array<String>) -> Unit)?,
-                        onBlocked: ((permission: Array<String>) -> Unit)?
-                    ) = listener.checkPermission(permission, blockRequest, showBlockPopup, onGranted, onDenied, onBlocked)
+            is ACError.Caller -> {
+                val module = ACError(caller, object : ACError.ACErrorListener {
+                    override fun getActivity(): ComponentActivity = listener.getActivity()
                 })
                 module.call()
             }
-            is ACInject.Caller<*> -> {
-                aCInject.call(caller)
+            is ACPermission.Caller -> {
+                val module = ACPermission(caller, object : ACPermission.ACPermissionListener {
+                    override fun getActivity(): ComponentActivity = listener.getActivity()
+
+                    override fun requestPermission(
+                        permission: Array<String>,
+                        onGranted: ((permission: Array<String>) -> Unit)?,
+                        onDenied: ((permission: Array<String>) -> Unit)?,
+                        onBlocked: ((permission: Array<String>) -> Unit)?
+                    ) = listener.requestPermission(permission, onGranted, onDenied, onBlocked)
+                })
+                module.call()
             }
-            is ACError.Caller -> {
-                val module = ACError(caller, object : ACError.ACErrorListener {
-                    override fun getActivity(): Activity = listener.getActivity()
+            is ACTake.Caller -> {
+                val module = ACTake(caller, object : ACTake.ACTakeListener {
 
-                    override fun onDone(module: ACError) {}
+                    override fun getActivity(): ComponentActivity = listener.getActivity()
 
-                    override fun getPopupHelper(): PopupHelper = aCInject.call(PopupHelper::class)
+                    override fun takePicture(uri: Uri, onResult: ((result: ACTake.Result) -> Unit)?) {
+                        listener.takePicture(uri, onResult)
+                    }
+
+                    override fun takeVideo(uri: Uri, onResult: ((result: ACTake.Result) -> Unit)?) {
+                        listener.takeVideo(uri, onResult)
+                    }
                 })
                 module.call()
             }
             is ACNavigation.Caller -> {
                 val module = ACNavigation(caller, object : ACModule.OnListener<ACNavigation> {
 
-                    override fun getActivity(): Activity = listener.getActivity()
+                    override fun getActivity(): ComponentActivity = listener.getActivity()
 
-                    override fun onDone(module: ACNavigation) {
-                        done(module)
+                    override fun launchActivity(intent: Intent, options: ActivityOptionsCompat?, onResult: ((result: ACNavigation.Result) -> Unit)?) {
+                        listener.launchActivity(intent, options, onResult)
                     }
                 })
-                activityResultEnableACModules.add(module)
                 module.call()
             }
         }
-    }
-
-    fun activityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
-        for (module in activityResultEnableACModules) {
-            if (module.onActivityResult(requestCode, resultCode, data)) {
-                return true
-            }
-        }
-        return false
-    }
-
-    private fun done(module: ACModule) {
-        activityResultEnableACModules.remove(module)
     }
 }

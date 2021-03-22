@@ -1,22 +1,19 @@
 package com.herry.test.app.base
 
 import android.annotation.SuppressLint
-import android.content.ActivityNotFoundException
-import android.content.DialogInterface
+import android.app.Dialog
 import android.content.Intent
 import android.content.pm.ActivityInfo
-import android.net.Uri
 import android.os.Bundle
-import android.provider.Settings
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import com.herry.libs.app.activity_caller.activity.ACActivity
 import com.herry.libs.helper.ApiHelper
-import com.herry.libs.helper.PopupHelper
 import com.herry.libs.util.AppActivityManager
 import com.herry.libs.util.AppUtil
 import com.herry.libs.util.FragmentAddingOption
+import com.herry.test.app.permission.PermissionHelper
 
 @Suppress("PrivatePropertyName")
 abstract class BaseActivity : ACActivity() {
@@ -82,7 +79,6 @@ abstract class BaseActivity : ACActivity() {
 
     override fun onPause() {
         super.onPause()
-        hideBlockedPermissionPopup()
 
 //        if(notificationBroadcastReceiverRegister) {
 //            LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(notificationBroadcastReceiver)
@@ -90,47 +86,7 @@ abstract class BaseActivity : ACActivity() {
 //        }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (activityCaller.activityResult(requestCode, resultCode, data)) {
-            return
-        }
-        super.onActivityResult(requestCode, resultCode, data)
-    }
-
-    private var blockedPermissionPopupHelper: PopupHelper? = null
-    private fun hideBlockedPermissionPopup() {
-        blockedPermissionPopupHelper?.dismiss()
-        blockedPermissionPopupHelper = null
-    }
-
     private fun getActivity() : BaseActivity = this
-
-    override fun showBlockedPermissionPopup() {
-        hideBlockedPermissionPopup()
-
-        blockedPermissionPopupHelper = PopupHelper(::getActivity)
-        blockedPermissionPopupHelper?.showPopup(
-            title = "Setting permissions",
-            message = "Permission settings are turned off and can not access those services.\n\nPlease turn in [Settings] > [authority].",
-            positiveListener = DialogInterface.OnClickListener { dialog, _ ->
-                dialog.dismiss()
-                applicationContext?.let {
-                    try {
-                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                            .setData(Uri.parse("package:" + applicationContext.packageName))
-                        startActivity(intent)
-                    } catch (e: ActivityNotFoundException) {
-                        e.printStackTrace()
-                        val intent = Intent(Settings.ACTION_MANAGE_APPLICATIONS_SETTINGS)
-                        startActivity(intent)
-                    }
-                }
-            },
-            negativeListener = DialogInterface.OnClickListener { dialog, _ ->
-                dialog.dismiss()
-            }
-        )
-    }
 
     protected fun finish(withoutAnimation: Boolean) {
         super.finish()
@@ -156,5 +112,9 @@ abstract class BaseActivity : ACActivity() {
         }
 
         super.onBackPressed()
+    }
+
+    override fun getBlockedPermissionPopup(permissions: Array<String>): Dialog? {
+        return PermissionHelper.createPermissionSettingScreenPopup(this, permissions)?.getDialog()
     }
 }

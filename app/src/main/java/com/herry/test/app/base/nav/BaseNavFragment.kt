@@ -26,13 +26,11 @@ open class BaseNavFragment: BaseFragment(), NavMovement {
     final override fun onBackPressed(): Boolean = false
 
     final override fun onNavigateUp(): Bundle? {
-        val bundle = onNavigateUpResult()
+        val bundle = onNavigateUpResult() ?: BundleUtil.createNavigationBundle(false)
 
-        if (bundle != null) {
-            val currentDestinationId = findNavController().currentBackStackEntry?.destination?.id
-            if (currentDestinationId != null) {
-                setFragmentResult(currentDestinationId.toString(), bundle)
-            }
+        val currentDestinationId = findNavController().currentBackStackEntry?.destination?.id
+        if (currentDestinationId != null) {
+            setFragmentResult(currentDestinationId.toString(), bundle)
         }
 
         return bundle
