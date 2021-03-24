@@ -24,6 +24,7 @@ interface MainContract {
         LAYOUT_SAMPLE,
         PICK,
         NESTED_FRAGMENTS,
-        APP_DIALOG
+        APP_DIALOG,
+        LIST
     }
 }

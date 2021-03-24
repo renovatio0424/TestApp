@@ -220,4 +220,17 @@
         <attr name="ad_listItemSelector" format="color|reference" />
         <attr name="ad_listItemScrollbarFadingEnabled" format="boolean" />
     </declare-styleable>
+
+    <attr name="RecyclerViewFastScroller" format="reference" />
+    <declare-styleable name="RecyclerViewFastScroller">
+        <attr name="rvfs_barColor" format="color" />
+        <attr name="rvfs_handleNormalColor" format="color" />
+        <attr name="rvfs_handlePressedColor" format="color" />
+        <attr name="rvfs_handleWidth" format="dimension" />
+        <attr name="rvfs_handleMinHeight" format="dimension" />
+        <attr name="rvfs_handleInsetWidth" format="dimension" />
+        <attr name="rvfs_touchTargetWidth" format="dimension" />
+        <attr name="rvfs_hideDelay" format="integer" />
+        <attr name="rvfs_hidingEnabled" format="boolean" />
+    </declare-styleable>
 </resources>

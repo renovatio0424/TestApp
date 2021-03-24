@@ -1,4 +1,4 @@
-package com.herry.libs.widget.loopsnaprecyclerview
+package com.herry.libs.widget.recyclerview.loopsnap
 
 import androidx.recyclerview.widget.RecyclerView
 import java.util.*
