@@ -1,4 +1,4 @@
-package com.herry.test.app.list.indexer
+package com.herry.test.app.list.fastscroller
 
 import android.content.Context
 import android.os.Bundle
@@ -13,7 +13,7 @@ import com.herry.libs.nodeview.NodeForm
 import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.nodeview.model.NodeRoot
 import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
-import com.herry.libs.widget.recyclerview.scroller.RecyclerViewFastScroller
+import com.herry.libs.widget.recyclerview.scroller.RecyclerViewFastScrollerView
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
 import com.herry.test.widget.TitleBarForm
@@ -49,7 +49,7 @@ class FastScrollerListFragment: BaseNavView<FastScrollerListContract.View, FastS
             bindFormModel(view.context, TitleBarForm.Model(title = "Fast Scroller List"))
         }
 
-        val recyclerViewFastScroller = view.findViewById<RecyclerViewFastScroller>(R.id.fast_scroller_list_fragment_rvfs)
+        val recyclerViewFastScroller = view.findViewById<RecyclerViewFastScrollerView>(R.id.fast_scroller_list_fragment_rvfs)
 
         view.findViewById<RecyclerView>(R.id.fast_scroller_list_fragment_list)?.apply {
             layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)

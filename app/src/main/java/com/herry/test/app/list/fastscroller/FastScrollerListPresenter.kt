@@ -1,4 +1,4 @@
-package com.herry.test.app.list.indexer
+package com.herry.test.app.list.fastscroller
 
 import com.herry.libs.nodeview.model.Node
 import com.herry.libs.nodeview.model.NodeHelper
@@ -31,20 +31,21 @@ class FastScrollerListPresenter : FastScrollerListContract.Presenter() {
 
         val nodes: Node<NodeModelGroup> = NodeHelper.createNodeGroup()
 
-        var c = 'A'
-        while (c <= 'Z') {
-            NodeHelper.addModel(nodes, FastScrollerListContract.ListItemData("$c"))
-            ++c
-        }
-
-        c = 'a'
-        while (c <= 'z') {
-            NodeHelper.addModel(nodes, FastScrollerListContract.ListItemData("$c"))
-            ++c
-        }
+        NodeHelper.addModels(nodes, *getAlphabetItems('A', 'Z').toTypedArray())
+        NodeHelper.addModels(nodes, *getAlphabetItems('a', 'z').toTypedArray())
 
         NodeHelper.upSert(this.nodes, nodes)
 
         this.nodes.endTransition()
+    }
+
+
+    private fun getAlphabetItems(start: Char, end: Char) : MutableList<FastScrollerListContract.ListItemData> {
+        val items = mutableListOf<FastScrollerListContract.ListItemData>()
+        (start .. end).forEach { ch ->
+            items.add(FastScrollerListContract.ListItemData("$ch"))
+        }
+
+        return items
     }
 }

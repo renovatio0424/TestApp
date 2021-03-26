@@ -6,7 +6,6 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Canvas
 import android.graphics.drawable.*
 import android.util.AttributeSet
 import android.view.MotionEvent
@@ -17,6 +16,7 @@ import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
+import androidx.core.view.isVisible
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import androidx.recyclerview.widget.RecyclerView
@@ -25,7 +25,7 @@ import com.herry.libs.R
 
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
-class RecyclerViewFastScroller : FrameLayout {
+class RecyclerViewFastScrollerView : FrameLayout {
 
     companion object {
         private const val DEFAULT_AUTO_HIDE_DELAY = 1500
@@ -33,7 +33,6 @@ class RecyclerViewFastScroller : FrameLayout {
 
     private var barView: View
     private var handleView: View
-    private var onHandleTouchListener: OnTouchListener? = null
 
     private val hideRunnable: Runnable
     private val minScrollHandleHeight: Int
@@ -44,6 +43,7 @@ class RecyclerViewFastScroller : FrameLayout {
 
     private var hideDelay = 0
     private var isHidingEnabled = false
+    private var isShowHandle = true
 
     @ColorInt
     private var handleNormalColor = 0
@@ -72,28 +72,35 @@ class RecyclerViewFastScroller : FrameLayout {
 
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
+    @SuppressLint("CustomViewStyleable")
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
 
-        val attr = context.obtainStyledAttributes(attrs, R.styleable.RecyclerViewFastScroller)
-        barColor = attr.getColor(R.styleable.RecyclerViewFastScroller_rvfs_barColor, resolveColor(context, R.attr.colorControlNormal))
-        handleNormalColor = attr.getColor(R.styleable.RecyclerViewFastScroller_rvfs_handleNormalColor, resolveColor(context, R.attr.colorControlNormal))
-        handlePressedColor = attr.getColor(R.styleable.RecyclerViewFastScroller_rvfs_handlePressedColor, resolveColor(context, R.attr.colorAccent))
-        touchTargetWidth = attr.getDimensionPixelSize(R.styleable.RecyclerViewFastScroller_rvfs_touchTargetWidth, convertDpToPx(context, 24f))
-        handleWidth = attr.getDimensionPixelSize(R.styleable.RecyclerViewFastScroller_rvfs_handleWidth, convertDpToPx(context, 24f))
-        handleMinHeight = attr.getDimensionPixelSize(R.styleable.RecyclerViewFastScroller_rvfs_handleMinHeight, convertDpToPx(context, 48f))
-        handleInsetWidth = attr.getDimensionPixelSize(R.styleable.RecyclerViewFastScroller_rvfs_handleInsetWidth, convertDpToPx(context, 8f))
-        hideDelay = attr.getInt(R.styleable.RecyclerViewFastScroller_rvfs_hideDelay, DEFAULT_AUTO_HIDE_DELAY)
-        isHidingEnabled = attr.getBoolean(R.styleable.RecyclerViewFastScroller_rvfs_hidingEnabled, true)
+        val attr = context.obtainStyledAttributes(attrs, R.styleable.RecyclerViewFastScrollerView)
+        barColor = attr.getColor(R.styleable.RecyclerViewFastScrollerView_rvfsv_barColor, resolveColor(context, R.attr.colorControlNormal))
+        handleNormalColor = attr.getColor(R.styleable.RecyclerViewFastScrollerView_rvfsv_handleNormalColor, resolveColor(context, R.attr.colorControlNormal))
+        handlePressedColor = attr.getColor(R.styleable.RecyclerViewFastScrollerView_rvfsv_handlePressedColor, resolveColor(context, R.attr.colorAccent))
+        touchTargetWidth = attr.getDimensionPixelSize(R.styleable.RecyclerViewFastScrollerView_rvfsv_touchTargetWidth, convertDpToPx(context, 24f))
+        handleWidth = attr.getDimensionPixelSize(R.styleable.RecyclerViewFastScrollerView_rvfsv_handleWidth, convertDpToPx(context, 24f))
+        handleMinHeight = attr.getDimensionPixelSize(R.styleable.RecyclerViewFastScrollerView_rvfsv_handleMinHeight, convertDpToPx(context, 48f))
+        handleInsetWidth = attr.getDimensionPixelSize(R.styleable.RecyclerViewFastScrollerView_rvfsv_handleInsetWidth, convertDpToPx(context, 8f))
+        hideDelay = attr.getInt(R.styleable.RecyclerViewFastScrollerView_rvfsv_hideDelay, DEFAULT_AUTO_HIDE_DELAY)
+        isHidingEnabled = attr.getBoolean(R.styleable.RecyclerViewFastScrollerView_rvfsv_hidingEnabled, true)
+        isShowHandle = attr.getBoolean(R.styleable.RecyclerViewFastScrollerView_rvfsv_showHandle, true)
         attr.recycle()
 
         if (0 < handleWidth) {
             layoutParams = ViewGroup.LayoutParams(handleWidth, ViewGroup.LayoutParams.MATCH_PARENT)
         }
+
         barView = View(context)
         handleView = View(context)
+        handleView.isVisible = isShowHandle
+
         addView(barView)
         addView(handleView)
+
         setTouchTargetWidth(touchTargetWidth)
+
         minScrollHandleHeight = handleMinHeight
         hideRunnable = Runnable {
             if (!handleView.isPressed) {
@@ -102,7 +109,7 @@ class RecyclerViewFastScroller : FrameLayout {
                 }
                 animatorSet = AnimatorSet()
                 val animator2 = ObjectAnimator.ofFloat(
-                    this@RecyclerViewFastScroller, ALPHA,
+                    this@RecyclerViewFastScrollerView, ALPHA,
                     1f, 0f
                 )
                 animator2.interpolator = FastOutLinearInInterpolator()
@@ -112,39 +119,95 @@ class RecyclerViewFastScroller : FrameLayout {
                 animatorSet?.start()
             }
         }
+
+        barView.setOnTouchListener(object : OnTouchListener {
+            private var initialBarHeight = 0f
+            private var lastPressedYAdjustedToInitial = 0f
+
+            @SuppressLint("ClickableViewAccessibility")
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+                v ?: return false
+                event ?: return false
+
+                val recyclerView = this@RecyclerViewFastScrollerView.recyclerView ?: return false
+
+                when (event.actionMasked) {
+                    MotionEvent.ACTION_DOWN -> {
+                        handleView.isPressed = true
+
+                        recyclerView.stopScroll()
+                        var nestedScrollAxis = ViewCompat.SCROLL_AXIS_NONE
+                        nestedScrollAxis = nestedScrollAxis or ViewCompat.SCROLL_AXIS_VERTICAL
+                        recyclerView.startNestedScroll(nestedScrollAxis)
+
+                        initialBarHeight = barView.height.toFloat()
+                        lastPressedYAdjustedToInitial = event.y + barView.y
+
+                        val deltaPressedYFromLastAdjustedToInitial = event.y - handleView.y
+                        val dY = (deltaPressedYFromLastAdjustedToInitial / initialBarHeight *
+                                recyclerView.computeVerticalScrollRange()).toInt()
+                        updateRecyclerViewScroll(dY)
+                    }
+                    MotionEvent.ACTION_MOVE -> {
+                        val newHandlePressedY = event.y + barView.y
+                        val barHeight = barView.height
+                        val newHandlePressedYAdjustedToInitial = newHandlePressedY + (initialBarHeight - barHeight)
+                        val deltaPressedYFromLastAdjustedToInitial = newHandlePressedYAdjustedToInitial - lastPressedYAdjustedToInitial
+                        val dY = (deltaPressedYFromLastAdjustedToInitial / initialBarHeight *
+                                recyclerView.computeVerticalScrollRange()).toInt()
+                        updateRecyclerViewScroll(dY)
+
+                        lastPressedYAdjustedToInitial = newHandlePressedYAdjustedToInitial
+                    }
+                    MotionEvent.ACTION_UP -> {
+                        lastPressedYAdjustedToInitial = -1f
+                        recyclerView.stopNestedScroll()
+                        handleView.isPressed = false
+                        postAutoHide()
+                    }
+                }
+                return true
+            }
+        })
+
         handleView.setOnTouchListener(object : OnTouchListener {
             private var initialBarHeight = 0f
             private var lastPressedYAdjustedToInitial = 0f
 
             @SuppressLint("ClickableViewAccessibility")
-            override fun onTouch(v: View, event: MotionEvent): Boolean {
-                onHandleTouchListener?.onTouch(v, event)
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+                v ?: return false
+                event ?: return false
 
-                if (event.actionMasked == MotionEvent.ACTION_DOWN) {
-                    handleView.isPressed = true
-                    recyclerView?.let { recyclerView ->
-                        recyclerView.stopScroll()
-                        var nestedScrollAxis = ViewCompat.SCROLL_AXIS_NONE
-                        nestedScrollAxis = nestedScrollAxis or ViewCompat.SCROLL_AXIS_VERTICAL
-                        recyclerView.startNestedScroll(nestedScrollAxis)
+                when (event.actionMasked) {
+                    MotionEvent.ACTION_DOWN -> {
+                        handleView.isPressed = true
+                        recyclerView?.let { recyclerView ->
+                            recyclerView.stopScroll()
+                            var nestedScrollAxis = ViewCompat.SCROLL_AXIS_NONE
+                            nestedScrollAxis = nestedScrollAxis or ViewCompat.SCROLL_AXIS_VERTICAL
+                            recyclerView.startNestedScroll(nestedScrollAxis)
+                        }
+
+                        initialBarHeight = barView.height.toFloat()
+                        lastPressedYAdjustedToInitial = event.y + handleView.y + barView.y
                     }
-
-                    initialBarHeight = barView.height.toFloat()
-                    lastPressedYAdjustedToInitial = event.y + handleView.y + barView.y
-                } else if (event.actionMasked == MotionEvent.ACTION_MOVE) {
-                    val newHandlePressedY = event.y + handleView.y + barView.y
-                    val barHeight = barView.height
-                    val newHandlePressedYAdjustedToInitial = newHandlePressedY + (initialBarHeight - barHeight)
-                    val deltaPressedYFromLastAdjustedToInitial = newHandlePressedYAdjustedToInitial - lastPressedYAdjustedToInitial
-                    val dY = (deltaPressedYFromLastAdjustedToInitial / initialBarHeight *
-                            (recyclerView?.computeVerticalScrollRange() ?: 0)).toInt()
-                    updateRvScroll(dY)
-                    lastPressedYAdjustedToInitial = newHandlePressedYAdjustedToInitial
-                } else if (event.actionMasked == MotionEvent.ACTION_UP) {
-                    lastPressedYAdjustedToInitial = -1f
-                    recyclerView?.stopNestedScroll()
-                    handleView.isPressed = false
-                    postAutoHide()
+                    MotionEvent.ACTION_MOVE -> {
+                        val newHandlePressedY = event.y + handleView.y + barView.y
+                        val barHeight = barView.height
+                        val newHandlePressedYAdjustedToInitial = newHandlePressedY + (initialBarHeight - barHeight)
+                        val deltaPressedYFromLastAdjustedToInitial = newHandlePressedYAdjustedToInitial - lastPressedYAdjustedToInitial
+                        val dY = (deltaPressedYFromLastAdjustedToInitial / initialBarHeight *
+                                (recyclerView?.computeVerticalScrollRange() ?: 0)).toInt()
+                        updateRecyclerViewScroll(dY)
+                        lastPressedYAdjustedToInitial = newHandlePressedYAdjustedToInitial
+                    }
+                    MotionEvent.ACTION_UP -> {
+                        lastPressedYAdjustedToInitial = -1f
+                        recyclerView?.stopNestedScroll()
+                        handleView.isPressed = false
+                        postAutoHide()
+                    }
                 }
                 return true
             }
@@ -262,8 +325,7 @@ class RecyclerViewFastScroller : FrameLayout {
         this.recyclerView?.run {
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
-                    show(true)
+                    show()
                 }
             })
             if (recyclerView.adapter != null) attachAdapter(recyclerView.adapter)
@@ -277,16 +339,12 @@ class RecyclerViewFastScroller : FrameLayout {
         this.adapter = adapter
     }
 
-    fun setOnHandleTouchListener(listener: OnTouchListener?) {
-        onHandleTouchListener = listener
-    }
-
     /**
      * Show the fast scroller and hide after delay
      *
      * @param animate whether to animate showing the scroller
      */
-    fun show(animate: Boolean) {
+    fun show(animate: Boolean = true) {
         requestLayout()
         post(Runnable {
             if (isHideOverride) {
@@ -294,13 +352,12 @@ class RecyclerViewFastScroller : FrameLayout {
             }
             handleView.isEnabled = true
             if (animate) {
-//                if (!isAnimatingIn && translationX != 0f) {
                 if (!isAnimatingIn && alpha != 1f) {
                     if (animatorSet?.isStarted == true) {
                         animatorSet?.cancel()
                     }
                     animatorSet = AnimatorSet()
-                    val animator = ObjectAnimator.ofFloat(this@RecyclerViewFastScroller, ALPHA, 0f, 1f)
+                    val animator = ObjectAnimator.ofFloat(this@RecyclerViewFastScrollerView, ALPHA, 0f, 1f)
                     animator.interpolator = LinearOutSlowInInterpolator()
                     animator.duration = 100
                     animator.addListener(object : AnimatorListenerAdapter() {
@@ -320,10 +377,14 @@ class RecyclerViewFastScroller : FrameLayout {
         })
     }
 
-    fun postAutoHide() {
+    fun hide() {
+        postAutoHide(0L)
+    }
+
+    private fun postAutoHide(delay: Long = hideDelay.toLong()) {
         if (isHidingEnabled) {
-            recyclerView?.removeCallbacks(hideRunnable)
-            recyclerView?.postDelayed(hideRunnable, hideDelay.toLong())
+            removeCallbacks(hideRunnable)
+            postDelayed(hideRunnable, delay)
         }
     }
 
@@ -334,7 +395,6 @@ class RecyclerViewFastScroller : FrameLayout {
         val scrollOffset = recyclerView.computeVerticalScrollOffset()
         val verticalScrollRange = recyclerView.computeVerticalScrollRange() + recyclerView.paddingBottom
         val barHeight = barView.height
-        val ratio = scrollOffset.toFloat() / (verticalScrollRange - barHeight)
         var calculatedHandleHeight = (barHeight.toFloat() / verticalScrollRange * barHeight).toInt()
         if (calculatedHandleHeight < minScrollHandleHeight) {
             calculatedHandleHeight = minScrollHandleHeight
@@ -345,11 +405,12 @@ class RecyclerViewFastScroller : FrameLayout {
             return
         }
         isHideOverride = false
+        val ratio = scrollOffset.toFloat() / (verticalScrollRange - barHeight)
         val y = ratio * (barHeight - calculatedHandleHeight)
         handleView.layout(handleView.left, y.toInt(), handleView.right, y.toInt() + calculatedHandleHeight)
     }
 
-    private fun updateRvScroll(dY: Int) {
+    private fun updateRecyclerViewScroll(dY: Int) {
         try {
             recyclerView?.scrollBy(0, dY)
         } catch (t: Throwable) {
@@ -385,9 +446,5 @@ class RecyclerViewFastScroller : FrameLayout {
         return if (null == context) {
             0
         } else (dp * context.resources.displayMetrics.density + 0.5f).toInt()
-    }
-
-    public override fun onDraw(c: Canvas) {
-        super.onDraw(c)
     }
 }

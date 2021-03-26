@@ -78,7 +78,7 @@
 
     <fragment
         android:id="@+id/fast_scroller_list_fragment"
-        android:name="com.herry.test.app.list.indexer.FastScrollerListFragment"
+        android:name="com.herry.test.app.list.fastscroller.FastScrollerListFragment"
         tools:layout="@layout/fast_scroller_list_fragment" />
 
     <fragment
@@ -86,6 +86,10 @@
         android:name="com.herry.test.app.list.endless.EndlessListFragment"
         tools:layout="@layout/list_fragment" />
 
+    <fragment
+        android:id="@+id/indexer_list_fragment"
+        android:name="com.herry.test.app.list.indexer.IndexerListFragment"
+        tools:layout="@layout/list_fragment" />
 <!--    <include app:graph="@navigation/nested_nav_fragments_navigation" />-->
 
 </navigation>

@@ -11,6 +11,7 @@ interface ListContract {
 
     enum class Type {
         FAST_SCROLLER,
-        ENDLESS
+        ENDLESS,
+        INDEXER
     }
 }

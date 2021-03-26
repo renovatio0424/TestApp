@@ -1,4 +1,4 @@
-package com.herry.test.app.list.indexer
+package com.herry.test.app.list.fastscroller
 
 import com.herry.libs.mvp.MVPView
 import com.herry.libs.nodeview.INodeRoot

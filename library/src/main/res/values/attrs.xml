@@ -221,16 +221,49 @@
         <attr name="ad_listItemScrollbarFadingEnabled" format="boolean" />
     </declare-styleable>
 
-    <attr name="RecyclerViewFastScroller" format="reference" />
-    <declare-styleable name="RecyclerViewFastScroller">
-        <attr name="rvfs_barColor" format="color" />
-        <attr name="rvfs_handleNormalColor" format="color" />
-        <attr name="rvfs_handlePressedColor" format="color" />
-        <attr name="rvfs_handleWidth" format="dimension" />
-        <attr name="rvfs_handleMinHeight" format="dimension" />
-        <attr name="rvfs_handleInsetWidth" format="dimension" />
-        <attr name="rvfs_touchTargetWidth" format="dimension" />
-        <attr name="rvfs_hideDelay" format="integer" />
-        <attr name="rvfs_hidingEnabled" format="boolean" />
+    <attr name="RecyclerViewFastScrollerView" format="reference" />
+    <declare-styleable name="RecyclerViewFastScrollerView">
+        <attr name="rvfsv_barColor" format="color" />
+        <attr name="rvfsv_handleNormalColor" format="color" />
+        <attr name="rvfsv_handlePressedColor" format="color" />
+        <attr name="rvfsv_handleWidth" format="dimension" />
+        <attr name="rvfsv_handleMinHeight" format="dimension" />
+        <attr name="rvfsv_handleInsetWidth" format="dimension" />
+        <attr name="rvfsv_touchTargetWidth" format="dimension" />
+        <attr name="rvfsv_hideDelay" format="integer" />
+        <attr name="rvfsv_hidingEnabled" format="boolean" />
+        <attr name="rvfsv_showHandle" format="boolean" />
+    </declare-styleable>
+
+    <attr name="RecyclerViewAlphabetIndexerScrollerView" format="reference" />
+    <declare-styleable name="RecyclerViewAlphabetIndexerScrollerView">
+        <attr name="rvaisv_sectionBarBackground" format="reference|color" />
+        <attr name="rvaisv_sectionBarWidth" format="dimension" />
+        <attr name="rvaisv_sectionBarPaddingTop" format="dimension" />
+        <attr name="rvaisv_sectionBarPaddingBottom" format="dimension" />
+        <attr name="rvaisv_sectionTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+        </attr>
+        <attr name="rvaisv_sectionTextColor" format="reference|color" />
+        <attr name="rvaisv_sectionTextSize" format="dimension" />
+        <attr name="rvaisv_sectionHighlightTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+        </attr>
+        <attr name="rvaisv_sectionHighlightTextColor" format="reference|color" />
+        <attr name="rvaisv_sectionHighlightTextSize" format="dimension" />
+        <attr name="rvaisv_sectionHighlightEnable" format="boolean" />
+        <attr name="rvaisv_sectionPreviewBackground" format="reference|color" />
+        <attr name="rvaisv_sectionPreviewWidth" format="dimension" />
+        <attr name="rvaisv_sectionPreviewHeight" format="dimension" />
+        <attr name="rvaisv_sectionPreviewTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+        </attr>
+        <attr name="rvaisv_sectionPreviewTextColor" format="reference|color" />
+        <attr name="rvaisv_sectionPreviewTextSize" format="dimension" />
+        <attr name="rvaisv_sectionPreviewEnable" format="boolean" />
+        <attr name="rvaisv_sectionPreviewHideDelay" format="integer" />
     </declare-styleable>
 </resources>
