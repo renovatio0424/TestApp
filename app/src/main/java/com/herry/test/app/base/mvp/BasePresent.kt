@@ -1,5 +1,7 @@
 package com.herry.test.app.base.mvp
 
+import androidx.lifecycle.LifecycleCoroutineScope
+import androidx.lifecycle.coroutineScope
 import com.herry.libs.mvp.MVPPresenter
 import com.herry.libs.mvp.MVPView
 import com.herry.test.rx.RxSchedulerProvider
@@ -7,6 +9,7 @@ import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 
+@Suppress("MemberVisibilityCanBePrivate")
 abstract class BasePresent<V> : MVPPresenter<V>() {
 
     protected var view: V? = null
@@ -115,4 +118,6 @@ abstract class BasePresent<V> : MVPPresenter<V>() {
             })
         )
     }
+
+    protected fun lifecycleScope(): LifecycleCoroutineScope? = (view as? MVPView<*>)?.getLifecycle()?.coroutineScope
 }

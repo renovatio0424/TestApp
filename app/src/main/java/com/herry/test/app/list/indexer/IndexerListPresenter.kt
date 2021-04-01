@@ -35,7 +35,7 @@ class IndexerListPresenter : IndexerListContract.Presenter() {
         NodeHelper.addModels(nodes, *getAlphabetItems('a', 'z').toTypedArray())
 
 //        for (i in 0 until 10) {
-//            NodeHelper.addModel(nodes, IndexerListContract.ListItemData("A"))
+//            NodeHelper.addModel(nodes, IndexerListContract.ListItemData("$i"))
 //        }
 //        for (i in 0 until 10) {
 //            NodeHelper.addModel(nodes, IndexerListContract.ListItemData("B"))
