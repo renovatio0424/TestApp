@@ -41,6 +41,14 @@ class RecyclerViewAlphabetIndexerScrollerView : FrameLayout {
 
     private var sectionBarRect: RectF = RectF()
     private var sectionBarBackgroundDrawable: Drawable? = null
+    private var sectionBarPaddingStart: Int = 0
+    private var sectionBarPaddingEnd: Int = 0
+    private var sectionBarPaddingTop: Int = 0
+    private var sectionBarPaddingBottom: Int = 0
+    private var sectionBarMarginStart: Int = 0
+    private var sectionBarMarginEnd: Int = 0
+    private var sectionBarMarginTop: Int = 0
+    private var sectionBarMarginBottom: Int = 0
     private var sectionBarWidth: Int = 0
     private var sectionTextSize = 0
     private var sectionTextTypeface = Typeface.DEFAULT
@@ -86,6 +94,14 @@ class RecyclerViewAlphabetIndexerScrollerView : FrameLayout {
             sectionBarBackgroundDrawable = ColorDrawable(Color.argb(0x80, 0, 0, 0))
         }
         sectionBarWidth = attr.getDimensionPixelSize(R.styleable.RecyclerViewAlphabetIndexerScrollerView_rvaisv_sectionBarWidth, convertDpToPx(context, 30f))
+        sectionBarPaddingStart = attr.getDimensionPixelSize(R.styleable.RecyclerViewAlphabetIndexerScrollerView_rvaisv_sectionBarPaddingStart, convertDpToPx(context, 0f))
+        sectionBarPaddingEnd = attr.getDimensionPixelSize(R.styleable.RecyclerViewAlphabetIndexerScrollerView_rvaisv_sectionBarPaddingEnd, convertDpToPx(context, 0f))
+        sectionBarPaddingTop = attr.getDimensionPixelSize(R.styleable.RecyclerViewAlphabetIndexerScrollerView_rvaisv_sectionBarPaddingTop, convertDpToPx(context, 0f))
+        sectionBarPaddingBottom = attr.getDimensionPixelSize(R.styleable.RecyclerViewAlphabetIndexerScrollerView_rvaisv_sectionBarPaddingBottom, convertDpToPx(context, 0f))
+        sectionBarMarginStart = attr.getDimensionPixelSize(R.styleable.RecyclerViewAlphabetIndexerScrollerView_rvaisv_sectionBarMarginStart, convertDpToPx(context, 0f))
+        sectionBarMarginEnd = attr.getDimensionPixelSize(R.styleable.RecyclerViewAlphabetIndexerScrollerView_rvaisv_sectionBarMarginEnd, convertDpToPx(context, 0f))
+        sectionBarMarginTop = attr.getDimensionPixelSize(R.styleable.RecyclerViewAlphabetIndexerScrollerView_rvaisv_sectionBarMarginTop, convertDpToPx(context, 0f))
+        sectionBarMarginBottom = attr.getDimensionPixelSize(R.styleable.RecyclerViewAlphabetIndexerScrollerView_rvaisv_sectionBarMarginBottom, convertDpToPx(context, 0f))
 
         val sectionTextStyle = attr.getInt(R.styleable.RecyclerViewAlphabetIndexerScrollerView_rvaisv_sectionTextStyle, 0)
         sectionTextTypeface = convertAttrTextStyleToTypeface(sectionTextStyle)
@@ -133,12 +149,12 @@ class RecyclerViewAlphabetIndexerScrollerView : FrameLayout {
 
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
-                // If down event occurs inside section bar region, start indexing
                 if (isSectionsRegionPoint(event.x, event.y)) {
                     recyclerView?.stopScroll()
 
                     isIndexing = true
-                    // Determine which section the point is in, and move the list to that section
+
+                    // detects which section the point is in, and move the list to that section
                     val sectionIndex = getSectionIndexByPoint(event.y)
                     setCurrentSectionIndex(sectionIndex)
                     scrollToSection(sectionIndex)
@@ -147,9 +163,8 @@ class RecyclerViewAlphabetIndexerScrollerView : FrameLayout {
             }
             MotionEvent.ACTION_MOVE -> {
                 if (isIndexing) {
-                    // If this event moves inside index bar
                     if (isSectionsRegionPoint(event.x, event.y)) {
-                        // Determine which section the point is in, and move the list to that section
+                        // detects which section the point is in, and move the list to that section
                         val sectionIndex = getSectionIndexByPoint(event.y)
                         setCurrentSectionIndex(sectionIndex)
                         scrollToSection(sectionIndex)
@@ -167,8 +182,9 @@ class RecyclerViewAlphabetIndexerScrollerView : FrameLayout {
     }
 
     private fun isSectionsRegionPoint(x: Float, y: Float): Boolean {
-        // Determine if the point is in index bar region, which includes the right margin of the bar
-        return (x >= sectionBarRect.left && y >= sectionBarRect.top && y <= sectionBarRect.top + sectionBarRect.height())
+        // detects if the point is in index bar region, which includes the right margin of the bar
+        return (x >= sectionBarRect.left && x <= sectionBarRect.left + sectionBarRect.width()
+                && y >= sectionBarRect.top && y <= sectionBarRect.top + sectionBarRect.height())
     }
 
     fun setSectionBarWidth(width: Int) {
@@ -222,28 +238,25 @@ class RecyclerViewAlphabetIndexerScrollerView : FrameLayout {
         invalidate()
     }
 
-    private fun getSectionByRecyclerView(recyclerView: RecyclerView?): Int {
-        recyclerView ?: return RecyclerView.NO_POSITION
-
-        // updates current section
-        val barHeight = sectionBarRect.height()
-        if (barHeight <= 0) {
-            return RecyclerView.NO_POSITION
-        }
-
-        val offset = recyclerView.computeVerticalScrollOffset()
-        val extent = recyclerView.computeVerticalScrollExtent()
-        val range = recyclerView.computeVerticalScrollRange()
-
-        val percentage = (100.0f * offset / (range - extent).toFloat())
-
-//        Log.d("Herry", "current percentage = $percentage, offset = $offset, extent = $extent, range = $range, barHeight = $barHeight")
-//        val y = barHeight * (percentage / 100.0f)
-
-        val y = (offset.toFloat() / (range - extent - extent)) * barHeight
-        Log.d("Herry", "current percentage = $percentage, y = $y")
-        return getSectionIndexByPoint(y)
-    }
+//    private fun getSectionByRecyclerView(recyclerView: RecyclerView?): Int {
+//        recyclerView ?: return RecyclerView.NO_POSITION
+//
+//        // updates current section
+//        val barHeight = sectionBarRect.height()
+//        if (barHeight <= 0) {
+//            return RecyclerView.NO_POSITION
+//        }
+//
+//        val offset = recyclerView.computeVerticalScrollOffset()
+//        val extent = recyclerView.computeVerticalScrollExtent()
+//        val range = recyclerView.computeVerticalScrollRange()
+//
+////        val percentage = (100.0f * offset / (range - extent).toFloat())
+////        val y = barHeight * (percentage / 100.0f)
+//
+//        val y = (offset.toFloat() / (range - extent - extent)) * barHeight
+//        return getSectionIndexByPoint(y)
+//    }
 
     fun attachRecyclerView(recyclerView: RecyclerView) {
         this.recyclerView = recyclerView
@@ -288,29 +301,35 @@ class RecyclerViewAlphabetIndexerScrollerView : FrameLayout {
     }
 
     private fun getSectionBarRect(): RectF {
-        val left = (width - sectionBarWidth - paddingLeft).toFloat()
-        val right = width.toFloat() - paddingRight
-        val top = 0f
-        val bottom = this.height.toFloat()
+        val left = if (isRTL()) {
+            (sectionBarMarginEnd).toFloat()
+        } else {
+            (width - sectionBarWidth - sectionBarMarginEnd).toFloat()
+        }
+        val right = if (isRTL()) {
+            (sectionBarMarginEnd + sectionBarWidth).toFloat()
+        } else {
+            (width - sectionBarMarginEnd).toFloat()
+        }
+        val top = sectionBarMarginTop.toFloat()
+        val bottom = this.height.toFloat() - sectionBarMarginBottom
 
         return RectF(left, top, right, bottom)
     }
 
     private fun getSectionIndexByPoint(y: Float): Int {
-
-        Log.d("Herry", "getSectionIndexByPoint y = $y")
         val sections = this.sections
         if (sections == null || sections.isEmpty()) return RecyclerView.NO_POSITION
 
         return when {
-            y < sectionBarRect.top + paddingTop -> {
+            y < sectionBarRect.top + sectionBarPaddingTop -> {
                 0
             }
-            y >= sectionBarRect.top + sectionBarRect.height() - paddingBottom -> {
+            y >= sectionBarRect.top + sectionBarRect.height() - sectionBarPaddingBottom -> {
                 sections.size - 1
             }
             else -> {
-                ((y - sectionBarRect.top - paddingTop) / ((sectionBarRect.height() - (paddingTop + paddingBottom)) / sections.size)).toInt()
+                ((y - sectionBarRect.top - sectionBarPaddingTop) / ((sectionBarRect.height() - (sectionBarPaddingTop + sectionBarPaddingBottom)) / sections.size)).toInt()
             }
         }
     }
@@ -325,7 +344,7 @@ class RecyclerViewAlphabetIndexerScrollerView : FrameLayout {
                 layoutManager.scrollToPosition(position)
             }
         } catch (e: Exception) {
-            Log.d("RVAISV", "Data size returns null")
+            Log.d("", "Data size returns null")
         }
     }
 
@@ -350,19 +369,68 @@ class RecyclerViewAlphabetIndexerScrollerView : FrameLayout {
     }
 
     private fun drawSections(canvas: Canvas) {
-        canvas.save()
-        sectionTextPaint.reset()
-        sectionTextPaint.isAntiAlias = true
-
         val currentSectionIndex = getCurrentSectionIndex()
         val sections = sections ?: return
         if (sections.isEmpty()) {
             return
         }
 
-        val sectionBarHeight = sectionBarRect.height() - (paddingTop + paddingBottom)
+        sectionTextPaint.reset()
+        sectionTextPaint.isAntiAlias = true
+
+        if (isHighlightEnable) {
+            sectionTextPaint.textSize = sectionHighlightTextSize.toFloat()
+            sectionTextPaint.typeface = sectionHighlightTextTypeface
+        } else {
+            sectionTextPaint.textSize = sectionTextSize.toFloat()
+            sectionTextPaint.typeface = sectionTextTypeface
+        }
+
+        val sectionTextHeight = sectionTextPaint.descent() - sectionTextPaint.ascent()
+        val sectionBarHeight = sectionBarRect.height() - (sectionBarPaddingTop + sectionBarPaddingBottom)
         val sectionHeight: Float = sectionBarHeight / sections.size
 
+        canvas.save()
+
+//        val drawSectionCounts = (sectionBarHeight / sectionTextHeight).toInt()
+//        if (drawSectionCounts <= 0) {
+//            return
+//        }
+//        var step: Float = sections.size / drawSectionCounts.toFloat()
+//        if (step < 1f) {
+//            step = 1f
+//        }
+//
+//        val drawSectionHeight = if (step <= 1f) {
+//            sectionBarHeight / sections.size
+//        } else {
+//            sectionBarHeight / drawSectionCounts
+//        }
+//        var lastDrawSection: String? = null
+//        for (index in sections.indices) {
+//            val drawIndex = (index * step).toInt()
+//            if (0 > drawIndex || drawIndex >= sections.size) {
+//                continue
+//            }
+//            val section = sections[drawIndex]
+//            if (lastDrawSection != null && lastDrawSection == section) {
+//                continue
+//            }
+//
+//            lastDrawSection = section
+//
+//            val sectionTextTop = sectionBarRect.top + sectionBarPaddingTop + index * drawSectionHeight
+//
+//            sectionTextPaint.textSize = sectionTextSize.toFloat()
+//            sectionTextPaint.typeface = sectionTextTypeface
+//            sectionTextPaint.color = sectionTextColor
+//
+//            val sectionTextStart: Float = (sectionBarWidth - sectionTextPaint.measureText(section)) / 2f
+//            val sectionTextX = (if (!isRTL()) sectionBarRect.left else sectionBarRect.right) + sectionTextStart
+//            val sectionTextY = sectionTextTop + (drawSectionHeight - sectionTextHeight) / 2f + sectionTextHeight - sectionTextPaint.descent()
+//            canvas.drawText(section, sectionTextX, sectionTextY, sectionTextPaint)
+//        }
+//
         var lastSectionTextY = -1f
         sections.forEachIndexed { index, section ->
             val isCurrentSection = currentSectionIndex > -1 && index == currentSectionIndex
@@ -376,16 +444,14 @@ class RecyclerViewAlphabetIndexerScrollerView : FrameLayout {
                 sectionTextPaint.color = sectionTextColor
             }
 
-            val sectionTextTop: Float = (sectionHeight - (sectionTextPaint.descent() - sectionTextPaint.ascent())) / 2f
-            val sectionTextY = sectionBarRect.top + paddingTop + sectionHeight * index + sectionTextTop - sectionTextPaint.ascent()
-            val sectionTextHeight = sectionTextPaint.descent() - sectionTextPaint.ascent()
+            val sectionTextTop: Float = sectionBarRect.top + sectionBarPaddingTop + index * sectionHeight
+            val sectionTextY = sectionTextTop + (sectionHeight - sectionTextHeight) / 2f - sectionTextPaint.ascent()
 
-            if (lastSectionTextY == -1f || (lastSectionTextY + sectionTextHeight) < sectionTextY) {
-                lastSectionTextY = sectionTextY
+            if (lastSectionTextY == -1f || sectionTextY - lastSectionTextY > sectionTextPaint.textSize) {
+                val sectionTextX = sectionBarRect.left + (sectionBarWidth - sectionTextPaint.measureText(section)) / 2f
 
-                val sectionTextStart: Float = (sectionBarWidth - sectionTextPaint.measureText(section)) / 2f
-                val sectionTextX = (if (!isRTL()) sectionBarRect.left else sectionBarRect.right) + sectionTextStart
                 canvas.drawText(section, sectionTextX, sectionTextY, sectionTextPaint)
+                lastSectionTextY = sectionTextY
             }
         }
         canvas.restore()
@@ -395,7 +461,6 @@ class RecyclerViewAlphabetIndexerScrollerView : FrameLayout {
         canvas.save()
 
         val section = getCurrentSection()
-        // Preview is shown when mCurrentSection is set
         if (isIndexing && isSectionPreviewEnable && section.isNotBlank()) {
             // draws section preview text
             sectionPreviewTextPaint.reset()
@@ -473,7 +538,8 @@ class RecyclerViewAlphabetIndexerScrollerView : FrameLayout {
     internal class SavedState : BaseSavedState {
         var currentSectionIndex = 0
 
-        constructor(superState: Parcelable?) : super(superState) {}
+        constructor(source: Parcelable?) : super(source)
+
         constructor(source: Parcel) : super(source) {
             currentSectionIndex = source.readInt()
         }

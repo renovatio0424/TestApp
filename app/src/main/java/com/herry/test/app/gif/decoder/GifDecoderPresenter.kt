@@ -15,7 +15,6 @@ import java.io.File
 class GifDecoderPresenter(private val data: GifMediaFileInfoData) : GifDecoderContract.Presenter() {
 
     override fun onLaunch(view: GifDecoderContract.View, recreated: Boolean) {
-        Log.d("Herry", "filePath = ${data.path} ")
         decode()
     }
 
@@ -46,7 +45,6 @@ class GifDecoderPresenter(private val data: GifMediaFileInfoData) : GifDecoderCo
                 do {
                     val bitmap = decoder.getNextFrame()
                     val currentFrameIndex = decoder.getCurrentFrameIndex()
-                    Log.d("Herry", "currentFrameIndex $currentFrameIndex")
                     val delay = decoder.getDelay(currentFrameIndex)
                     if (null != bitmap) {
                         frames.add(GifDecoderContract.DecodedGifFrame(

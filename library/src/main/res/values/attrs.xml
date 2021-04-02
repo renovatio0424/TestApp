@@ -241,6 +241,12 @@
         <attr name="rvaisv_sectionBarWidth" format="dimension" />
         <attr name="rvaisv_sectionBarPaddingTop" format="dimension" />
         <attr name="rvaisv_sectionBarPaddingBottom" format="dimension" />
+        <attr name="rvaisv_sectionBarPaddingStart" format="dimension" />
+        <attr name="rvaisv_sectionBarPaddingEnd" format="dimension" />
+        <attr name="rvaisv_sectionBarMarginStart" format="dimension" />
+        <attr name="rvaisv_sectionBarMarginEnd" format="dimension" />
+        <attr name="rvaisv_sectionBarMarginTop" format="dimension" />
+        <attr name="rvaisv_sectionBarMarginBottom" format="dimension" />
         <attr name="rvaisv_sectionTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
