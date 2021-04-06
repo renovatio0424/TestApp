@@ -50,10 +50,8 @@ fun Fragment.setOnNavNotifyListener(navHostFragment: NavHostFragment, listener: 
     navHostFragment.parentFragment?.childFragmentManager?.setFragmentResultListener(navHostFragment.id.toString(), this, listener)
 }
 
-fun findParentNavHostFragment(fragment: Fragment?): NavHostFragment? {
-    fragment ?: return null
-
-    var parentFragment: Fragment? = fragment.parentFragment
+fun Fragment.findParentNavHostFragment(): NavHostFragment? {
+    var parentFragment: Fragment? = this.parentFragment
     while (parentFragment != null) {
         if (parentFragment is NavHostFragment) {
             return parentFragment
@@ -80,7 +78,7 @@ fun Fragment.popToNavHost(bundle: Bundle? = null) {
     val navHostFragment = if (this is NavHostFragment) {
         this
     } else {
-        findParentNavHostFragment(this)
+        this.findParentNavHostFragment()
     } ?: return
 
     val destinationId = navHostFragment.findNavController().graph.startDestination
@@ -96,7 +94,7 @@ fun Fragment.notifyTo(@IdRes destinationId: Int, bundle: Bundle) {
 }
 
 fun Fragment.notifyToNestedNavHost(bundle: Bundle) {
-    val navHostFragment = findParentNavHostFragment(this)
+    val navHostFragment = this.findParentNavHostFragment()
 
     navHostFragment?.parentFragment?.childFragmentManager?.setFragmentResult(
         navHostFragment.id.toString(), bundle
@@ -174,11 +172,23 @@ fun Fragment.navigate(@IdRes resId: Int, args: Bundle?, navOptions: NavOptions?,
         @IdRes val destId: Int = navDestination.id
         if (destId == 0) return
 
-        val navHostFragment = findParentNavHostFragment(this)
+        val navHostFragment = this.findParentNavHostFragment()
         if (navHostFragment != null) {
             this.setFragmentResultListener(destId.toString()) { _: String, bundle: Bundle ->
                 onResult(bundle)
             }
         }
     }
+}
+
+
+fun NavHostFragment.getFragmentByViewID(): Fragment? {
+    return childFragmentManager.findFragmentById(this.id)
+}
+
+fun NavHostFragment.isCurrentStartDestinationFragment(): Boolean {
+    val currentFragmentDestinationId = findNavController().currentBackStackEntry?.destination?.id ?: 0
+    val parentStartFragmentDestinationId = findNavController().graph.startDestination
+
+    return currentFragmentDestinationId != 0 && currentFragmentDestinationId == parentStartFragmentDestinationId
 }

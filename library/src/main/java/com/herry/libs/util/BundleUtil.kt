@@ -68,6 +68,10 @@ object BundleUtil {
         return bundle != null && bundle.getBoolean(NavMovement.NAV_UP_RESULT_OK, false)
     }
 
+    fun isNavigationUpBlocked(bundle: Bundle?): Boolean {
+        return bundle != null && bundle.getBoolean(NavMovement.NAV_UP_BLOCK, false)
+    }
+
     fun fromNavigationId(bundle: Bundle?): Int {
         return bundle?.getInt(NavMovement.NAV_UP_FROM_ID, 0) ?: 0
     }

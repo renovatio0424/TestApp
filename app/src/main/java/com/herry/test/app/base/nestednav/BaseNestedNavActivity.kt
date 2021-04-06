@@ -4,7 +4,10 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
+import com.herry.libs.app.nav.NavMovement
+import com.herry.libs.util.BundleUtil
 import com.herry.libs.widget.extension.findParentNavHostFragment
+import com.herry.libs.widget.extension.isCurrentStartDestinationFragment
 import com.herry.test.app.base.nav.BaseNavActivity
 
 abstract class BaseNestedNavActivity: BaseNavActivity() {
@@ -29,7 +32,7 @@ abstract class BaseNestedNavActivity: BaseNavActivity() {
     }
 
     override fun getCurrentDestination(): NavDestination? {
-        val navHostFragment = findParentNavHostFragment(getCurrentFragment())
+        val navHostFragment = getCurrentFragment()?.findParentNavHostFragment()
         return navHostFragment?.findNavController()?.currentDestination ?: navController?.currentDestination
     }
 
@@ -60,6 +63,49 @@ abstract class BaseNestedNavActivity: BaseNavActivity() {
         }
 
         return navHostFragment?.navController?.navigateUp() ?: false
+    }
+
+    override fun navigateUpAndResults(): Boolean {
+        val fragment = getCurrentFragment()
+        if (fragment is NavMovement) {
+            if (fragment.isTransition()) {
+                return false
+            }
+
+            results = fragment.onNavigateUp()?.apply {
+                if (BundleUtil.isNavigationUpBlocked(this)) {
+                    results = null
+                    return false
+                }
+                getCurrentDestination()?.let {
+                    putInt(NavMovement.NAV_UP_FROM_ID, it.id)
+                }
+            }
+
+            val parentNavHostFragment = fragment.findParentNavHostFragment()
+            if (parentNavHostFragment?.isCurrentStartDestinationFragment() == true) {
+                val parentFragment = parentNavHostFragment.parentFragment
+                if (parentFragment is NavMovement) {
+                    if (parentFragment.isTransition()) {
+                        return false
+                    }
+                    results = parentFragment.onNavigateUp()?.apply {
+                        if (BundleUtil.isNavigationUpBlocked(this)) {
+                            results = null
+                            return false
+                        }
+                        getCurrentDestination()?.let {
+                            putInt(NavMovement.NAV_UP_FROM_ID, it.id)
+                        }
+                    }
+                    return true
+                } else {
+                    return false
+                }
+            }
+        }
+
+        return true
     }
 
 //

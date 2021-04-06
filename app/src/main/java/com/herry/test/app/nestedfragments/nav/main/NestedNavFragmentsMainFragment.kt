@@ -92,4 +92,7 @@ class NestedNavFragmentsMainFragment : BaseNestedNavFragment() {
         }
     }
 
+    override fun onNavigateUpResult(): Bundle? {
+        return super.onNavigateUpResult()
+    }
 }

@@ -20,7 +20,7 @@ abstract class BaseNavActivity: BaseActivity() {
     var navHostFragment: NavHostFragment? = null
         private set
 
-    private var results: Bundle? = null
+    protected var results: Bundle? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,7 +91,7 @@ abstract class BaseNavActivity: BaseActivity() {
 
     protected open fun navigateUp(): Boolean = navController?.navigateUp() ?: false
 
-    private fun navigateUpAndResults(): Boolean {
+    protected open fun navigateUpAndResults(): Boolean {
         val fragment = getCurrentFragment()
         if (fragment is NavMovement) {
             if (fragment.isTransition()) {
