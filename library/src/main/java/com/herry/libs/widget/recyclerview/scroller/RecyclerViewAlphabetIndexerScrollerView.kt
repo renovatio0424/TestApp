@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
 import android.os.Parcel
 import android.os.Parcelable
 import android.util.AttributeSet
@@ -32,6 +33,7 @@ class RecyclerViewAlphabetIndexerScrollerView : FrameLayout {
         override fun onChanged() {
             super.onChanged()
             updateSections()
+            requestLayout()
         }
     }
 
@@ -118,7 +120,14 @@ class RecyclerViewAlphabetIndexerScrollerView : FrameLayout {
         sectionPreviewViewHeight = attr.getDimensionPixelSize(R.styleable.RecyclerViewAlphabetIndexerScrollerView_rvaisv_sectionPreviewHeight, convertDpToPx(context, 56f))
         sectionPreviewBackgroundDrawable = attr.getDrawable(R.styleable.RecyclerViewAlphabetIndexerScrollerView_rvaisv_sectionPreviewBackground)
         if (sectionPreviewBackgroundDrawable == null) {
-            sectionPreviewBackgroundDrawable = ColorDrawable(Color.argb(0x80, 0, 0, 0))
+            val drawable = GradientDrawable().apply {
+                shape = GradientDrawable.RECTANGLE
+                setColor(Color.argb(0x80, 0, 0, 0))
+                val radius = convertDpToPx(context, 5f).toFloat()
+                cornerRadii = floatArrayOf(radius, radius, radius, radius, radius, radius, radius, radius)
+            }
+
+            sectionPreviewBackgroundDrawable = drawable
         }
         val sectionPreviewTextStyle = attr.getInt(R.styleable.RecyclerViewAlphabetIndexerScrollerView_rvaisv_sectionPreviewTextStyle, 0)
         sectionPreviewTextTypeface = convertAttrTextStyleToTypeface(sectionPreviewTextStyle)
@@ -354,6 +363,10 @@ class RecyclerViewAlphabetIndexerScrollerView : FrameLayout {
         // draws FrameLayout attributes
         super.onDraw(canvas)
 
+        if (sections.isNullOrEmpty()) {
+            return
+        }
+
         drawSectionBar(canvas)
         drawSections(canvas)
         drawSectionPreview(canvas)
@@ -476,11 +489,13 @@ class RecyclerViewAlphabetIndexerScrollerView : FrameLayout {
             val previewHeight: Float = kotlin.math.max(sectionPreviewTextHeight, sectionPreviewViewHeight.toFloat())
 
             // draws background
+            val viewWidth = width - paddingStart - paddingEnd
+            val viewHeight = height - paddingTop - paddingBottom
             val sectionPreviewRect = RectF(
-                (width - previewWidth) / 2f,
-                (height - previewHeight) / 2f,
-                (width - previewWidth) / 2f + previewWidth,
-                (height - previewHeight) / 2 + previewHeight
+                (viewWidth - previewWidth) / 2f + paddingStart,
+                (viewHeight - previewHeight) / 2f + paddingTop,
+                (viewWidth - previewWidth) / 2f + previewWidth + paddingStart,
+                (viewHeight - previewHeight) / 2 + previewHeight + paddingTop
             )
 
             sectionPreviewBackgroundDrawable?.bounds = sectionPreviewRect.toRect()
