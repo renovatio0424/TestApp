@@ -30,7 +30,7 @@ class DataCheckerMainPresenter : DataCheckerMainContract.Presenter() {
     }
 
     private fun display() {
-        view?.getViewContext() ?: return
+        view?.getContext() ?: return
 
         displayPassword()
     }

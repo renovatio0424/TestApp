@@ -9,6 +9,11 @@ import androidx.annotation.LayoutRes
 
 abstract class NodeView<H : NodeHolder> {
 
+    protected var holder: H? = null
+        private set
+
+    fun getView() = holder?.view
+
     open fun createHolder(context: Context, parent: ViewGroup?, attach: Boolean = true): H? {
         val view = onCreateView(context, parent)
         if (attach) {
@@ -17,14 +22,15 @@ abstract class NodeView<H : NodeHolder> {
         return bindHolder(context, view)
     }
 
-    open fun bindHolder(context: Context, parent: ViewGroup?, @IdRes id: Int): H? {
+    fun bindHolder(context: Context, parent: ViewGroup?, @IdRes id: Int): H? {
         return bindHolder(context, parent?.findViewById(id))
     }
 
-    open fun bindHolder(context: Context, view: View?): H? {
-        return view?.let {
+    fun bindHolder(context: Context, view: View?): H? {
+        holder = view?.let {
             onCreateHolder(context, it)
         }
+        return holder
     }
 
     protected open fun onCreateView(context: Context, parent: ViewGroup?): View =

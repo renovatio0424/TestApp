@@ -3,8 +3,10 @@
 package com.herry.libs.widget.extension
 
 import android.os.Bundle
+import android.view.View
 import androidx.annotation.IdRes
 import androidx.annotation.NavigationRes
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
@@ -46,8 +48,12 @@ fun Fragment.addNestedNavHostFragment(
     return navHostFragment
 }
 
-fun Fragment.setOnNavNotifyListener(navHostFragment: NavHostFragment, listener: ((requestKey: String, bundle: Bundle) -> Unit)) {
-    navHostFragment.parentFragment?.childFragmentManager?.setFragmentResultListener(navHostFragment.id.toString(), this, listener)
+fun NavHostFragment.setNotifyListenerToParentNavHost(listener: ((requestKey: String, bundle: Bundle) -> Unit)) {
+    parentFragment?.childFragmentManager?.setFragmentResultListener(id.toString(), this, listener)
+}
+
+fun NavHostFragment.setNotifyListenerFromChild(listener: ((requestKey: String, bundle: Bundle) -> Unit)) {
+    childFragmentManager.setFragmentResultListener(id.toString(), this, listener)
 }
 
 fun Fragment.findParentNavHostFragment(): NavHostFragment? {
@@ -67,6 +73,9 @@ fun Fragment.findNestedNavHostFragment(@IdRes id: Int): NavHostFragment? {
     return childFragmentManager.findFragmentById(id) as? NavHostFragment
 }
 
+/**
+ * Pop child fragment until destinationId
+ */
 fun Fragment.popTo(@IdRes destinationId: Int, bundle: Bundle) {
     findNavController().run {
         popBackStack(destinationId, true)
@@ -74,6 +83,9 @@ fun Fragment.popTo(@IdRes destinationId: Int, bundle: Bundle) {
     }
 }
 
+/**
+ * Pop all child fragment and set to the NavHostFragment
+ */
 fun Fragment.popToNavHost(bundle: Bundle? = null) {
     val navHostFragment = if (this is NavHostFragment) {
         this
@@ -93,7 +105,25 @@ fun Fragment.notifyTo(@IdRes destinationId: Int, bundle: Bundle) {
     setFragmentResult(destinationId.toString(), bundle)
 }
 
-fun Fragment.notifyToNestedNavHost(bundle: Bundle) {
+/**
+ * Sends data to NavHostFragment of this fragment
+ */
+fun Fragment.notifyToNavHost(bundle: Bundle) {
+    val navHostFragment = this.findParentNavHostFragment()
+
+    if (navHostFragment?.isCurrentStartDestinationFragment() == true) {
+        notifyToParentNavHost(bundle)
+    } else {
+        navHostFragment?.childFragmentManager?.setFragmentResult(
+            navHostFragment.id.toString(), bundle
+        )
+    }
+}
+
+/**
+ * Sends data to ParentNavHostFragment of the NavHostFragment of this fragment
+ */
+fun Fragment.notifyToParentNavHost(bundle: Bundle) {
     val navHostFragment = this.findParentNavHostFragment()
 
     navHostFragment?.parentFragment?.childFragmentManager?.setFragmentResult(
@@ -101,10 +131,16 @@ fun Fragment.notifyToNestedNavHost(bundle: Bundle) {
     )
 }
 
+/**
+ * Sends data to caller fragment of this fragment
+ */
 fun Fragment.notifyToCaller(bundle: Bundle) {
     notifyTo(getNavCurrentDestinationID(), bundle)
 }
 
+/**
+ * Sends data to current fragment from this fragment
+ */
 fun Fragment.notifyToCurrent(bundle: Bundle) {
     val currentDestinationId = findNavController().currentBackStackEntry?.destination?.id
     if (currentDestinationId != null) {
@@ -112,15 +148,18 @@ fun Fragment.notifyToCurrent(bundle: Bundle) {
     }
 }
 
+/**
+ * Changes screen to
+ */
 fun Fragment.navigate(@IdRes resId: Int, onResult: ((bundle: Bundle) -> Unit)? = null) {
     navigate(resId, null, onResult)
 }
 
-fun Fragment.navigate(@IdRes resId: Int, args: Bundle?, onResult: ((bundle: Bundle) -> Unit)? = null) {
+fun Fragment.navigate(@IdRes resId: Int, args: Bundle? = null, onResult: ((bundle: Bundle) -> Unit)? = null) {
     navigate(resId, args, null, onResult)
 }
 
-fun Fragment.navigate(@IdRes resId: Int, args: Bundle?, navOptions: NavOptions?, onResult: ((bundle: Bundle) -> Unit)? = null) {
+fun Fragment.navigate(@IdRes resId: Int, args: Bundle? = null, navOptions: NavOptions? = null, onResult: ((bundle: Bundle) -> Unit)? = null) {
     navigate(resId, args, navOptions, null, onResult)
 }
 
@@ -181,7 +220,6 @@ fun Fragment.navigate(@IdRes resId: Int, args: Bundle?, navOptions: NavOptions?,
     }
 }
 
-
 fun NavHostFragment.getFragmentByViewID(): Fragment? {
     return childFragmentManager.findFragmentById(this.id)
 }
@@ -191,4 +229,27 @@ fun NavHostFragment.isCurrentStartDestinationFragment(): Boolean {
     val parentStartFragmentDestinationId = findNavController().graph.startDestination
 
     return currentFragmentDestinationId != 0 && currentFragmentDestinationId == parentStartFragmentDestinationId
+}
+
+fun Fragment.isParentViewVisible() : Boolean {
+    return isParentViewVisible(view?.parent as? View)
+}
+
+private fun isParentViewVisible(parentView: View?) : Boolean {
+    parentView ?: return true
+    if (parentView.isVisible) {
+        return isParentViewVisible(parentView.parent as? View)
+    }
+
+    return false
+}
+
+fun Fragment.isNavHostFragment() : NavHostFragment? {
+    val navHostFragment = this.findParentNavHostFragment()
+
+    return if (navHostFragment?.isCurrentStartDestinationFragment() == true) {
+        navHostFragment
+    } else {
+        null
+    }
 }

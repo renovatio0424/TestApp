@@ -25,7 +25,7 @@ class FastScrollerListPresenter : FastScrollerListContract.Presenter() {
     }
 
     private fun loadList() {
-        view?.getViewContext() ?: return
+        view?.getContext() ?: return
 
         this.nodes.beginTransition()
 

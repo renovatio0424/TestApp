@@ -29,7 +29,7 @@ class MainPresenter : MainContract.Presenter() {
     }
 
     private fun setTestItems() {
-        view?.getViewContext() ?: return
+        view?.getContext() ?: return
 
         this.nodes.beginTransition()
 

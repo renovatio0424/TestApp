@@ -21,7 +21,7 @@ class LayoutSamplePresenter : LayoutSampleContract.Presenter() {
     }
 
     private fun displayRatios(type: LayoutSampleContract.AspectRatioType?) {
-        view?.getViewContext() ?: return
+        view?.getContext() ?: return
 
         view?.onUpdateRatios(type)
     }

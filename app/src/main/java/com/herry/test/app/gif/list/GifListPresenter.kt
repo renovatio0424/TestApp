@@ -46,7 +46,7 @@ class GifListPresenter : GifListContract.Presenter() {
     }
 
     private fun updateGifList(list: MutableList<GifMediaFileInfoData>) {
-        view?.getViewContext() ?: return
+        view?.getContext() ?: return
 
         this.nodes.beginTransition()
 
@@ -59,7 +59,7 @@ class GifListPresenter : GifListContract.Presenter() {
 
     @Suppress("DEPRECATION")
     private fun getGifContentsFromMediaStore(): Observable<MutableList<GifMediaFileInfoData>> {
-        val context: Context? = view?.getViewContext()
+        val context: Context? = view?.getContext()
         context ?: return Observable.empty()
 
         return Observable.fromCallable {

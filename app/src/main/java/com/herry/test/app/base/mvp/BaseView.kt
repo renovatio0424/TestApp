@@ -1,6 +1,5 @@
 package com.herry.test.app.base.mvp
 
-import android.content.Context
 import android.os.Bundle
 import com.herry.libs.app.activity_caller.module.ACError
 import com.herry.libs.mvp.MVPPresenter
@@ -42,8 +41,6 @@ abstract class BaseView<V: MVPView<P>, P: MVPPresenter<V>>: BaseFragment(), MVPV
 
         super.onPause()
     }
-
-    override fun getViewContext(): Context? = context
 
     override fun error(throwable: Throwable) {
         activityCaller?.call(

@@ -4,10 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProvider
 import com.herry.libs.helper.ToastHelper
 import com.herry.libs.util.BundleUtil
+import com.herry.libs.widget.extension.getNavCurrentDestinationID
 import com.herry.libs.widget.extension.navigate
+import com.herry.libs.widget.extension.notifyToNavHost
 import com.herry.test.R
 import com.herry.test.app.base.nestednav.BaseNestedNavFragment
 import com.herry.test.databinding.NestedNavFragmentsSub2FragmentBinding
@@ -39,6 +42,15 @@ class NestedNavFragmentsSub2Fragment : BaseNestedNavFragment() {
 
                     ToastHelper.showToast(requireActivity(), "from R.id.nested_nav_fragments_sub3_fragment = ${R.id.nested_nav_fragments_sub3_fragment == fromId}, result = $result")
                 }
+            }
+
+            binding.nestedNavFragmentsSub2FragmentShowOverlay.setOnClickListener {
+                notifyToNavHost(
+                    bundleOf(
+                        "from" to getNavCurrentDestinationID(),
+                        "value" to ""
+                    )
+                )
             }
         }
 

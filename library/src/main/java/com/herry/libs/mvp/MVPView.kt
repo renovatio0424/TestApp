@@ -1,7 +1,7 @@
 package com.herry.libs.mvp
 
 import android.content.Context
-import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 
 @Suppress("unused")
 interface MVPView<P> {
@@ -10,11 +10,9 @@ interface MVPView<P> {
     /**
      * Context
      */
-    fun getViewContext(): Context?
+    fun getContext(): Context?
 
-    fun getLifecycle(): Lifecycle?
-
-//    fun getViewLifecycleOwner(): LifecycleOwner?
+    fun getViewLifecycleOwner(): LifecycleOwner
 
     /**
      * Shows loading view

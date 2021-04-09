@@ -43,8 +43,6 @@ abstract class BaseNestedNavView<V: MVPView<P>, P: MVPPresenter<V>>: BaseNestedN
         super.onPause()
     }
 
-    override fun getViewContext(): Context? = context
-
     override fun error(throwable: Throwable) {
         activityCaller?.call(
             ACError.Caller(throwable) {

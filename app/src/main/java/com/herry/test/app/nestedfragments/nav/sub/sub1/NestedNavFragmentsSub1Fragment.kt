@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.herry.libs.helper.ToastHelper
 import com.herry.libs.util.BundleUtil
 import com.herry.libs.widget.extension.navigate
+import com.herry.libs.widget.extension.notifyToParentNavHost
 import com.herry.test.R
 import com.herry.test.app.base.nestednav.BaseNestedNavFragment
 import com.herry.test.app.nestedfragments.nav.sub.sub2.NestedNavFragmentsSub2ViewModel
@@ -44,5 +45,9 @@ class NestedNavFragmentsSub1Fragment : BaseNestedNavFragment() {
         }
 
         return binding.root
+    }
+
+    override fun onNotifiedFromChild(from: String, bundle: Bundle) {
+        notifyToParentNavHost(bundle)
     }
 }

@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.herry.libs.util.BundleUtil
 import com.herry.test.app.base.nestednav.BaseNestedNavFragment
@@ -36,7 +35,7 @@ class NestedNavFragmentsSecondFragment : BaseNestedNavFragment() {
         return binding.root
     }
 
-    override fun onNavigateUpResult(): Bundle? {
+    override fun onNavigateUpResult(): Bundle {
         return BundleUtil.createNavigationBundle(true)
     }
 }

@@ -64,6 +64,10 @@ object BundleUtil {
         return bundle
     }
 
+    fun createBlockNavigateUp(): Bundle = Bundle().apply {
+        putBoolean(NavMovement.NAV_UP_BLOCK, true)
+    }
+
     fun isNavigationResultOk(bundle: Bundle?): Boolean {
         return bundle != null && bundle.getBoolean(NavMovement.NAV_UP_RESULT_OK, false)
     }

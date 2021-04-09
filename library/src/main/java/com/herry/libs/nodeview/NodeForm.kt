@@ -8,24 +8,20 @@ import kotlin.reflect.full.safeCast
 
 @Suppress("unused")
 abstract class NodeForm<H : NodeHolder, M : Any>(val hClass: KClass<H>, val mClass: KClass<M>) : NodeView<H>() {
-    var holder: H? = null
-        private set
 
     var model: M? = null
         private set
 
-    fun getView() = holder?.view
-
     open fun createFormHolder(context: Context, parent: ViewGroup?, attach: Boolean = true) {
-        holder = super.createHolder(context, parent, attach)
+        super.createHolder(context, parent, attach)
     }
 
     open fun bindFormHolder(context: Context, parent: ViewGroup?, id: Int) {
-        holder = super.bindHolder(context, parent, id)
+        super.bindHolder(context, parent, id)
     }
 
     open fun bindFormHolder(context: Context, view: View?) {
-        holder = super.bindHolder(context, view)
+        super.bindHolder(context, view)
     }
 
     open fun bindFormModel(context: Context, model: M?) {
@@ -35,6 +31,10 @@ abstract class NodeForm<H : NodeHolder, M : Any>(val hClass: KClass<H>, val mCla
                 onBindModel(context, _holder, it)
             } ?: onBindModelEmpty(context, _holder)
         }
+    }
+
+    open fun notifyChangedModel(context: Context) {
+        bindFormModel(context, this.model)
     }
 
     internal fun bindModel(context: Context, holder: NodeHolder, model: Any) {

@@ -1,6 +1,5 @@
 package com.herry.test.app.base.nav
 
-import android.content.Context
 import android.os.Bundle
 import com.herry.libs.app.activity_caller.module.ACError
 import com.herry.libs.mvp.MVPPresenter
@@ -42,8 +41,6 @@ abstract class BaseNavView<V: MVPView<P>, P: MVPPresenter<V>>: BaseNavFragment()
 
         super.onPause()
     }
-
-    override fun getViewContext(): Context? = context
 
     override fun error(throwable: Throwable) {
         activityCaller?.call(

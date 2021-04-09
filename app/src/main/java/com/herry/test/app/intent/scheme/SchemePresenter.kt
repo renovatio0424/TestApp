@@ -28,7 +28,7 @@ class SchemePresenter : SchemeContract.Presenter() {
     }
 
     private fun setTestItems() {
-        view?.getViewContext() ?: return
+        view?.getContext() ?: return
 
         this.nodes.beginTransition()
 
@@ -41,7 +41,7 @@ class SchemePresenter : SchemeContract.Presenter() {
     }
 
     override fun gotoScheme(type: SchemeContract.SchemeItemType) {
-        view?.getViewContext() ?: return
+        view?.getContext() ?: return
 
         view?.onGotoScheme(type.url)
     }

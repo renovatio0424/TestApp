@@ -9,7 +9,6 @@ import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 
-@Suppress("MemberVisibilityCanBePrivate")
 abstract class BasePresent<V> : MVPPresenter<V>() {
 
     protected var view: V? = null
@@ -59,13 +58,18 @@ abstract class BasePresent<V> : MVPPresenter<V>() {
         }
     }
 
-    override fun onPause() {
+    final override fun onPause() {
         compositeDisposable.clear()
+        this.view?.let {
+            onPause(it)
+        }
     }
 
     protected abstract fun onLaunch(view: V, recreated: Boolean = false)
 
     protected open fun onResume(view: V) {}
+
+    protected open fun onPause(view: V) {}
 
     protected open fun launched(function: () -> Unit) {
         if (view != null) {
@@ -119,5 +123,5 @@ abstract class BasePresent<V> : MVPPresenter<V>() {
         )
     }
 
-    protected fun lifecycleScope(): LifecycleCoroutineScope? = (view as? MVPView<*>)?.getLifecycle()?.coroutineScope
+    protected fun lifecycleScope(): LifecycleCoroutineScope? = (view as? MVPView<*>)?.getViewLifecycleOwner()?.lifecycle?.coroutineScope
 }

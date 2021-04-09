@@ -20,7 +20,7 @@ class PasswordSettingPresenter : PasswordSettingContract.Presenter() {
     }
 
     private fun display() {
-        view?.getViewContext() ?: return
+        view?.getContext() ?: return
 
         view?.onDisplayPassword(passwordChecker.data ?: "")
     }

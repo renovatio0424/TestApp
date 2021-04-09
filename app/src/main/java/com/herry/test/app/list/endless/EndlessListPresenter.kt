@@ -34,7 +34,7 @@ class EndlessListPresenter : EndlessListContract.Presenter() {
     }
 
     private fun loadList() {
-        view?.getViewContext() ?: return
+        view?.getContext() ?: return
 
         this.nodes.beginTransition()
 
@@ -47,7 +47,7 @@ class EndlessListPresenter : EndlessListContract.Presenter() {
     }
 
     override fun loadMore() {
-        view?.getViewContext() ?: return
+        view?.getContext() ?: return
 
         this.nodes.beginTransition()
 

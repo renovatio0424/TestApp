@@ -4,13 +4,14 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.annotation.TransitionRes
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
 import com.herry.libs.app.nav.NavMovement
 import com.herry.libs.helper.TransitionHelper
 import com.herry.libs.util.BundleUtil
 import com.herry.libs.util.ViewUtil
+import com.herry.libs.widget.extension.isNavHostFragment
+import com.herry.libs.widget.extension.setNotifyListenerFromChild
 import com.herry.test.app.base.BaseActivity
 import com.herry.test.app.base.BaseFragment
 
@@ -25,7 +26,7 @@ open class BaseNavFragment: BaseFragment(), NavMovement {
      */
     final override fun onBackPressed(): Boolean = false
 
-    final override fun onNavigateUp(): Bundle? {
+    final override fun onNavigateUp(): Bundle {
         val bundle = onNavigateUpResult() ?: BundleUtil.createNavigationBundle(false)
 
         val currentDestinationId = findNavController().currentBackStackEntry?.destination?.id
@@ -36,14 +37,41 @@ open class BaseNavFragment: BaseFragment(), NavMovement {
         return bundle
     }
 
+    protected open fun navigateUpAndResult(resultOK: Boolean) {
+        navigateUpAndResult(BundleUtil.createNavigationBundle(resultOK))
+    }
+
+    protected open fun navigateUpAndResult(bundle: Bundle?) {
+        try {
+            val currentDestinationId = findNavController().currentBackStackEntry?.destination?.id
+            if (currentDestinationId != null) {
+                setFragmentResult(currentDestinationId.toString(), bundle ?: BundleUtil.createNavigationBundle(false))
+            }
+            if (!navigateUp()) {
+                finishAndResults(bundle)
+            }
+        } catch (ex: IllegalStateException) {
+            finishAndResults(bundle)
+        }
+    }
+
     protected open fun onNavigateUpResult(): Bundle? = null
 
     override fun isTransition(): Boolean = transitionHelper.isTransition()
+
+    protected open fun onNotifiedFromChild(from: String, bundle: Bundle) {}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         transitionHelper.onCreate(activity, this)
+
+        // checks current fragment is NavHostFragment or not
+        this.isNavHostFragment()?.run {
+            setNotifyListenerFromChild { from, bundle ->
+                onNotifiedFromChild(from, bundle)
+            }
+        }
     }
 
     override fun onDestroy() {
@@ -55,7 +83,7 @@ open class BaseNavFragment: BaseFragment(), NavMovement {
     /**
      * finish fragment.
      * If you want finish with to set result, creates [bundle] parameter.
-     * @see com.herry.libs.util.BundleUtil.createNavigationBundle(Boolean)
+     * @see BundleUtil.createNavigationBundle(Boolean)
      *
      * - Sets result to RESULT_OK
      *   finishActivity(BundleUtil.createNavigationBundle(true))
@@ -78,7 +106,7 @@ open class BaseNavFragment: BaseFragment(), NavMovement {
     /**
      * finish fragment.
      * If you want finish with to set result, creates [bundle] parameter.
-     * @see com.herry.libs.util.BundleUtil.createNavigationBundle(Boolean)
+     * @see BundleUtil.createNavigationBundle(Boolean)
      * @param resultOK set result to ok or cancel
      * @param bundle result data
      */
@@ -101,24 +129,6 @@ open class BaseNavFragment: BaseFragment(), NavMovement {
                 putExtra(NavMovement.NAV_BUNDLE, resultBundle)
             })
             activity.finishAfterTransition()
-        }
-    }
-
-    private fun finishAndResultsAndNav(bundle: Bundle?) {
-        activity?.let { activity ->
-            activity.window?.let {
-                ViewUtil.hideSoftKeyboard(context, activity.window.decorView.rootView)
-            }
-
-            bundle?.let {
-                val intent = Intent()
-                intent.putExtra(NavMovement.NAV_BUNDLE, it)
-                activity.setResult(
-                    if (it.getBoolean(NavMovement.NAV_UP_RESULT_OK, false)) AppCompatActivity.RESULT_OK else AppCompatActivity.RESULT_CANCELED,
-                    intent
-                )
-                activity.finishAfterTransition()
-            } ?: activity.finishAfterTransition()
         }
     }
 

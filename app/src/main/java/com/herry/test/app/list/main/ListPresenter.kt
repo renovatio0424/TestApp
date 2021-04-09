@@ -24,7 +24,7 @@ class ListPresenter : ListContract.Presenter() {
     }
 
     private fun loadList() {
-        view?.getViewContext() ?: return
+        view?.getContext() ?: return
 
         this.nodes.beginTransition()
 

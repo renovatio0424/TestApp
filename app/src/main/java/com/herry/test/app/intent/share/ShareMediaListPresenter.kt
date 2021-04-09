@@ -45,7 +45,7 @@ class ShareMediaListPresenter : ShareMediaListContract.Presenter() {
     }
 
     private fun updateMediaList(list: MutableList<MediaFileInfoData>) {
-        view?.getViewContext() ?: return
+        view?.getContext() ?: return
 
         this.nodes.beginTransition()
 
@@ -58,7 +58,7 @@ class ShareMediaListPresenter : ShareMediaListContract.Presenter() {
 
     @Suppress("DEPRECATION")
     private fun getMediaContentsFromMediaStore(): Observable<MutableList<MediaFileInfoData>> {
-        val context: Context? = view?.getViewContext()
+        val context: Context? = view?.getContext()
         context ?: return Observable.empty()
 
         return Observable.fromCallable {
