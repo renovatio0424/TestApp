@@ -3,6 +3,7 @@
 package com.herry.libs.widget.extension
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.annotation.IdRes
 import androidx.annotation.NavigationRes
@@ -16,7 +17,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.Navigator
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
-import com.herry.libs.util.BundleUtil
+import com.herry.libs.app.nav.NavBundleUtil
 
 fun Fragment.getNavCurrentDestinationID(): Int = findNavController().currentDestination?.id ?: 0
 
@@ -48,11 +49,7 @@ fun Fragment.addNestedNavHostFragment(
     return navHostFragment
 }
 
-fun NavHostFragment.setNotifyListenerToParentNavHost(listener: ((requestKey: String, bundle: Bundle) -> Unit)) {
-    parentFragment?.childFragmentManager?.setFragmentResultListener(id.toString(), this, listener)
-}
-
-fun NavHostFragment.setNotifyListenerFromChild(listener: ((requestKey: String, bundle: Bundle) -> Unit)) {
+fun NavHostFragment.setFragmentNotifyListener(listener: ((requestKey: String, bundle: Bundle) -> Unit)) {
     childFragmentManager.setFragmentResultListener(id.toString(), this, listener)
 }
 
@@ -71,6 +68,18 @@ fun Fragment.findParentNavHostFragment(): NavHostFragment? {
 
 fun Fragment.findNestedNavHostFragment(@IdRes id: Int): NavHostFragment? {
     return childFragmentManager.findFragmentById(id) as? NavHostFragment
+}
+
+fun Fragment.isNestedNavHostFragment(): Boolean {
+    if (this is NavHostFragment) {
+        return this.findParentNavHostFragment() != null
+    }
+
+    return false
+}
+
+fun NavHostFragment.getCurrentFragment(): Fragment? {
+    return childFragmentManager.primaryNavigationFragment
 }
 
 /**
@@ -97,11 +106,11 @@ fun Fragment.popToNavHost(bundle: Bundle? = null) {
 
     findNavController().run {
         popBackStack(destinationId, false)
-        notifyTo(destinationId, bundle ?: BundleUtil.createNavigationBundle(false))
+        notifyTo(destinationId, bundle ?: NavBundleUtil.createNavigationBundle(false))
     }
 }
 
-fun Fragment.notifyTo(@IdRes destinationId: Int, bundle: Bundle) {
+private fun Fragment.notifyTo(@IdRes destinationId: Int, bundle: Bundle) {
     setFragmentResult(destinationId.toString(), bundle)
 }
 
@@ -114,6 +123,7 @@ fun Fragment.notifyToNavHost(bundle: Bundle) {
     if (navHostFragment?.isCurrentStartDestinationFragment() == true) {
         notifyToParentNavHost(bundle)
     } else {
+        Log.d("Herry", "notifyToNavHost id = ${navHostFragment?.id}")
         navHostFragment?.childFragmentManager?.setFragmentResult(
             navHostFragment.id.toString(), bundle
         )
@@ -132,16 +142,9 @@ fun Fragment.notifyToParentNavHost(bundle: Bundle) {
 }
 
 /**
- * Sends data to caller fragment of this fragment
+ * Sends data to current fragment from NavHostFragment
  */
-fun Fragment.notifyToCaller(bundle: Bundle) {
-    notifyTo(getNavCurrentDestinationID(), bundle)
-}
-
-/**
- * Sends data to current fragment from this fragment
- */
-fun Fragment.notifyToCurrent(bundle: Bundle) {
+fun NavHostFragment.notifyToCurrent(bundle: Bundle) {
     val currentDestinationId = findNavController().currentBackStackEntry?.destination?.id
     if (currentDestinationId != null) {
         notifyTo(currentDestinationId, bundle)
@@ -244,7 +247,7 @@ private fun isParentViewVisible(parentView: View?) : Boolean {
     return false
 }
 
-fun Fragment.isNavHostFragment() : NavHostFragment? {
+fun Fragment.getNavHostFragment() : NavHostFragment? {
     val navHostFragment = this.findParentNavHostFragment()
 
     return if (navHostFragment?.isCurrentStartDestinationFragment() == true) {

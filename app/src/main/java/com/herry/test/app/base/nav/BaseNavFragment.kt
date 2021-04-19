@@ -6,12 +6,11 @@ import android.os.Bundle
 import androidx.annotation.TransitionRes
 import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
+import com.herry.libs.app.nav.NavBundleUtil
 import com.herry.libs.app.nav.NavMovement
 import com.herry.libs.helper.TransitionHelper
 import com.herry.libs.util.BundleUtil
 import com.herry.libs.util.ViewUtil
-import com.herry.libs.widget.extension.isNavHostFragment
-import com.herry.libs.widget.extension.setNotifyListenerFromChild
 import com.herry.test.app.base.BaseActivity
 import com.herry.test.app.base.BaseFragment
 
@@ -27,7 +26,7 @@ open class BaseNavFragment: BaseFragment(), NavMovement {
     final override fun onBackPressed(): Boolean = false
 
     final override fun onNavigateUp(): Bundle {
-        val bundle = onNavigateUpResult() ?: BundleUtil.createNavigationBundle(false)
+        val bundle = onNavigateUpResult() ?: NavBundleUtil.createNavigationBundle(false)
 
         val currentDestinationId = findNavController().currentBackStackEntry?.destination?.id
         if (currentDestinationId != null) {
@@ -38,14 +37,14 @@ open class BaseNavFragment: BaseFragment(), NavMovement {
     }
 
     protected open fun navigateUpAndResult(resultOK: Boolean) {
-        navigateUpAndResult(BundleUtil.createNavigationBundle(resultOK))
+        navigateUpAndResult(NavBundleUtil.createNavigationBundle(resultOK))
     }
 
     protected open fun navigateUpAndResult(bundle: Bundle?) {
         try {
             val currentDestinationId = findNavController().currentBackStackEntry?.destination?.id
             if (currentDestinationId != null) {
-                setFragmentResult(currentDestinationId.toString(), bundle ?: BundleUtil.createNavigationBundle(false))
+                setFragmentResult(currentDestinationId.toString(), bundle ?: NavBundleUtil.createNavigationBundle(false))
             }
             if (!navigateUp()) {
                 finishAndResults(bundle)
@@ -59,19 +58,14 @@ open class BaseNavFragment: BaseFragment(), NavMovement {
 
     override fun isTransition(): Boolean = transitionHelper.isTransition()
 
-    protected open fun onNotifiedFromChild(from: String, bundle: Bundle) {}
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         transitionHelper.onCreate(activity, this)
+    }
 
-        // checks current fragment is NavHostFragment or not
-        this.isNavHostFragment()?.run {
-            setNotifyListenerFromChild { from, bundle ->
-                onNotifiedFromChild(from, bundle)
-            }
-        }
+    override fun onDetach() {
+        super.onDetach()
     }
 
     override fun onDestroy() {
@@ -99,7 +93,7 @@ open class BaseNavFragment: BaseFragment(), NavMovement {
             }
             activity.finishAndResults(bundle)
         } else if (activity is BaseActivity) {
-            finishAndResults(BundleUtil.isNavigationResultOk(bundle), bundle)
+            finishAndResults(NavBundleUtil.isNavigationResultOk(bundle), bundle)
         }
     }
 

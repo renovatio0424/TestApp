@@ -6,14 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProvider
+import com.herry.libs.app.nav.NavBundleUtil
 import com.herry.libs.util.BundleUtil
 import com.herry.libs.widget.extension.getNavCurrentDestinationID
 import com.herry.libs.widget.extension.notifyToNavHost
 import com.herry.libs.widget.extension.popToNavHost
+import com.herry.test.app.base.nav.BaseNavFragment
 import com.herry.test.app.base.nestednav.BaseNestedNavFragment
 import com.herry.test.databinding.NestedNavFragmentsSub3FragmentBinding
 
-class NestedNavFragmentsSub3Fragment : BaseNestedNavFragment() {
+class NestedNavFragmentsSub3Fragment : BaseNavFragment() {
 
     private var _binding: NestedNavFragmentsSub3FragmentBinding? = null
     // This property is only valid between onCreateView and onDestroyView.
@@ -51,6 +53,6 @@ class NestedNavFragmentsSub3Fragment : BaseNestedNavFragment() {
     }
 
     override fun onNavigateUpResult(): Bundle {
-        return BundleUtil.createNavigationBundle(false)
+        return NavBundleUtil.createNavigationBundle(false)
     }
 }

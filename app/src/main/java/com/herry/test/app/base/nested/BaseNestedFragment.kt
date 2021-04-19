@@ -34,7 +34,7 @@ open class BaseNestedFragment: BaseFragment() {
     /**
      * finish fragment.
      * If you want finish with to set result, creates [bundle] parameter.
-     * @see com.herry.libs.util.BundleUtil.createNavigationBundle(Boolean)
+     * @see com.herry.libs.app.nav.NavBundleUtil.createNavigationBundle(Boolean)
      * @param resultCode set result to ok or cancel
      * @param bundle result data
      */

@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import com.herry.libs.app.nav.NavBundleUtil
 import com.herry.libs.util.AppUtil
 import com.herry.libs.util.BundleUtil
 import com.herry.test.R
@@ -67,6 +68,6 @@ class PasswordSettingFragment : BaseNavView<PasswordSettingContract.View, Passwo
 
 
     override fun onNavigateUpResult(): Bundle {
-        return BundleUtil.createNavigationBundle(presenter?.isChangedPassword() ?: false)
+        return NavBundleUtil.createNavigationBundle(presenter?.isChangedPassword() ?: false)
     }
 }

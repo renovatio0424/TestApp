@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.herry.libs.app.nav.NavBundleUtil
 import com.herry.libs.util.BundleUtil
 import com.herry.libs.util.FragmentAddingOption
 import com.herry.libs.widget.extension.setOnProtectClickListener
@@ -47,7 +48,7 @@ class NestedFragmentsMainFragment : BaseNestedView<NestedFragmentsMainContract.V
                 NestedFragmentsMainSubFragment.newInstance("1"),
                 FragmentAddingOption(isReplace = false, isAddToBackStack = true)
             ) { requestKey, bundle ->
-                val isOk = BundleUtil.isNavigationResultOk(bundle)
+                val isOk = NavBundleUtil.isNavigationResultOk(bundle)
                 Log.d("Herry", "requestKey= $requestKey, isOk = $isOk")
             }
         }
@@ -58,7 +59,7 @@ class NestedFragmentsMainFragment : BaseNestedView<NestedFragmentsMainContract.V
                 NestedFragmentsMainSubFragment.newInstance((currentSubIndex++).toString()),
                 FragmentAddingOption(isReplace = false, isAddToBackStack = true)
             ) { requestKey, bundle ->
-                val isOk = BundleUtil.isNavigationResultOk(bundle)
+                val isOk = NavBundleUtil.isNavigationResultOk(bundle)
                 Log.d("Herry", "requestKey= $requestKey, isOk = $isOk")
             }
         }
@@ -68,7 +69,7 @@ class NestedFragmentsMainFragment : BaseNestedView<NestedFragmentsMainContract.V
             addFragmentToActivity(
                 NestedFragmentsSecondFragment.newInstance()
             ) { requestKey, bundle ->
-                val isOk = BundleUtil.isNavigationResultOk(bundle)
+                val isOk = NavBundleUtil.isNavigationResultOk(bundle)
                 Log.d("Herry", "requestKey= $requestKey, isOk = $isOk")
             }
         }

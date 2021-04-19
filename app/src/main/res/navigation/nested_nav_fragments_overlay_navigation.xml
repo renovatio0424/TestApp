@@ -4,7 +4,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nested_nav_fragments_overlay_navigation"
-    app:startDestination="@+id/nested_nav_fragments_overlay_main1_fragment">
+    app:startDestination="@+id/nested_nav_fragments_overlay_base_fragment">
+
+    <fragment
+        android:id="@+id/nested_nav_fragments_overlay_base_fragment"
+        android:name="com.herry.test.app.nestedfragments.nav.overlay.NestedNavFragmentsOverlayBaseFragment" />
 
     <fragment
         android:id="@+id/nested_nav_fragments_overlay_main1_fragment"

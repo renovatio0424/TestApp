@@ -1,91 +1,92 @@
 package com.herry.test.app.nestedfragments.nav.main
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.herry.libs.util.BundleUtil
 import com.herry.libs.widget.extension.findNestedNavHostFragment
 import com.herry.libs.widget.extension.navigate
 import com.herry.libs.widget.extension.popToNavHost
-import com.herry.libs.widget.extension.setNotifyListenerToParentNavHost
+import com.herry.libs.widget.extension.setFragmentNotifyListener
 import com.herry.test.R
 import com.herry.test.app.base.nestednav.BaseNestedNavFragment
-import com.herry.test.app.nestedfragments.nav.second.NestedNavFragmentsSecondViewModel
-import com.herry.test.databinding.NestedNavFragmentsMainFragmentBinding
 
 class NestedNavFragmentsMainFragment : BaseNestedNavFragment() {
 
-    private var _binding: NestedNavFragmentsMainFragmentBinding? = null
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
-
-    private lateinit var viewModel: NestedNavFragmentsSecondViewModel
+    private var container: View? = null
 
     private var subNavHostFragment: NavHostFragment? = null
-
-    @SuppressLint("SetTextI18n")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(NestedNavFragmentsSecondViewModel::class.java)
-    }
+    private var overlayNavHostFragment: NavHostFragment? = null
+    private var overlayContainer: View? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        if (_binding == null) {
-            _binding = NestedNavFragmentsMainFragmentBinding.inflate(inflater, container, false)
+    ): View? {
+        if (this.container == null) {
+            this.container = inflater.inflate(R.layout.nested_nav_fragments_main_fragment, container, false)
 
-            val subNavHost = findNestedNavHostFragment(binding.nestedNavFragmentsMainFragmentSubContainer.id)
-            if (subNavHost != null) {
-                subNavHostFragment = subNavHost
-                addSubNavHostFragment(subNavHostFragment)
+            init(this.container)
+        }
 
-                subNavHost.setNotifyListenerToParentNavHost { _, bundle ->
-                    onSubScreenResults(bundle)
-                }
+        return this.container
+    }
+
+    private fun init(view: View?) {
+        view ?: return
+
+        val subNavHost = findNestedNavHostFragment(R.id.nested_nav_fragments_main_fragment_sub_container)
+        if (subNavHost != null) {
+            subNavHost.setFragmentNotifyListener { from, bundle ->
+                onSubScreenResults(bundle)
             }
 
-            binding.nestedNavFragmentsMainFragmentBottomShowSub3.setOnClickListener {
-                subNavHostFragment?.navigate(R.id.nested_nav_fragments_sub3_fragment)
-            }
+            addNestedNavHostFragment(subNavHost)
 
-            binding.nestedNavFragmentsMainFragmentBottomPopupToSub1.setOnClickListener {
-                subNavHostFragment?.popToNavHost()
-            }
+            subNavHostFragment = subNavHost
+        }
 
-            binding.nestedNavFragmentsMainFragmentBottomCloseOverlay.setOnClickListener {
-                hideOverlay()
+        overlayContainer = view.findViewById(R.id.nested_nav_fragments_main_fragment_overlay_container)
+        val overlayNavHost = findNestedNavHostFragment(R.id.nested_nav_fragments_main_fragment_overlay_container)
+        if (overlayNavHost != null) {
+            overlayNavHost.setFragmentNotifyListener { from, bundle ->
+                onOverlayScreenResults(bundle)
             }
+            addNestedNavHostFragment(overlayNavHost)
+            overlayNavHostFragment = overlayNavHost
+        }
 
-            binding.nestedNavFragmentsMainFragmentBottomShowOverlay2.setOnClickListener {
-                showOverlay(2)
-            }
+        view.findViewById<View>(R.id.nested_nav_fragments_main_fragment_bottom_show_sub_3).setOnClickListener {
+            subNavHostFragment?.navigate(R.id.nested_nav_fragments_sub3_fragment)
+        }
 
-            binding.nestedNavFragmentsMainFragmentBottomShowSecond.setOnClickListener {
-                navigate(R.id.action_nested_nav_fragments_main_to_second) { _ ->
-                    Toast.makeText(requireContext(), "from second screen by action id", Toast.LENGTH_SHORT).show()
-                }
-            }
+        view.findViewById<View>(R.id.nested_nav_fragments_main_fragment_bottom_popup_to_sub1).setOnClickListener {
+            subNavHostFragment?.popToNavHost()
+        }
 
-            binding.nestedNavFragmentsMainFragmentBottomShowSecondWithId.setOnClickListener {
-                navigate(R.id.nested_nav_fragments_second_fragment) { _ ->
-                    Toast.makeText(requireContext(), "from second screen by destination id", Toast.LENGTH_SHORT).show()
-                }
+        view.findViewById<View>(R.id.nested_nav_fragments_main_fragment_bottom_close_overlay).setOnClickListener {
+            overlayNavHostFragment?.popToNavHost()
+        }
+
+        view.findViewById<View>(R.id.nested_nav_fragments_main_fragment_bottom_show_overlay2).setOnClickListener {
+            showOverlay(2)
+        }
+
+        view.findViewById<View>(R.id.nested_nav_fragments_main_fragment_bottom_show_second).setOnClickListener {
+            navigate(R.id.action_nested_nav_fragments_main_to_second) { _ ->
+                Toast.makeText(requireContext(), "from second screen by action id", Toast.LENGTH_SHORT).show()
             }
         }
 
-        return binding.root
+        view.findViewById<View>(R.id.nested_nav_fragments_main_fragment_bottom_show_second_with_id).setOnClickListener {
+            navigate(R.id.nested_nav_fragments_second_fragment) { _ ->
+                Toast.makeText(requireContext(), "from second screen by destination id", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
-
     private fun onSubScreenResults(bundle: Bundle) {
         when (bundle.getInt("from")) {
             R.id.nested_nav_fragments_sub1_fragment -> {
@@ -104,29 +105,19 @@ class NestedNavFragmentsMainFragment : BaseNestedNavFragment() {
         }
     }
 
+    private fun onOverlayScreenResults(bundle: Bundle) {
+        when (bundle.getInt("from")) {
+        }
+    }
+
     private fun showOverlay(type: Int) {
-        val navController = binding.nestedNavFragmentsMainFragmentOverlayContainer.findNavController()
-        val navGraph = navController.graph
-
-        navGraph.startDestination = when (type) {
-            1 -> R.id.nested_nav_fragments_overlay_main1_fragment
-            else -> R.id.nested_nav_fragments_overlay_main2_fragment
+        when (type) {
+            1 -> {
+                overlayNavHostFragment?.navigate(R.id.nested_nav_fragments_overlay_main1_fragment)
+            }
+            else -> {
+                overlayNavHostFragment?.navigate(R.id.nested_nav_fragments_overlay_main2_fragment)
+            }
         }
-
-        navController.graph = navGraph
-
-        binding.nestedNavFragmentsMainFragmentOverlayContainer.isVisible = true
-    }
-
-    private fun hideOverlay() {
-        binding.nestedNavFragmentsMainFragmentOverlayContainer.isVisible = false
-    }
-
-    override fun onNavigateUpResult(): Bundle? {
-        if (binding.nestedNavFragmentsMainFragmentOverlayContainer.isVisible) {
-            hideOverlay()
-            return BundleUtil.createBlockNavigateUp()
-        }
-        return super.onNavigateUpResult()
     }
 }

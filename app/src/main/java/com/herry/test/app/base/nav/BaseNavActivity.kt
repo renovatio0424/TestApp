@@ -7,8 +7,8 @@ import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.herry.libs.app.nav.NavMovement
 import com.herry.test.R
 import com.herry.test.app.base.BaseActivity
@@ -29,7 +29,7 @@ abstract class BaseNavActivity: BaseActivity() {
         navHostFragment = supportFragmentManager.findFragmentById(getNavHostFragment()) as? NavHostFragment
         addOnBackStackChangedListener(navHostFragment)
 
-        navController = Navigation.findNavController(this, getNavHostFragment())
+        navController = navHostFragment?.findNavController()
         navController?.let {
             val navGraph = it.navInflater.inflate(getGraph())
             if (getStartDestination() != 0) {

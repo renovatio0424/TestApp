@@ -4,17 +4,18 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
+import com.herry.libs.app.nav.NavBundleUtil
 import com.herry.libs.app.nav.NavMovement
-import com.herry.libs.util.BundleUtil
 import com.herry.libs.widget.extension.findParentNavHostFragment
 import com.herry.libs.widget.extension.isCurrentStartDestinationFragment
+import com.herry.libs.widget.extension.isNestedNavHostFragment
 import com.herry.libs.widget.extension.isParentViewVisible
 import com.herry.test.app.base.nav.BaseNavActivity
 
 abstract class BaseNestedNavActivity : BaseNavActivity() {
 
-    fun addSubNavHostFragment(subNavHostFragment: NavHostFragment?) {
-        addOnBackStackChangedListener(subNavHostFragment)
+    fun addNestedNavHostFragment(navHostFragment: NavHostFragment?) {
+        addOnBackStackChangedListener(navHostFragment)
     }
 
     override fun getCurrentFragment(): Fragment? {
@@ -57,7 +58,15 @@ abstract class BaseNestedNavActivity : BaseNavActivity() {
             val navHostFragment = findNavHostFragment(fragment)
             // checks sub NavHostFragment
             val subNavHostFragments = navHostFragment?.parentFragmentManager?.fragments ?: mutableListOf()
-            val subNavHostFragment = subNavHostFragments.asReversed().firstOrNull { it.isParentViewVisible() }
+            val subNavHostFragment = subNavHostFragments.asReversed().firstOrNull {
+                val isFragmentContainerViewVisible = it.isParentViewVisible()
+                val isNestedNavFragment = it.isNestedNavHostFragment()
+                val currentFragment = it.childFragmentManager.primaryNavigationFragment
+                val isCurrentStartDestinationFragment = (it is NavHostFragment) && it.isCurrentStartDestinationFragment()
+                val isSkipNavigationUp = isCurrentStartDestinationFragment && (currentFragment is NavMovement) && currentFragment.isSkipNavigateUp()
+
+                isNestedNavFragment && isFragmentContainerViewVisible && !isSkipNavigationUp
+            }
             if (subNavHostFragment is NavHostFragment) {
                 return subNavHostFragment
             }
@@ -74,7 +83,7 @@ abstract class BaseNestedNavActivity : BaseNavActivity() {
             }
 
             results = fragment.onNavigateUp()?.apply {
-                if (BundleUtil.isNavigationUpBlocked(this)) {
+                if (NavBundleUtil.isNavigationUpBlocked(this)) {
                     results = null
                     return false
                 }
@@ -92,7 +101,7 @@ abstract class BaseNestedNavActivity : BaseNavActivity() {
                     }
                     // gets result from main nav host fragment
                     results = parentFragment.onNavigateUp()?.apply {
-                        if (BundleUtil.isNavigationUpBlocked(this)) {
+                        if (NavBundleUtil.isNavigationUpBlocked(this)) {
                             results = null
                             return false
                         }

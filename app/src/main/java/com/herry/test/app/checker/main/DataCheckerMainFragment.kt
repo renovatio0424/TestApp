@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
+import com.herry.libs.app.nav.NavBundleUtil
 import com.herry.libs.nodeview.NodeForm
 import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.nodeview.model.NodeRoot
@@ -82,7 +83,7 @@ class DataCheckerMainFragment : BaseNavView<DataCheckerMainContract.View, DataCh
                 view.setOnProtectClickListener {
                     NodeRecyclerForm.getBindModel(this@DataCheckerPasswordItemForm, this@Holder)?.let {
                         navigate(R.id.password_setting_fragment) { bundle ->
-                            if (BundleUtil.isNavigationResultOk(bundle)) {
+                            if (NavBundleUtil.isNavigationResultOk(bundle)) {
                                 presenter?.refresh()
                             }
                         }

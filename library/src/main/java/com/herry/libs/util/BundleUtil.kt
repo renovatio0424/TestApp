@@ -58,28 +58,6 @@ object BundleUtil {
         return default
     }
 
-    fun createNavigationBundle(resultOk: Boolean): Bundle {
-        val bundle = Bundle()
-        bundle.putBoolean(NavMovement.NAV_UP_RESULT_OK, resultOk)
-        return bundle
-    }
-
-    fun createBlockNavigateUp(): Bundle = Bundle().apply {
-        putBoolean(NavMovement.NAV_UP_BLOCK, true)
-    }
-
-    fun isNavigationResultOk(bundle: Bundle?): Boolean {
-        return bundle != null && bundle.getBoolean(NavMovement.NAV_UP_RESULT_OK, false)
-    }
-
-    fun isNavigationUpBlocked(bundle: Bundle?): Boolean {
-        return bundle != null && bundle.getBoolean(NavMovement.NAV_UP_BLOCK, false)
-    }
-
-    fun fromNavigationId(bundle: Bundle?): Int {
-        return bundle?.getInt(NavMovement.NAV_UP_FROM_ID, 0) ?: 0
-    }
-
     operator fun <T> get(bundle: Bundle?, key: String, tClass: Class<T>): T? {
         if (null != bundle) {
             val obj = bundle.get(key)
