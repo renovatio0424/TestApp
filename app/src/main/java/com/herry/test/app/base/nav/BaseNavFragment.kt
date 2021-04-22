@@ -25,25 +25,19 @@ open class BaseNavFragment: BaseFragment(), NavMovement {
      */
     final override fun onBackPressed(): Boolean = false
 
-    final override fun onNavigateUp(): Bundle {
-        val bundle = onNavigateUpResult() ?: NavBundleUtil.createNavigationBundle(false)
-
-        val currentDestinationId = findNavController().currentBackStackEntry?.destination?.id
-        if (currentDestinationId != null) {
-            setFragmentResult(currentDestinationId.toString(), bundle)
-        }
-
-        return bundle
+    override fun onNavigateUp(): Bundle {
+        return NavBundleUtil.createNavigationBundle(false)
     }
 
-    protected open fun navigateUpAndResult(resultOK: Boolean) {
-        navigateUpAndResult(NavBundleUtil.createNavigationBundle(resultOK))
+    protected open fun navigateUp(resultOK: Boolean = false) {
+        navigateUp(NavBundleUtil.createNavigationBundle(resultOK))
     }
 
-    protected open fun navigateUpAndResult(bundle: Bundle?) {
+    protected open fun navigateUp(bundle: Bundle?) {
         try {
             val currentDestinationId = findNavController().currentBackStackEntry?.destination?.id
             if (currentDestinationId != null) {
+                NavBundleUtil.addFromNavigationId(bundle, currentDestinationId)
                 setFragmentResult(currentDestinationId.toString(), bundle ?: NavBundleUtil.createNavigationBundle(false))
             }
             if (!navigateUp()) {
@@ -53,8 +47,6 @@ open class BaseNavFragment: BaseFragment(), NavMovement {
             finishAndResults(bundle)
         }
     }
-
-    protected open fun onNavigateUpResult(): Bundle? = null
 
     override fun isTransition(): Boolean = transitionHelper.isTransition()
 

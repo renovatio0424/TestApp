@@ -247,7 +247,7 @@ private fun isParentViewVisible(parentView: View?) : Boolean {
     return false
 }
 
-fun Fragment.getNavHostFragment() : NavHostFragment? {
+fun Fragment.getNavHostFragment(): NavHostFragment? {
     val navHostFragment = this.findParentNavHostFragment()
 
     return if (navHostFragment?.isCurrentStartDestinationFragment() == true) {
@@ -256,3 +256,5 @@ fun Fragment.getNavHostFragment() : NavHostFragment? {
         null
     }
 }
+
+fun NavHostFragment.getBackEntryCounts(): Int = this.childFragmentManager.backStackEntryCount

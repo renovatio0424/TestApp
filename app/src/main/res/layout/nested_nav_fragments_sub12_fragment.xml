@@ -11,7 +11,7 @@
         android:id="@+id/nested_nav_fragments_sub2_fragment_go_sub3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Show sub3 screen"
+        android:text="Show sub1-3 screen"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/nested_nav_fragments_sub2_fragment_show_overlay"
         app:layout_constraintEnd_toEndOf="parent"

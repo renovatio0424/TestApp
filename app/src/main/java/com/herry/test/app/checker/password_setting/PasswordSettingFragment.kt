@@ -67,7 +67,7 @@ class PasswordSettingFragment : BaseNavView<PasswordSettingContract.View, Passwo
     }
 
 
-    override fun onNavigateUpResult(): Bundle {
+    override fun onNavigateUp(): Bundle {
         return NavBundleUtil.createNavigationBundle(presenter?.isChangedPassword() ?: false)
     }
 }

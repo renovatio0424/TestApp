@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavFragment
-import com.herry.test.app.base.nestednav.BaseNestedNavFragment
 
 class NestedNavFragmentsOverlayBaseFragment : BaseNavFragment() {
 
@@ -19,6 +18,4 @@ class NestedNavFragmentsOverlayBaseFragment : BaseNavFragment() {
 
         return this.container
     }
-
-    override fun isSkipNavigateUp(): Boolean = true
 }

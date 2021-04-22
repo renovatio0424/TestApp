@@ -16,9 +16,7 @@ interface NavMovement {
         const val NAV_ACTION_KEY = "action_key"
     }
 
-    fun onNavigateUp(): Bundle?
+    fun onNavigateUp(): Bundle
 
     fun isTransition(): Boolean
-
-    fun isSkipNavigateUp(): Boolean = false
 }

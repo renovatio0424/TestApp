@@ -59,8 +59,16 @@ class NestedNavFragmentsMainFragment : BaseNestedNavFragment() {
             overlayNavHostFragment = overlayNavHost
         }
 
+        val sub2NavHost = findNestedNavHostFragment(R.id.nested_nav_fragments_main_fragment_sub2_container)
+        if (sub2NavHost != null) {
+            sub2NavHost.setFragmentNotifyListener { from, bundle ->
+//                onOverlayScreenResults(bundle)
+            }
+            addNestedNavHostFragment(sub2NavHost)
+        }
+
         view.findViewById<View>(R.id.nested_nav_fragments_main_fragment_bottom_show_sub_3).setOnClickListener {
-            subNavHostFragment?.navigate(R.id.nested_nav_fragments_sub3_fragment)
+            subNavHostFragment?.navigate(R.id.nested_nav_fragments_sub13_fragment)
         }
 
         view.findViewById<View>(R.id.nested_nav_fragments_main_fragment_bottom_popup_to_sub1).setOnClickListener {
@@ -89,14 +97,14 @@ class NestedNavFragmentsMainFragment : BaseNestedNavFragment() {
     }
     private fun onSubScreenResults(bundle: Bundle) {
         when (bundle.getInt("from")) {
-            R.id.nested_nav_fragments_sub1_fragment -> {
+            R.id.nested_nav_fragments_sub11_fragment -> {
                 Toast.makeText(requireContext(), "from sub 1", Toast.LENGTH_SHORT).show()
             }
-            R.id.nested_nav_fragments_sub2_fragment -> {
+            R.id.nested_nav_fragments_sub12_fragment -> {
                 Toast.makeText(requireContext(), "from sub 2", Toast.LENGTH_SHORT).show()
                 showOverlay(BundleUtil[bundle, "overlay_type", 1])
             }
-            R.id.nested_nav_fragments_sub3_fragment -> {
+            R.id.nested_nav_fragments_sub13_fragment -> {
                 Toast.makeText(requireContext(), "from sub 3", Toast.LENGTH_SHORT).show()
                 navigate(NestedNavFragmentsMainFragmentDirections.actionNestedNavFragmentsMainToSecond()) { _ ->
 

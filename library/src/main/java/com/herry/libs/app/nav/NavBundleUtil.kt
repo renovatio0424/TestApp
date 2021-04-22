@@ -29,6 +29,23 @@ object NavBundleUtil {
         return bundle?.getInt(NavMovement.NAV_UP_FROM_ID, 0) ?: 0
     }
 
+    fun addFromNavigationId(bundle: Bundle? = null, id: Int) {
+        bundle ?: return
+        bundle.putInt(NavMovement.NAV_UP_FROM_ID, id)
+    }
+
+    fun createNavigationBundleWidthFromId(id: Int): Bundle {
+        return Bundle().apply {
+            addFromNavigationId(this, id)
+        }
+    }
+
+    fun createNavigationId(resultOk: Boolean): Bundle {
+        val bundle = Bundle()
+        bundle.putBoolean(NavMovement.NAV_UP_RESULT_OK, resultOk)
+        return bundle
+    }
+
     fun createNavigationBundle(resultOk: Boolean): Bundle {
         val bundle = Bundle()
         bundle.putBoolean(NavMovement.NAV_UP_RESULT_OK, resultOk)

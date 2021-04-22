@@ -1,39 +1,28 @@
-package com.herry.test.app.nestedfragments.nav.sub.sub3
+package com.herry.test.app.nestedfragments.nav.sub1
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
-import androidx.lifecycle.ViewModelProvider
-import com.herry.libs.app.nav.NavBundleUtil
-import com.herry.libs.util.BundleUtil
 import com.herry.libs.widget.extension.getNavCurrentDestinationID
 import com.herry.libs.widget.extension.notifyToNavHost
 import com.herry.libs.widget.extension.popToNavHost
 import com.herry.test.app.base.nav.BaseNavFragment
-import com.herry.test.app.base.nestednav.BaseNestedNavFragment
-import com.herry.test.databinding.NestedNavFragmentsSub3FragmentBinding
+import com.herry.test.databinding.NestedNavFragmentsSub13FragmentBinding
 
-class NestedNavFragmentsSub3Fragment : BaseNavFragment() {
+class NestedNavFragmentsSub13Fragment : BaseNavFragment() {
 
-    private var _binding: NestedNavFragmentsSub3FragmentBinding? = null
+    private var _binding: NestedNavFragmentsSub13FragmentBinding? = null
     // This property is only valid between onCreateView and onDestroyView.
     private val binding get() = _binding!!
-
-    private lateinit var viewModel: NestedNavFragmentsSub3ViewModel
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(NestedNavFragmentsSub3ViewModel::class.java)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         if (_binding == null) {
-            _binding = NestedNavFragmentsSub3FragmentBinding.inflate(inflater, container, false)
+            _binding = NestedNavFragmentsSub13FragmentBinding.inflate(inflater, container, false)
 
             binding.nestedNavFragmentsSub3FragmentShowSecondScreen.setOnClickListener { view ->
                 notifyToNavHost(
@@ -50,9 +39,5 @@ class NestedNavFragmentsSub3Fragment : BaseNavFragment() {
         }
 
         return binding.root
-    }
-
-    override fun onNavigateUpResult(): Bundle {
-        return NavBundleUtil.createNavigationBundle(false)
     }
 }

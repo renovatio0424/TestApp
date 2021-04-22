@@ -1,14 +1,12 @@
-package com.herry.test.app.nestedfragments.nav.overlay.main1.sub1
+package com.herry.test.app.nestedfragments.nav.overlay.main1
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.herry.libs.app.nav.NavBundleUtil
-import com.herry.libs.util.BundleUtil
 import com.herry.libs.widget.extension.popToNavHost
 import com.herry.test.app.base.nav.BaseNavFragment
-import com.herry.test.app.base.nestednav.BaseNestedNavFragment
 import com.herry.test.databinding.NestedNavFragmentsOverlayMain1Sub1FragmentBinding
 
 class NestedNavFragmentsOverlayMain1Sub1Fragment : BaseNavFragment() {
