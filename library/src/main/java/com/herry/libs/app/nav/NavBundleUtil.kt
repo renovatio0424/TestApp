@@ -40,10 +40,10 @@ object NavBundleUtil {
         }
     }
 
-    fun createNavigationId(resultOk: Boolean): Bundle {
-        val bundle = Bundle()
-        bundle.putBoolean(NavMovement.NAV_UP_RESULT_OK, resultOk)
-        return bundle
+    fun addNavigationUpDestinationId(bundle: Bundle? = null, desId: Int): Bundle {
+        return (bundle ?: Bundle()).apply {
+            putInt(NavMovement.NAV_UP_DES_ID, desId)
+        }
     }
 
     fun createNavigationBundle(resultOk: Boolean): Bundle {

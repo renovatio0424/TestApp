@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.fragment.NavHostFragment
+import com.herry.libs.app.nav.NavBundleUtil
 import com.herry.libs.util.BundleUtil
 import com.herry.libs.widget.extension.findNestedNavHostFragment
 import com.herry.libs.widget.extension.navigate
@@ -84,8 +85,9 @@ class NestedNavFragmentsMainFragment : BaseNestedNavFragment() {
         }
 
         view.findViewById<View>(R.id.nested_nav_fragments_main_fragment_bottom_show_second).setOnClickListener {
-            navigate(R.id.action_nested_nav_fragments_main_to_second) { _ ->
-                Toast.makeText(requireContext(), "from second screen by action id", Toast.LENGTH_SHORT).show()
+            navigate(R.id.action_nested_nav_fragments_main_to_second) { result ->
+                val from = NavBundleUtil.fromNavigationId(result)
+                Toast.makeText(requireContext(), "from second screen $from by action id", Toast.LENGTH_SHORT).show()
             }
         }
 

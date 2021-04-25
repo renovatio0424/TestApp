@@ -19,6 +19,16 @@
 
     <fragment
         android:id="@+id/nested_nav_fragments_second_fragment"
-        android:name="com.herry.test.app.nestedfragments.nav.second.NestedNavFragmentsSecondFragment"
+        android:name="com.herry.test.app.nestedfragments.nav.next.NestedNavFragmentsSecondFragment"
         tools:layout="@layout/nested_nav_fragments_second_fragment" />
+
+    <fragment
+        android:id="@+id/nested_nav_fragments_third_fragment"
+        android:name="com.herry.test.app.nestedfragments.nav.next.NestedNavFragmentsThirdFragment"
+        tools:layout="@layout/nested_nav_fragments_third_fragment" />
+
+    <fragment
+        android:id="@+id/nested_nav_fragments_4th_fragment"
+        android:name="com.herry.test.app.nestedfragments.nav.next.NestedNavFragments4thFragment"
+        tools:layout="@layout/nested_nav_fragments_4th_fragment" />
 </navigation>

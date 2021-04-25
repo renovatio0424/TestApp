@@ -10,15 +10,15 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Nested navigation second screen"
+        android:text="Nested navigation 4th screen"
         tools:ignore="HardcodedText" />
 
     <Button
-        android:id="@+id/nested_nav_fragments_second_fragment_go_to_third"
+        android:id="@+id/nested_nav_fragments_4th_fragment_go_to_first"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size16"
-        android:text="go to third screen"
+        android:text="go to first screen"
         tools:ignore="HardcodedText" />
 
 </LinearLayout>

@@ -15,7 +15,7 @@ import com.herry.test.app.base.BaseActivity
 import com.herry.test.app.base.BaseFragment
 
 @Suppress("SameParameterValue")
-open class BaseNavFragment: BaseFragment(), NavMovement {
+open class BaseNavFragment : BaseFragment(), NavMovement {
 
     /**
      * {@inheritDoc}
@@ -38,7 +38,10 @@ open class BaseNavFragment: BaseFragment(), NavMovement {
             val currentDestinationId = findNavController().currentBackStackEntry?.destination?.id
             if (currentDestinationId != null) {
                 NavBundleUtil.addFromNavigationId(bundle, currentDestinationId)
-                setFragmentResult(currentDestinationId.toString(), bundle ?: NavBundleUtil.createNavigationBundle(false))
+
+                if (activity is BaseNavActivity) {
+                    (activity as BaseNavActivity).setNavigationUpResult(bundle ?: NavBundleUtil.createNavigationBundle(false))
+                }
             }
             if (!navigateUp()) {
                 finishAndResults(bundle)
@@ -47,6 +50,8 @@ open class BaseNavFragment: BaseFragment(), NavMovement {
             finishAndResults(bundle)
         }
     }
+
+    fun navigateUp(): Boolean = findNavController().navigateUp()
 
     override fun isTransition(): Boolean = transitionHelper.isTransition()
 
@@ -79,7 +84,7 @@ open class BaseNavFragment: BaseFragment(), NavMovement {
      */
     protected fun finishAndResults(bundle: Bundle?) {
         val activity = this.activity
-        if(activity is BaseNavActivity) {
+        if (activity is BaseNavActivity) {
             activity.window?.let {
                 ViewUtil.hideSoftKeyboard(context, activity.window.decorView.rootView)
             }
@@ -117,8 +122,6 @@ open class BaseNavFragment: BaseFragment(), NavMovement {
             activity.finishAfterTransition()
         }
     }
-
-    fun navigateUp(): Boolean = findNavController().navigateUp()
 
     private val transitionHelper by lazy {
         TransitionHelper(
