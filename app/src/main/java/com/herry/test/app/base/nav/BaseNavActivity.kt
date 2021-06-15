@@ -320,6 +320,7 @@ class SavedViewModel : ViewModel() {
     }
 }
 
+@Suppress("unused")
 class NavigationStack {
     private val hosts = HashMap<Int, NavHostFragment>()
 

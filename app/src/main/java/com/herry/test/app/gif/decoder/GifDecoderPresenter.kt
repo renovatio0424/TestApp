@@ -1,12 +1,9 @@
 package com.herry.test.app.gif.decoder
 
-import android.util.Log
 import com.herry.libs.media.gif.decoder.GifDecoder
 import com.herry.libs.media.gif.decoder.GifHeader
-import com.herry.libs.util.FileUtil
 import com.herry.test.data.GifMediaFileInfoData
 import io.reactivex.Observable
-import java.io.File
 
 
 /**
@@ -25,16 +22,16 @@ class GifDecoderPresenter(private val data: GifMediaFileInfoData) : GifDecoderCo
                 launched {
                     view?.onDecoded(it)
                 }
-            }
+            },
+            loadView = true
         )
     }
 
     private fun getDecodedGif(data: GifMediaFileInfoData) : Observable<GifDecoderContract.DecodedGifMediaInfo> {
         return Observable.create { emitter ->
-            val rowData: ByteArray? = FileUtil.readFileToByteArray(File(data.path))
-            rowData?.let { _rowData ->
-                val decoder = GifDecoder()
-                decoder.setData(_rowData)
+            val decoder = GifDecoder()
+            try {
+                decoder.setData(data.path)
 
                 val header: GifHeader = decoder.header ?: run {
                     emitter.onError(Throwable())
@@ -68,11 +65,13 @@ class GifDecoderPresenter(private val data: GifMediaFileInfoData) : GifDecoderCo
                         frameCounts = header.frameCount,
                         totalDuration = duration,
                         frames = GifDecoderContract.DecodedGifFrames(frames)
-                ))
+                    ))
 
                 emitter.onComplete()
                 return@create
-            } ?: emitter.onError(Throwable())
+            } catch (ex: Exception) {
+                emitter.onError(Throwable())
+            }
         }
     }
 }

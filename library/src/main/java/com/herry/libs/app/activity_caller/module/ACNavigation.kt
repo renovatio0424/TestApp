@@ -43,14 +43,18 @@ open class ACNavigation(private val caller: Caller, private val listener: ACModu
         internal val cls: Class<out ACActivity>,
         internal val bundle: Bundle? = null,
         internal val startDestination: Int = 0,
+        internal val clearTop: Boolean = false,
         transitions: Array<Transition>? = null,
         onResult: ((result: Result) -> Unit)? = null
     ) : Caller(transitions, onResult)
 
-    open fun getCallerIntent(activity: Activity): Intent? {
+    protected open fun getCallerIntent(activity: Activity): Intent? {
         return when(caller) {
             is NavCaller -> {
                 Intent(activity, caller.cls).apply {
+                    if (caller.clearTop) {
+                        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    }
                     caller.bundle?.let {
                         putExtra(NavMovement.NAV_BUNDLE, it)
                     }

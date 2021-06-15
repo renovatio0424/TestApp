@@ -3,7 +3,14 @@ package com.herry.test.app.base
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.annotation.IdRes
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -12,6 +19,7 @@ import com.herry.libs.app.activity_caller.AC
 import com.herry.libs.helper.ApiHelper
 import com.herry.libs.util.AppUtil
 import com.herry.libs.util.FragmentAddingOption
+import com.herry.libs.widget.view.LoadingCountView
 
 open class BaseFragment: Fragment() {
     internal open var activityCaller: AC? = null
@@ -146,5 +154,54 @@ open class BaseFragment: Fragment() {
         }
 
         return AppUtil.setFragment(fragmentManager, containerViewId, fragment, option)
+    }
+
+    private var loading: LoadingCountView? = null
+
+    protected open fun showLoading() {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            showMainLoopLoading()
+        } else {
+            Handler(Looper.getMainLooper()).post {
+                showMainLoopLoading()
+            }
+        }
+    }
+
+    private fun showMainLoopLoading() {
+        if (loading == null) {
+            loading = context?.run {
+                LoadingCountView(this).apply {
+                }
+            }
+
+            loading?.let {
+                it.visibility = View.GONE
+
+                if (view is FrameLayout) {
+                    (view as FrameLayout).addView(it, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+                } else if (view is ConstraintLayout) {
+                    val layoutParams = ConstraintLayout.LayoutParams(0, 0).apply {
+                        startToStart = ConstraintSet.PARENT_ID
+                        endToEnd = ConstraintSet.PARENT_ID
+                        topToTop = ConstraintSet.PARENT_ID
+                        bottomToBottom = ConstraintSet.PARENT_ID
+                    }
+                    (view as ConstraintLayout).addView(it, layoutParams)
+                }
+            }
+        }
+
+        loading?.show()
+    }
+
+    protected open fun hideLoading() {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            loading?.hide()
+        } else {
+            Handler(Looper.getMainLooper()).post {
+                loading?.hide()
+            }
+        }
     }
 }

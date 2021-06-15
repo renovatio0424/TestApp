@@ -12,6 +12,7 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.text.TextUtils
 import android.util.DisplayMetrics
+import android.util.Log
 import android.util.TypedValue
 import android.view.*
 import android.widget.*
@@ -29,7 +30,7 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
         fun onLongClick(dialog: DialogInterface, which: Int) : Boolean
     }
 
-    private val context: ContextThemeWrapper = ContextThemeWrapper(context, themeResId)
+    private val context: ContextThemeWrapper? = if (context != null) ContextThemeWrapper(context, themeResId) else null
     private var dialog: Dialog? = null
 
     private var container: FrameLayoutEx? = null
@@ -201,7 +202,7 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
     }
 
     private fun getDisplaySize() : Point? {
-        val wm = this.context.getSystemService(Context.WINDOW_SERVICE) as WindowManager? ?: return null
+        val wm = this.context?.getSystemService(Context.WINDOW_SERVICE) as WindowManager? ?: return null
         val display = wm.defaultDisplay
         val metrics = DisplayMetrics()
         display.getMetrics(metrics)
@@ -212,7 +213,7 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
     }
 
     private fun retrieveAttributes(@StyleRes themeResId: Int) {
-        val attrs = this.context.theme?.obtainStyledAttributes(themeResId, R.styleable.AppDialog)
+        val attrs = this.context?.theme?.obtainStyledAttributes(themeResId, R.styleable.AppDialog)
         if (attrs != null) {
             // sets dialog attributes
 
@@ -1061,8 +1062,10 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
     }
 
     fun setView(@LayoutRes resID: Int) {
+        val context = this.context ?: return
+
         val view = contentsContainer?.run {
-            LayoutInflater.from(this.context).inflate(resID, this, false)
+            LayoutInflater.from(context).inflate(resID, this, false)
         }
 
         setView(view)
@@ -1082,6 +1085,8 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
      * button, if no buttons are supplied it's up to the user to dismiss the dialog.
      */
     fun setSingleChoiceItems(@ArrayRes itemsId: Int, checkedItem: Int, listener: DialogInterface.OnClickListener? = null) {
+        val context = this.context ?: return
+
         setSingleChoiceItems(context.resources?.getStringArray(itemsId), checkedItem, listener)
     }
 
@@ -1098,6 +1103,8 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
      * button, if no buttons are supplied it's up to the user to dismiss the dialog.
      */
     fun setSingleChoiceItems(items: Array<String>?, checkedItem: Int, listener: DialogInterface.OnClickListener? = null) {
+        val context = this.context ?: return
+
         messageContainer?.isVisible = false
 
         listView?.run {
@@ -1116,10 +1123,14 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
     }
 
     fun setMultiChoiceItems(@ArrayRes itemsId: Int, checkedItems: Array<Boolean>?, listener: DialogInterface.OnMultiChoiceClickListener?) {
+        val context = this.context ?: return
+
         setMultiChoiceItems(context.resources?.getStringArray(itemsId), checkedItems, listener)
     }
 
     fun setMultiChoiceItems(items: Array<String>?, checkedItems: Array<Boolean>? = arrayOf(), listener: DialogInterface.OnMultiChoiceClickListener?) {
+        val context = this.context ?: return
+
         messageContainer?.isVisible = false
 
         listView?.run {
@@ -1144,6 +1155,8 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
      *
      */
     fun setItems(items: Array<String>?, listener: DialogInterface.OnClickListener? = null) {
+        val context = this.context ?: return
+
         messageContainer?.isVisible = false
 
         listView?.run {
@@ -1162,6 +1175,8 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
      *
      */
     fun setItems(@ArrayRes itemsId: Int, listener: DialogInterface.OnClickListener? = null) {
+        val context = this.context ?: return
+
         setItems(context.resources?.getStringArray(itemsId), listener)
     }
 
@@ -1185,15 +1200,27 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
     }
 
     fun show() {
-        dialog?.show()
+        try {
+            dialog?.show()
+        } catch (e: Exception) {
+            Log.e(this.javaClass.simpleName, e.message, e)
+        }
     }
 
     override fun cancel() {
-        dialog?.cancel()
+        try {
+            dialog?.cancel()
+        } catch (e: Exception) {
+            Log.e(this.javaClass.simpleName, e.message, e)
+        }
     }
 
     override fun dismiss() {
-        dialog?.dismiss()
+        try {
+            dialog?.dismiss()
+        } catch (e: Exception) {
+            Log.e(this.javaClass.simpleName, e.message, e)
+        }
     }
 
     private fun setButtonStyles() {
@@ -1494,63 +1521,66 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
     }
 
     init {
-        val inflater = this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater?
-        container = inflater?.inflate(R.layout.app_dialog, null, false) as FrameLayoutEx?
-        container?.let { container ->
-            retrieveAttributes(themeResId)
-            initViews()
+        val _context = this.context
 
-            container.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
-                if (updateCurrentOrientation()) {
-                    retrieveAttributes(themeResId)
-                    updateDialogWidowSize()
-                }
-            }
-        }
-
-        this.dialog = object : Dialog(this.context, dialogThemeResId) {
-            override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-                if (this@AppDialog.onKeyDown(keyCode, event)) {
-                    return true
-                }
-
-                return super.onKeyDown(keyCode, event)
-            }
-
-            override fun onKeyLongPress(keyCode: Int, event: KeyEvent): Boolean {
-                if (this@AppDialog.onKeyLongPress(keyCode, event)) {
-                    return true
-                }
-
-                return super.onKeyLongPress(keyCode, event)
-            }
-
-            override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
-                if (this@AppDialog.onKeyUp(keyCode, event)) {
-                    return true
-                }
-
-                return super.onKeyUp(keyCode, event)
-            }
-
-            override fun onKeyMultiple(keyCode: Int, repeatCount: Int, event: KeyEvent): Boolean {
-                if (this@AppDialog.onKeyMultiple(keyCode, repeatCount, event)) {
-                    return true
-                }
-
-                return super.onKeyMultiple(keyCode, repeatCount, event)
-            }
-        }.apply {
-            requestWindowFeature(Window.FEATURE_NO_TITLE)
-            val window = this.window
-            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            setCancelable(true)
-
+        if (_context != null) {
+            val inflater = _context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater?
+            container = inflater?.inflate(R.layout.app_dialog, null, false) as FrameLayoutEx?
             container?.let { container ->
-                setContentView(container)
+                retrieveAttributes(themeResId)
+                initViews()
 
-                // sets container size
-                container.clipToOutline = true
+                container.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+                    if (updateCurrentOrientation()) {
+                        retrieveAttributes(themeResId)
+                        updateDialogWidowSize()
+                    }
+                }
+            }
+
+            this.dialog = object : Dialog(_context, dialogThemeResId) {
+                override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+                    if (this@AppDialog.onKeyDown(keyCode, event)) {
+                        return true
+                    }
+
+                    return super.onKeyDown(keyCode, event)
+                }
+
+                override fun onKeyLongPress(keyCode: Int, event: KeyEvent): Boolean {
+                    if (this@AppDialog.onKeyLongPress(keyCode, event)) {
+                        return true
+                    }
+
+                    return super.onKeyLongPress(keyCode, event)
+                }
+
+                override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
+                    if (this@AppDialog.onKeyUp(keyCode, event)) {
+                        return true
+                    }
+
+                    return super.onKeyUp(keyCode, event)
+                }
+
+                override fun onKeyMultiple(keyCode: Int, repeatCount: Int, event: KeyEvent): Boolean {
+                    if (this@AppDialog.onKeyMultiple(keyCode, repeatCount, event)) {
+                        return true
+                    }
+
+                    return super.onKeyMultiple(keyCode, repeatCount, event)
+                }
+            }.apply {
+                requestWindowFeature(Window.FEATURE_NO_TITLE)
+                val window = this.window
+                window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                setCancelable(true)
+
+                container?.let { container ->
+                    setContentView(container)
+
+                    // sets container size
+                    container.clipToOutline = true
 
 //                if (dialogMinWidth > 0) {
 //                    container.minimumWidth = dialogMinWidth
@@ -1558,17 +1588,20 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
 //                if (dialogMaxWidth > 0) {
 //                    container.setMaximumWidth(dialogMaxWidth)
 //                }
+                }
             }
-        }
 
-        updateCurrentOrientation()
-        updateDialogWidowSize()
+            updateCurrentOrientation()
+            updateDialogWidowSize()
+        }
     }
 
     private var currentOrientation: Int? = null
 
     private fun updateCurrentOrientation(): Boolean {
-        val orientation = this.context.resources.configuration.orientation
+        val context = this.context ?: return false
+
+        val orientation = context.resources.configuration.orientation
         if (currentOrientation == orientation) {
             return false
         }

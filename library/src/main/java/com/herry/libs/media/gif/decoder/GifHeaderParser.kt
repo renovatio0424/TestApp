@@ -2,6 +2,7 @@ package com.herry.libs.media.gif.decoder
 
 import android.util.Log
 import com.herry.libs.media.gif.decoder.GifFrame.Disposal.Companion.generate
+import java.io.*
 import java.nio.BufferUnderflowException
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -139,6 +140,8 @@ class GifHeaderParser {
     // Raw data read working array.
     private val block = ByteArray(MAX_BLOCK_SIZE)
     private var rawData: ByteBuffer? = null
+    private var inputStream: InputStream? = null
+    private var inputStreamReadPosition: Long = 0
     private var header: GifHeader? = null
     private var blockSize = 0
 
@@ -161,20 +164,55 @@ class GifHeaderParser {
         return this
     }
 
+    @Throws(Exception::class)
+    fun setData(file: File): GifHeaderParser {
+        try {
+            val data = GifFileUtil.readFileToByteArray(file)
+            setData(data)
+        } catch (ex: Exception) {
+            try {
+                setData(GifFileUtil.openInputStream(file))
+            } catch (ex: Exception) {
+                throw ex
+            }
+        }
+        return this
+    }
+
+    fun setData(data: InputStream?): GifHeaderParser {
+        reset()
+
+        if (data == null) {
+            header?.status = GifDecoder.GifDecodeStatus.OPEN_ERROR
+        } else {
+            inputStream = data
+        }
+        return this
+    }
+
     fun clear() {
+        inputStream?.close()
+        inputStream = null
+        inputStreamReadPosition = 0
         rawData = null
         header = null
     }
 
     private fun reset() {
         rawData = null
+        inputStream?.close()
+        inputStream = null
+        inputStreamReadPosition = 0
         Arrays.fill(block, 0.toByte())
         header = GifHeader()
         blockSize = 0
     }
 
     fun parseHeader(): GifHeader {
-        rawData ?: checkNotNull(rawData) { "You must call setData() before parseHeader()" }
+        if (inputStream == null && rawData == null) {
+            @Suppress("IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION")
+            checkNotNull(null) { "You must call setData() before parseHeader()" }
+        }
         val header = this.header ?: checkNotNull(this.header) { "You must call setData() before parseHeader()" }
         if (err()) return header
 
@@ -192,23 +230,35 @@ class GifHeaderParser {
         return header
     }/* maxFrames */
 
-//    /**
-//     * Determines if the GIF is animated by trying to read in the first 2 frames
-//     * This method re-parses the data even if the header has already been read.
-//     */
-//    fun isAnimated(): Boolean {
-//        val header = this.header ?: checkNotNull(this.header) { "You must call parseHeader() before isAnimated()" }
-//
-//        // parse header
-//        readHeader()
-//
-//        if (!err()) {
-//            // parse contents
-//            readContents(2 /* maxFrames */)
-//        }
-//        return header.frameCount > 1
-//    }
+    /**
+     * Determines if the GIF is animated by trying to read in the first 2 frames
+     * This method re-parses the data even if the header has already been read.
+     */
+    fun isAnimated(): Boolean {
+        val header = this.header ?: checkNotNull(this.header) { "You must call parseHeader() before isAnimated()" }
 
+        if (header.frameCount == 1) {
+            return false
+        } else if (header.frameCount > 1) {
+            return true
+        }
+        return false
+    }
+
+    fun isAnimated(file: File): Boolean {
+        setData(file)
+
+        val header = this.header ?: checkNotNull(this.header) { "You must call parseHeader() before isAnimated()" }
+
+        // parse header
+        readHeader()
+
+        if (!err()) {
+            // parse contents
+            readContents(2 /* maxFrames */)
+        }
+        return header.frameCount > 1
+    }
     /**
      * Main file parser. Reads GIF content blocks. Stops after reading maxFrames
      */
@@ -254,10 +304,15 @@ class GifHeaderParser {
                                 skip()
                             }
                         }
-                        LABEL_COMMENT_EXTENSION -> skip()
-                        LABEL_PLAIN_TEXT_EXTENSION -> skip()
-                        else ->                             // Uninteresting extension.
+                        LABEL_COMMENT_EXTENSION -> {
                             skip()
+                        }
+                        LABEL_PLAIN_TEXT_EXTENSION -> {
+                            skip()
+                        }
+                        else -> {                           // Uninteresting extension.
+                            skip()
+                        }
                     }
                 }
                 TRAILER ->                     // This block is a single-field block indicating the end of the GIF Data Stream.
@@ -316,8 +371,13 @@ class GifHeaderParser {
      * Reads next frame image.
      */
     private fun readBitmap() {
-        val rawData = this.rawData ?: return
+        val rawData = this.rawData
+        val inputStream = this.inputStream
         val header = this.header ?: return
+
+        if (rawData == null && inputStream == null) {
+            return
+        }
 
         // (sub)image position & size.
         header.currentFrame?.let { currentFrame ->
@@ -350,7 +410,17 @@ class GifHeaderParser {
             }
 
             // Save this as the decoding position pointer.
-            currentFrame.bufferFrameStart = rawData.position()
+            currentFrame.bufferFrameStart = when {
+                rawData != null -> {
+                    rawData.position()
+                }
+                inputStream != null -> {
+                    inputStreamReadPosition.toInt()
+                }
+                else -> {
+                    return@let
+                }
+            }
         }
 
         // False decode pixel data to advance buffer.
@@ -443,14 +513,25 @@ class GifHeaderParser {
      * @return int array containing 256 colors (packed ARGB with full alpha).
      */
     private fun readColorTable(nColors: Int): IntArray? {
-        val rawData = this.rawData ?: return null
+        val rawData = this.rawData
+        val inputStream = this.inputStream
         val header = this.header ?: return null
 
         val nBytes = 3 * nColors
         var table: IntArray? = null
         val color = ByteArray(nBytes)
         try {
-            rawData[color]
+            when {
+                rawData != null -> {
+                    rawData[color]
+                }
+                inputStream != null -> {
+                    inputStreamReadPosition += inputStream.read(color)
+                }
+                else -> {
+                    return null
+                }
+            }
 
             // TODO: what bounds checks are we avoiding if we know the number of colors?
             // Max size to avoid bounds checks.
@@ -467,6 +548,8 @@ class GifHeaderParser {
             if (Log.isLoggable(TAG, Log.DEBUG)) {
                 Log.d(TAG, "Format Error Reading Color Table", e)
             }
+            header.status = GifDecoder.GifDecodeStatus.FORMAT_ERROR
+        } catch (e: IOException) {
             header.status = GifDecoder.GifDecodeStatus.FORMAT_ERROR
         }
         return table
@@ -486,13 +569,31 @@ class GifHeaderParser {
      * Skips variable length blocks up to and including next zero length block.
      */
     private fun skip() {
-        val rawData = this.rawData ?: return
+        val rawData = this.rawData
+        val inputStream = this.inputStream
 
         var blockSize: Int
         do {
             blockSize = read()
-            val newPosition = min(rawData.position() + blockSize, rawData.limit())
-            rawData.position(newPosition)
+            if (blockSize > 0) {
+                when {
+                    rawData != null -> {
+                        val newPosition = min(rawData.position() + blockSize, rawData.limit())
+                        rawData.position(newPosition)
+                    }
+                    inputStream != null -> {
+                        try {
+                            val skipSize = min(blockSize, inputStream.available())
+                            inputStreamReadPosition += inputStream.skip(skipSize.toLong())
+                        } catch (ex: IOException) {
+                            return
+                        }
+                    }
+                    else -> {
+                        return
+                    }
+                }
+            }
         } while (blockSize > 0)
     }
 
@@ -500,7 +601,8 @@ class GifHeaderParser {
      * Reads next variable length block from input.
      */
     private fun readBlock() {
-        val rawData = this.rawData ?: return
+        val rawData = this.rawData
+        val inputStream = this.inputStream
         val header = this.header ?: return
 
         blockSize = read()
@@ -510,7 +612,17 @@ class GifHeaderParser {
             try {
                 while (n < blockSize) {
                     count = blockSize - n
-                    rawData[block, n, count]
+                    when {
+                        rawData != null -> {
+                            rawData[block, n, count]
+                        }
+                        inputStream != null -> {
+                            inputStreamReadPosition += inputStream.read(this.block, n, count)
+                        }
+                        else -> {
+                            return
+                        }
+                    }
                     n += count
                 }
             } catch (e: Exception) {
@@ -529,27 +641,70 @@ class GifHeaderParser {
      * Reads a single byte from the input stream.
      */
     private fun read(): Int {
-        val rawData = this.rawData ?: return 0
         val header = this.header ?: return 0
+        val rawData = this.rawData
+        val inputStream = this.inputStream
 
-        var currByte = 0
-        try {
-            currByte = (rawData.get().toInt() and MASK_INT_LOWEST_BYTE)
-        } catch (e: Exception) {
-            header.status = GifDecoder.GifDecodeStatus.FORMAT_ERROR
+        when {
+            rawData != null -> {
+                var currByte = 0
+                try {
+                    currByte = (rawData.get().toInt() and MASK_INT_LOWEST_BYTE)
+                } catch (e: Exception) {
+                    header.status = GifDecoder.GifDecodeStatus.FORMAT_ERROR
+                }
+
+                return currByte
+            }
+            inputStream != null -> {
+                var currByte = 0
+                val buffer = ByteArray(1)
+                try {
+                    inputStreamReadPosition += inputStream.read(buffer)
+                    currByte = buffer[0].toInt() and 0xff
+                } catch (e: IOException) {
+                    header.status = GifDecoder.GifDecodeStatus.FORMAT_ERROR
+                }
+
+                return currByte
+            }
+            else -> {
+                return 0
+            }
         }
-        return currByte
     }
 
     /**
      * Reads next 16-bit value, LSB first.
      */
     private fun readShort(): Int {
+        val rawData = this.rawData
+        val inputStream = this.inputStream
+
         // Read 16-bit value.
-        return rawData?.short?.toInt() ?: 0
+        when {
+            rawData != null -> {
+                return rawData.short.toInt()
+            }
+            inputStream != null -> {
+                val buffer = ByteArray(2)
+                return try {
+                    inputStreamReadPosition += inputStream.read(buffer)
+                    (buffer[0].toInt() and 0xff) or (buffer[1].toInt() and 0xff) shl 8
+                } catch (e: IOException) {
+                    0
+                }
+            }
+            else -> {
+                return 0
+            }
+        }
     }
 
     private fun err(): Boolean {
         return header?.status != GifDecoder.GifDecodeStatus.OK
     }
+
+    fun getRawData(): ByteBuffer? = rawData
+    fun getInputStream(): InputStream? = inputStream
 }

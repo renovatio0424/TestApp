@@ -4,11 +4,10 @@ import android.graphics.Bitmap
 import android.util.Log
 import androidx.annotation.ColorInt
 import androidx.annotation.IntRange
-import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.nio.ByteBuffer
-import java.nio.ByteOrder
 import java.util.*
 import kotlin.math.min
 
@@ -53,17 +52,20 @@ class GifDecoder(
         /**
          * File read status: Error decoding file (may be partially decoded).
          */
-        , FORMAT_ERROR
+        ,
+        FORMAT_ERROR
 
         /**
          * File read status: Unable to open source.
          */
-        , OPEN_ERROR
+        ,
+        OPEN_ERROR
 
         /**
          * Unable to fully decode the current frame.
          */
-        , PARTIAL_DECODE
+        ,
+        PARTIAL_DECODE
     }
 
     companion object {
@@ -91,6 +93,7 @@ class GifDecoder(
      * Raw GIF data from input source.
      */
     private var rawData: ByteBuffer? = null
+    private var inputStream: InputStream? = null
 
     var header: GifHeader? = null
 
@@ -156,6 +159,10 @@ class GifDecoder(
         return rawData
     }
 
+    fun getInputStream(): InputStream? {
+        return inputStream
+    }
+
     /**
      * Move the animation frame counter forward.
      */
@@ -165,34 +172,27 @@ class GifDecoder(
         }
     }
 
-//    @Synchronized
-//    fun setData(filePath: String, @IntRange(from = 1, to = Int.MAX_VALUE.toLong()) sampleSize: Int = 1) {
-//
-//    }
-
     @Synchronized
-    fun setData(data: ByteArray, @IntRange(from = 1, to = Int.MAX_VALUE.toLong()) sampleSize: Int = 1) {
-        setData(ByteBuffer.wrap(data), sampleSize)
-    }
+    fun setData(filePath: String, @IntRange(from = 1, to = Int.MAX_VALUE.toLong()) sampleSize: Int = 1) {
 
-    @Synchronized
-    fun setData(buffer: ByteBuffer, @IntRange(from = 1, to = Int.MAX_VALUE.toLong()) sampleSize: Int = 1) {
         // Make sure sample size is a power of 2.
         val bitSampleSize = Integer.highestOneBit(sampleSize)
 
+        this.headerParser = GifHeaderParser()
+        try {
+            headerParser?.setData(File(filePath))
+        } catch (ex: Exception) {
+            this.headerParser = null
+            return
+        }
+
+        this.rawData = this.headerParser?.getRawData()
+        this.inputStream = this.headerParser?.getInputStream()
         status = GifDecodeStatus.OK
 
-        headerParser = GifHeaderParser()
-        headerParser?.setData(buffer)
         header = headerParser?.parseHeader()
 
         framePointer = INITIAL_FRAME_POINTER
-
-        // Initialize the raw data buffer.
-        rawData = buffer.asReadOnlyBuffer().apply {
-            position(0)
-            order(ByteOrder.LITTLE_ENDIAN)
-        }
 
         // No point in specially saving an old frame if we're never going to use it.
         savePrevious = false
@@ -214,62 +214,70 @@ class GifDecoder(
         this.sampleSize = bitSampleSize
 
         // Now that we know the size, init scratch arrays.
-        mainPixels = bitmapProvider.obtainByteArray((header?.width ?: 0) * (header?.height ?: 0))
-        mainScratch = bitmapProvider.obtainIntArray(downSampledWidth * downSampledHeight)
+        mainPixels = try{
+            bitmapProvider.obtainByteArray((header?.width ?: 0) * (header?.height ?: 0))
+        } catch (err: OutOfMemoryError) {
+            ByteArray(0)
+        }
+        mainScratch = try {
+            bitmapProvider.obtainIntArray(downSampledWidth * downSampledHeight)
+        } catch (err: OutOfMemoryError) {
+            IntArray(0)
+        }
 
         advance()
     }
 
-    /**
-     * Reads GIF image from byte array.
-     *
-     * @param data containing GIF file.
-     * @return read status
-     * @see GifDecodeStatus 
-     */
-    @Synchronized
-    fun read(data: ByteArray?): GifDecodeStatus {
-        checkNotNull(header) { "You must call setData() before read()" }
-
-        if (data != null) {
-            setData(data)
-        }
-        return status
-    }
-
-    /**
-     * Reads GIF image from stream.
-     *
-     * @param inputStream containing GIF file.
-     * @return read status code (0 = no errors).
-     */
-    @Synchronized
-    fun read(inputStream: InputStream?, contentLength: Int): GifDecodeStatus {
-        if (inputStream != null) {
-            try {
-                val capacity = if (contentLength > 0) contentLength + 4 * 1024 else 16 * 1024
-                val buffer = ByteArrayOutputStream(capacity)
-                var nRead: Int
-                val data = ByteArray(16 * 1024)
-                while (inputStream.read(data, 0, data.size).also { nRead = it } != -1) {
-                    buffer.write(data, 0, nRead)
-                }
-                buffer.flush()
-                read(buffer.toByteArray())
-            } catch (e: IOException) {
-                Log.w(TAG, "Error reading data from stream", e)
-            }
-        } else {
-            status = GifDecodeStatus.OPEN_ERROR
-        }
-
-        try {
-            inputStream?.close()
-        } catch (e: IOException) {
-            Log.w(TAG, "Error closing stream", e)
-        }
-        return status
-    }
+//    /**
+//     * Reads GIF image from byte array.
+//     *
+//     * @param data containing GIF file.
+//     * @return read status
+//     * @see GifDecodeStatus
+//     */
+//    @Synchronized
+//    fun read(data: ByteArray?): GifDecodeStatus {
+//        checkNotNull(header) { "You must call setData() before read()" }
+//
+//        if (data != null) {
+//            setData(data)
+//        }
+//        return status
+//    }
+//
+//    /**
+//     * Reads GIF image from stream.
+//     *
+//     * @param inputStream containing GIF file.
+//     * @return read status code (0 = no errors).
+//     */
+//    @Synchronized
+//    fun read(inputStream: InputStream?, contentLength: Int): GifDecodeStatus {
+//        if (inputStream != null) {
+//            try {
+//                val capacity = if (contentLength > 0) contentLength + 4 * 1024 else 16 * 1024
+//                val buffer = ByteArrayOutputStream(capacity)
+//                var nRead: Int
+//                val data = ByteArray(16 * 1024)
+//                while (inputStream.read(data, 0, data.size).also { nRead = it } != -1) {
+//                    buffer.write(data, 0, nRead)
+//                }
+//                buffer.flush()
+//                read(buffer.toByteArray())
+//            } catch (e: IOException) {
+//                Log.w(TAG, "Error reading data from stream", e)
+//            }
+//        } else {
+//            status = GifDecodeStatus.OPEN_ERROR
+//        }
+//
+//        try {
+//            inputStream?.close()
+//        } catch (e: IOException) {
+//            Log.w(TAG, "Error closing stream", e)
+//        }
+//        return status
+//    }
 
     fun clear() {
         header = null
@@ -292,8 +300,10 @@ class GifDecoder(
             bitmapProvider.release(block)
         }
 
-        rawData = null
         isFirstFrameTransparent = null
+
+        headerParser?.clear()
+
     }
 
     /**
@@ -420,13 +430,6 @@ class GifDecoder(
     }
 
     /**
-     * Returns an estimated byte size for this decoder based on the data provided to [ ][.setData], as well as internal buffers.
-     */
-    fun getByteSize(): Int {
-        return (rawData?.limit() ?: 0) + (mainPixels?.size ?: 0) + ((mainScratch?.size ?: 0) * BYTES_PER_INTEGER)
-    }
-
-    /**
      * Get the next frame in the animation sequence.
      *
      * @return Bitmap representation of frame.
@@ -528,7 +531,7 @@ class GifDecoder(
      */
     private fun setPixels(currentFrame: GifFrame, previousFrame: GifFrame?): Bitmap? {
         val header: GifHeader = this.header ?: return null
- 
+
         // Final location of blended pixels.
         val dest: IntArray = mainScratch ?: return null
 
@@ -655,7 +658,7 @@ class GifDecoder(
         }
         isFirstFrameTransparent =
             ((isFirstFrameTransparent != null) && (isFirstFrameTransparent == true))
-                || ((isFirstFrameTransparent == null) && isFirstFrame && (transparentColorIndex.toInt() != -1))
+                    || ((isFirstFrameTransparent == null) && isFirstFrame && (transparentColorIndex.toInt() != -1))
     }
 
     private fun copyCopyIntoScratchRobust(currentFrame: GifFrame) {
@@ -673,7 +676,7 @@ class GifDecoder(
         val sampleSize = sampleSize
         val downSampledWidth = downSampledWidth
         val downSampledHeight = downSampledHeight
-        val mainPixels = mainPixels  ?: return
+        val mainPixels = mainPixels ?: return
         val act = act ?: return
         var isFirstFrameTransparent = isFirstFrameTransparent
         for (i in 0 until downSampledIH) {
@@ -808,20 +811,28 @@ class GifDecoder(
      * Decodes LZW image data into pixel array. Adapted from John Cristy's BitmapMagick.
      */
     private fun decodeBitmapData(frame: GifFrame?) {
-        val rawData = this.rawData ?: return
+        val rawData = this.rawData
+        val inputStream = this.inputStream
         val header = this.header ?: return
         val block = this.block ?: return
 
+        if (rawData == null && inputStream == null) {
+            return
+        }
+
         if (frame != null) {
             // Jump to the frame start position.
-            rawData.position(frame.bufferFrameStart)
+            if (rawData != null) {
+                rawData.position(frame.bufferFrameStart)
+            } else {
+                inputStream?.skip(frame.bufferFrameStart.toLong())
+            }
         }
         val npix = if (frame == null) header.width * header.height else frame.imageWidth * frame.imageHeight
         var available: Int
         val clear: Int
         var codeMask: Int
         var codeSize: Int
-        val endOfInformation: Int
         var inCode: Int
         var oldCode: Int
         var bits: Int
@@ -832,10 +843,13 @@ class GifDecoder(
         var first: Int
         var top: Int
         var bi: Int
-        var pi: Int
         if (mainPixels == null || mainPixels!!.size < npix) {
             // Allocate new pixel array.
-            mainPixels = bitmapProvider.obtainByteArray(npix)
+            mainPixels = try {
+                bitmapProvider.obtainByteArray(npix)
+            } catch (err: OutOfMemoryError) {
+                ByteArray(0)
+            }
         }
         val mainPixels = mainPixels ?: return
         if (prefix == null) {
@@ -854,7 +868,7 @@ class GifDecoder(
         // Initialize GIF data stream decoder.
         val dataSize: Int = readByte()
         clear = 1 shl dataSize
-        endOfInformation = clear + 1
+        val endOfInformation: Int = clear + 1
         available = clear + 2
         oldCode = NULL_CODE
         codeSize = dataSize + 1
@@ -870,7 +884,7 @@ class GifDecoder(
 
         // Decode GIF pixel stream.
         bi = 0
-        pi = bi
+        var pi: Int = bi
         top = pi
         first = top
         count = first
@@ -959,7 +973,26 @@ class GifDecoder(
      * Reads a single byte from the input stream.
      */
     private fun readByte(): Int {
-        return if (null == rawData) 0 else (rawData!!.get().toInt() and MASK_INT_LOWEST_BYTE)
+        val rawData = this.rawData
+        val inputStream = this.inputStream
+
+        when {
+            rawData != null -> {
+                return rawData.get().toInt() and MASK_INT_LOWEST_BYTE
+            }
+
+            inputStream != null -> {
+                val buffer = ByteArray(1)
+                return try {
+                    inputStream.read(buffer)
+                    buffer[0].toInt() and 0xff
+                } catch (e: IOException) {
+                    0
+                }
+            }
+        }
+
+        return 0
     }
 
     /**
@@ -972,14 +1005,21 @@ class GifDecoder(
         if (blockSize <= 0) {
             return blockSize
         }
-        rawData?.let { rawData ->
-            block?.let { block ->
+
+        val rawData = this.rawData
+        val inputStream = this.inputStream
+
+        val block = this.block
+        if (block != null) {
+            if (rawData != null) {
                 rawData[block, 0, min(blockSize, rawData.remaining())]
+            } else {
+                inputStream?.read(block, 0, min(blockSize, inputStream.available()))
             }
         }
         return blockSize
     }
-    
+
     private fun getNextBitmap(): Bitmap {
         val config = if (isFirstFrameTransparent == null || isFirstFrameTransparent == true) {
             Bitmap.Config.ARGB_8888

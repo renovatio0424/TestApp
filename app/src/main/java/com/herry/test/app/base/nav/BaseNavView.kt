@@ -71,10 +71,10 @@ abstract class BaseNavView<V: MVPView<P>, P: MVPPresenter<V>>: BaseNavFragment()
     }
 
     override fun showViewLoading() {
-        // implements show loading view to base fragment
+        showLoading()
     }
 
     override fun hideViewLoading(success: Boolean) {
-        // implements hide loading view to base fragment
+        hideLoading()
     }
 }

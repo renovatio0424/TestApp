@@ -16,6 +16,7 @@ import android.widget.SectionIndexer
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.toRect
+import androidx.customview.view.AbsSavedState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.herry.libs.R
@@ -277,11 +278,13 @@ class RecyclerViewAlphabetIndexerScrollerView : FrameLayout {
 //                    }
 //                }
 //            })
-            if (recyclerView.adapter != null) attachAdapter(recyclerView.adapter)
+            recyclerView.adapter?.run {
+                attachAdapter(this)
+            }
         }
     }
 
-    private fun attachAdapter(adapter: RecyclerView.Adapter<*>?) {
+    fun attachAdapter(adapter: RecyclerView.Adapter<*>?) {
         if (this.adapter == adapter) return
         this.adapter?.unregisterAdapterDataObserver(adapterObserver)
         adapter?.registerAdapterDataObserver(adapterObserver)
@@ -366,7 +369,6 @@ class RecyclerViewAlphabetIndexerScrollerView : FrameLayout {
         if (sections.isNullOrEmpty()) {
             return
         }
-
         drawSectionBar(canvas)
         drawSections(canvas)
         drawSectionPreview(canvas)
@@ -536,26 +538,36 @@ class RecyclerViewAlphabetIndexerScrollerView : FrameLayout {
         } else (dp * context.resources.displayMetrics.density + 0.5f).toInt()
     }
 
-    override fun onSaveInstanceState(): Parcelable {
-        val superState = super.onSaveInstanceState()
-        val savedState = SavedState(superState)
-        savedState.currentSectionIndex = currentSectionIndex
-        return savedState
+    override fun onSaveInstanceState(): Parcelable? {
+        val superState: Parcelable? = super.onSaveInstanceState()
+        superState?.let {
+            val state = SavedState(superState)
+            state.currentSectionIndex = currentSectionIndex
+            return state
+        } ?: run {
+            return superState
+        }
     }
 
     override fun onRestoreInstanceState(state: Parcelable?) {
-        val savedState: SavedState = state as SavedState
-        super.onRestoreInstanceState(savedState.superState)
-        this.savedState = savedState
-        requestLayout()
+        when (state) {
+            is SavedState -> {
+                super.onRestoreInstanceState(state.superState)
+                this.savedState = state
+                requestLayout()
+            }
+            else -> {
+                super.onRestoreInstanceState(state)
+            }
+        }
     }
 
-    internal class SavedState : BaseSavedState {
+    internal class SavedState : AbsSavedState {
         var currentSectionIndex = 0
 
-        constructor(source: Parcelable?) : super(source)
+        constructor(superState: Parcelable) : super(superState)
 
-        constructor(source: Parcel) : super(source) {
+        constructor(source: Parcel, loader: ClassLoader?) : super(source, loader) {
             currentSectionIndex = source.readInt()
         }
 
@@ -568,6 +580,23 @@ class RecyclerViewAlphabetIndexerScrollerView : FrameLayout {
             return ("SavedState{"
                     + Integer.toHexString(System.identityHashCode(this))
                     + " currentSectionIndex=" + currentSectionIndex + "}")
+        }
+
+        companion object {
+            @JvmField
+            val CREATOR: Parcelable.ClassLoaderCreator<SavedState> = object : Parcelable.ClassLoaderCreator<SavedState> {
+                override fun createFromParcel(source: Parcel, loader: ClassLoader): SavedState {
+                    return SavedState(source, loader)
+                }
+
+                override fun createFromParcel(source: Parcel): SavedState {
+                    return SavedState(source, null)
+                }
+
+                override fun newArray(size: Int): Array<SavedState> {
+                    return newArray(size)
+                }
+            }
         }
     }
 }

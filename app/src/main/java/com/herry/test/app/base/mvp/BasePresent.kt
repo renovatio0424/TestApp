@@ -77,6 +77,36 @@ abstract class BasePresent<V> : MVPPresenter<V>() {
         }
     }
 
+    protected fun <T> presenterObservable(
+        observable: Observable<T>,
+        subscribeOn: Scheduler = RxSchedulerProvider.io(),
+        loadView: Boolean = true): Observable<T> {
+
+        return observable
+            .subscribeOn(subscribeOn)
+            .doOnSubscribe {
+                if (loadView) {
+                    (view as? MVPView<*>)?.showViewLoading()
+                }
+            }
+            .doOnError {
+                (view as? MVPView<*>)?.error(it)
+                if (loadView) {
+                    (view as? MVPView<*>)?.hideViewLoading(false)
+                }
+            }
+            .doOnComplete {
+                if (loadView) {
+                    (view as? MVPView<*>)?.hideViewLoading(true)
+                }
+            }
+            .doOnDispose {
+                if (loadView) {
+                    (view as? MVPView<*>)?.hideViewLoading(true)
+                }
+            }
+    }
+
     protected fun <T> subscribeObservable(
         observable: Observable<T>,
         onNext: ((T) -> Unit)? = null,

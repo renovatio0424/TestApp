@@ -2,6 +2,7 @@ package com.herry.libs.app.nav
 
 import android.os.Bundle
 
+@Suppress("unused")
 object NavBundleUtil {
     fun isNavigationResultOk(bundle: Bundle?): Boolean {
         return bundle != null && bundle.getBoolean(NavMovement.NAV_UP_RESULT_OK, false)

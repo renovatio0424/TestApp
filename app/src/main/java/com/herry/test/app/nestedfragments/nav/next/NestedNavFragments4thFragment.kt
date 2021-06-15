@@ -25,7 +25,9 @@ class NestedNavFragments4thFragment : BaseNavFragment() {
             _binding = NestedNavFragments4thFragmentBinding.inflate(inflater, container, false)
 
             binding.nestedNavFragments4thFragmentGoToFirst.setOnClickListener {
-                navigateUp(NavBundleUtil.addNavigationUpDestinationId(desId = R.id.nested_nav_fragments_main_fragment))
+                navigateUp(NavBundleUtil.addNavigationUpDestinationId(desId = R.id.nested_nav_fragments_main_fragment).apply {
+                    putInt("aa", 111)
+                })
             }
         }
 
