@@ -160,4 +160,8 @@ class ViewAnimPlayer {
         cancel()
         animations.clear()
     }
+
+    companion object {
+        const val INFINITE: Int = ObjectAnimator.INFINITE
+    }
 }

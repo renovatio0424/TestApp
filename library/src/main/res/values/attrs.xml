@@ -272,4 +272,10 @@
         <attr name="rvaisv_sectionPreviewEnable" format="boolean" />
         <attr name="rvaisv_sectionPreviewHideDelay" format="integer" />
     </declare-styleable>
+
+    <attr name="SkeletonFrameLayout" format="reference" />
+    <declare-styleable name="SkeletonFrameLayout">
+        <attr name="sf_auto_start" format="boolean" />
+        <attr name="sf_effect_duration" format="integer" />
+    </declare-styleable>
 </resources>

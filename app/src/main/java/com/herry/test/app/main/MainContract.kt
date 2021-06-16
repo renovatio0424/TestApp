@@ -25,6 +25,7 @@ interface MainContract {
         PICK,
         NESTED_FRAGMENTS,
         APP_DIALOG,
-        LIST
+        LIST,
+        SKELETON
     }
 }

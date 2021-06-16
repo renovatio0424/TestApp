@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:ignore="HardcodedText" >
+
+    <com.herry.libs.widget.view.skeleton.SkeletonFrameLayout
+        android:id="@+id/skeleton_sample_loading_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/size16"
+        app:sf_auto_start="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@drawable/divider_h08dp"
+            android:showDividers="middle"
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/shape_r08_bg_tbc70"
+                />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/shape_r08_bg_tbc70"
+                />
+        </LinearLayout>
+
+    </com.herry.libs.widget.view.skeleton.SkeletonFrameLayout>
+
+    <com.herry.libs.widget.view.skeleton.SkeletonFrameLayout
+        android:id="@+id/skeleton_sample_contents_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/size16">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@drawable/divider_h08dp"
+            android:showDividers="middle"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="1"
+                android:textSize="@dimen/size20"
+                android:textColor="@color/tbc_100"
+                android:background="@drawable/shape_r08_bg_tbc10_st_02dp_tbc100"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="2"
+                android:textSize="@dimen/size20"
+                android:textColor="@color/tbc_100"
+                android:background="@drawable/shape_r08_bg_tbc10_st_02dp_tbc100"
+                />
+        </LinearLayout>
+
+    </com.herry.libs.widget.view.skeleton.SkeletonFrameLayout>
+
+</FrameLayout>

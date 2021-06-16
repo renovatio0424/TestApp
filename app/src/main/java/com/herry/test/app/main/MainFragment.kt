@@ -107,6 +107,9 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
             MainContract.TestItemType.LIST -> {
                 navigate(R.id.list_fragment)
             }
+            MainContract.TestItemType.SKELETON -> {
+                navigate(R.id.skeleton_fragment)
+            }
         }
     }
 
@@ -136,6 +139,7 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
                 MainContract.TestItemType.NESTED_FRAGMENTS -> "Nested Fragments"
                 MainContract.TestItemType.APP_DIALOG -> "App Dialog"
                 MainContract.TestItemType.LIST -> "List"
+                MainContract.TestItemType.SKELETON -> "Skeleton"
             }
         }
     }
