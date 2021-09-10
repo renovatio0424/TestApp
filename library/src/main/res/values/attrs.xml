@@ -16,6 +16,7 @@
         <attr name="rfBackgroundColor" format="reference|color"/>
         <attr name="rfStrokeColor" format="reference|color"/>
         <attr name="rfStrokeWidth" format="dimension"/>
+        <attr name="rfIsCircle" format="boolean"/>
     </declare-styleable>
 
     <attr format="reference" name="AppDialog"/>

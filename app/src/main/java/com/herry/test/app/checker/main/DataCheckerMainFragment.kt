@@ -82,11 +82,7 @@ class DataCheckerMainFragment : BaseNavView<DataCheckerMainContract.View, DataCh
             init {
                 view.setOnProtectClickListener {
                     NodeRecyclerForm.getBindModel(this@DataCheckerPasswordItemForm, this@Holder)?.let {
-                        navigate(R.id.password_setting_fragment) { bundle ->
-                            if (NavBundleUtil.isNavigationResultOk(bundle)) {
-                                presenter?.refresh()
-                            }
-                        }
+                        navigate(R.id.password_setting_fragment)
                     }
                 }
             }
@@ -98,6 +94,15 @@ class DataCheckerMainFragment : BaseNavView<DataCheckerMainContract.View, DataCh
 
         override fun onBindModel(context: Context, holder: Holder, model: DataCheckerMainContract.PasswordModel) {
             holder.mainPasswordStatus?.text = if (model.password.isBlank()) "Not exit password" else "Exist password"
+        }
+    }
+
+    override fun onNavigateResults(from: Int, result: Bundle) {
+        when(from) {
+            R.id.password_setting_fragment ->
+                if (NavBundleUtil.isNavigationResultOk(result)) {
+                    presenter?.refresh()
+                }
         }
     }
 }

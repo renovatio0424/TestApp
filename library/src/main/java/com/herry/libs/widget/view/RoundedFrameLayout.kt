@@ -24,6 +24,7 @@ class RoundedFrameLayout : FrameLayoutEx {
     private var cornerRadiusRadiusY = DEFAULT_CORNER_RADIUS
     private var cornerDimensions: FloatArray? = null
     private val backgroundPaint = Paint()
+    private var isCircle = false
 
     constructor(context: Context) : this(context, null)
 
@@ -37,6 +38,7 @@ class RoundedFrameLayout : FrameLayoutEx {
         val cornerRadius = attr.getDimensionPixelSize(R.styleable.RoundedFrameLayout_rfCornerRadius, 0).toFloat()
         val corners = attr.getInt(R.styleable.RoundedFrameLayout_rfCorners, CORNER_DEFAULT)
         setCornerRadius(cornerRadius, corners)
+        isCircle = attr.getBoolean(R.styleable.RoundedFrameLayout_rfIsCircle, false)
 
         var backgroundColor = 0
         if (attr.hasValue(R.styleable.RoundedFrameLayout_rfBackgroundColor)) {
@@ -69,7 +71,8 @@ class RoundedFrameLayout : FrameLayoutEx {
         baseClipPath?.run {
             reset()
 
-            cornerDimensions?.let { corner ->
+            if (isCircle) {
+                val radius = canvas.width.toFloat().coerceAtMost(canvas.height.toFloat()) / 2f
                 addRoundRect(
                     RectF(
                         0f,
@@ -77,34 +80,48 @@ class RoundedFrameLayout : FrameLayoutEx {
                         canvas.width.toFloat(),
                         canvas.height.toFloat()
                     ),
-                    corner,
+                    radius,
+                    radius,
                     Path.Direction.CW
                 )
-            } ?: run {
-                addRoundRect(
+            } else {
+                cornerDimensions?.let { corner ->
+                    addRoundRect(
+                        RectF(
+                            0f,
+                            0f,
+                            canvas.width.toFloat(),
+                            canvas.height.toFloat()
+                        ),
+                        corner,
+                        Path.Direction.CW
+                    )
+                } ?: run {
+                    addRoundRect(
+                        RectF(
+                            0f,
+                            0f,
+                            canvas.width.toFloat(),
+                            canvas.height.toFloat()
+                        ),
+                        cornerRadiusRadiusX,
+                        cornerRadiusRadiusY,
+                        Path.Direction.CW
+                    )
+                }
+
+                canvas.drawRoundRect(
                     RectF(
                         0f,
                         0f,
                         canvas.width.toFloat(),
                         canvas.height.toFloat()
                     ),
-                    cornerRadiusRadiusX,
-                    cornerRadiusRadiusY,
-                    Path.Direction.CW
+                    cornerRadiusRadiusX,  // rx
+                    cornerRadiusRadiusY,  // ry
+                    backgroundPaint // Paint
                 )
             }
-
-            canvas.drawRoundRect(
-                RectF(
-                    0f,
-                    0f,
-                    canvas.width.toFloat(),
-                    canvas.height.toFloat()
-                ),
-                cornerRadiusRadiusX,  // rx
-                cornerRadiusRadiusY,  // ry
-                backgroundPaint // Paint
-            )
             canvas.clipPath(this)
         }
         super.dispatchDraw(canvas)

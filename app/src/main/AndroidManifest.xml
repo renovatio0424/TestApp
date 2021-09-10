@@ -33,9 +33,7 @@
 
         <activity android:name=".app.base.SingleActivity"/>
 
-        <activity android:name=".app.nestedfragments.normal.NestedFragmentsActivity" />
-
-        <activity android:name=".app.nestedfragments.nav.NestedNavFragmentsActivity" />
+        <activity android:name=".app.nestedfragments.NestedNavFragmentsActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

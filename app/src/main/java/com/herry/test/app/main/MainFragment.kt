@@ -1,10 +1,13 @@
 package com.herry.test.app.main
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +15,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
+import com.herry.libs.app.activity_caller.module.ACNavigation
 import com.herry.libs.app.activity_caller.module.ACPermission
 import com.herry.libs.nodeview.NodeForm
 import com.herry.libs.nodeview.NodeHolder
@@ -22,6 +26,7 @@ import com.herry.libs.widget.extension.navigate
 import com.herry.libs.widget.extension.setOnProtectClickListener
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
+import com.herry.test.app.nestedfragments.NestedNavFragmentsActivity
 import com.herry.test.widget.TitleBarForm
 
 
@@ -75,9 +80,9 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
 
     override fun onScreen(type: MainContract.TestItemType) {
         when (type) {
-//            MainContract.TestItemType.SCHEME_TEST -> {
-//                navigate(R.id.intent_list_fragment)
-//            }
+            MainContract.TestItemType.SCHEME_TEST -> {
+                navigate(R.id.intent_list_fragment)
+            }
             MainContract.TestItemType.GIF_DECODER -> {
                 activityCaller?.call(
                     ACPermission.Caller(
@@ -99,7 +104,15 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
                 navigate(R.id.pick_list_fragment)
             }
             MainContract.TestItemType.NESTED_FRAGMENTS -> {
-                navigate(R.id.nested_fragments_list_fragment)
+                //.navigate(R.id.nested_nav_fragments_navigation)
+                activityCaller?.call(
+                    ACNavigation.IntentCaller(
+                        Intent(requireActivity(), NestedNavFragmentsActivity::class.java), onResult = { result ->
+                            if (result.resultCode == Activity.RESULT_OK) {
+                                Log.d("Herry", "result = OK")
+                            }
+                        }
+                    ))
             }
             MainContract.TestItemType.APP_DIALOG -> {
                 navigate(R.id.app_dialog_list_fragment)
@@ -131,7 +144,7 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
 
         override fun onBindModel(context: Context, holder: TestItemForm.Holder, model: MainContract.TestItemType) {
             holder.title?.text = when (model) {
-//                MainContract.TestItemType.SCHEME_TEST -> "Intent"
+                MainContract.TestItemType.SCHEME_TEST -> "Intent"
                 MainContract.TestItemType.GIF_DECODER -> "GIF Decoder"
                 MainContract.TestItemType.CHECKER_LIST -> "Data Checker"
                 MainContract.TestItemType.LAYOUT_SAMPLE -> "Layout Sample"

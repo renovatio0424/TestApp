@@ -8,23 +8,20 @@ import android.os.Looper
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.annotation.IdRes
+import androidx.annotation.TransitionRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.setFragmentResult
 import com.herry.libs.app.activity_caller.AC
 import com.herry.libs.helper.ApiHelper
-import com.herry.libs.util.AppUtil
-import com.herry.libs.util.FragmentAddingOption
+import com.herry.libs.helper.TransitionHelper
 import com.herry.libs.widget.view.LoadingCountView
 
 open class BaseFragment: Fragment() {
     internal open var activityCaller: AC? = null
 
-    internal val fragmentTag: String = createTag()
+    private val fragmentTag: String = createTag()
 
     companion object {
         private const val TAG = "ARG_TAG"
@@ -39,7 +36,19 @@ open class BaseFragment: Fragment() {
     }
 
     fun setDefaultArguments(bundle: Bundle) {
-        setArguments(bundle)
+        this.arguments = bundle
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        transitionHelper.onCreate(activity, this)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        transitionHelper.onDestroy(activity)
     }
 
     @Suppress("DEPRECATION")
@@ -74,87 +83,6 @@ open class BaseFragment: Fragment() {
     }
 
     open fun onBackPressed(): Boolean = false
-
-    protected open fun setResultListener(
-        fragmentManager: FragmentManager?,
-        requestKey: String,
-        listener: ((resultKey: String, bundle: Bundle) -> Unit)
-    ) {
-        fragmentManager ?: return
-
-        fragmentManager.setFragmentResultListener(requestKey, this, listener)
-    }
-
-    protected open fun setResult(result: Bundle?) {
-        setFragmentResult(fragmentTag, result ?: bundleOf())
-    }
-
-    protected fun addChildFragment(
-        @IdRes containerViewId: Int?,
-        fragment: Fragment?,
-        option: FragmentAddingOption,
-        listener: ((resultKey: String, bundle: Bundle) -> Unit)? = null
-    ): Boolean {
-        if (containerViewId == null || containerViewId == -1) return false
-        fragment ?: return false
-        val fragmentManager: FragmentManager = childFragmentManager
-
-        // sets result listener
-        if (listener != null) {
-            val requestKey = option.tag ?: run {
-                if (fragment is BaseFragment) {
-                    fragment.fragmentTag
-                } else {
-                    tag
-                }
-            }
-
-            if (requestKey.isNullOrBlank()) {
-                throw IllegalArgumentException("Must set option.tag")
-            }
-
-            setResultListener(fragmentManager, requestKey, listener)
-        }
-
-        return AppUtil.setFragment(fragmentManager, containerViewId, fragment, option)
-    }
-
-    protected fun addFragmentToActivity(
-        fragment: Fragment?,
-        option: FragmentAddingOption = FragmentAddingOption(isReplace = false),
-        listener: ((resultKey: String, bundle: Bundle) -> Unit)? = null
-    ): Boolean {
-        val activity = requireActivity()
-        if (activity !is BaseActivity) {
-            return false
-        }
-
-        val containerViewId = activity.getHostViewID()
-        if (containerViewId == null || containerViewId == -1) return false
-
-        fragment ?: return false
-
-        val fragmentManager: FragmentManager = activity.supportFragmentManager
-
-        // sets result listener
-        if (listener != null) {
-            val requestKey = option.tag ?: run {
-                if (fragment is BaseFragment) {
-                    fragment.fragmentTag
-                } else {
-                    tag
-                }
-            }
-
-            if (requestKey.isNullOrBlank()) {
-                throw IllegalArgumentException("Must set option.tag")
-            }
-
-            setResultListener(fragmentManager, requestKey, listener)
-        }
-
-        return AppUtil.setFragment(fragmentManager, containerViewId, fragment, option)
-    }
 
     private var loading: LoadingCountView? = null
 
@@ -203,5 +131,33 @@ open class BaseFragment: Fragment() {
                 loading?.hide()
             }
         }
+    }
+
+    protected val transitionHelper by lazy {
+        TransitionHelper(
+            enterTransition = enterTransition,
+            exitTransition = exitTransition,
+            listener = object : TransitionHelper.TransitionHelperListener {
+                override fun onTransitionStart() {
+                    this@BaseFragment.onTransitionStart()
+                }
+
+                override fun onTransitionEnd() {
+                    this@BaseFragment.onTransitionEnd()
+                }
+            }
+        )
+    }
+
+    @TransitionRes
+    protected open val enterTransition: Int = 0
+
+    @TransitionRes
+    protected open val exitTransition: Int = 0
+
+    protected open fun onTransitionStart() {
+    }
+
+    protected open fun onTransitionEnd() {
     }
 }

@@ -7,7 +7,6 @@ import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -17,10 +16,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.herry.libs.app.nav.NavBundleUtil
 import com.herry.libs.app.nav.NavMovement
-import com.herry.libs.widget.extension.getBackEntryCounts
-import com.herry.libs.widget.extension.isCurrentStartDestinationFragment
-import com.herry.libs.widget.extension.isNestedNavHostFragment
-import com.herry.libs.widget.extension.isParentViewVisible
+import com.herry.libs.widget.extension.*
 import com.herry.test.R
 import com.herry.test.app.base.BaseActivity
 
@@ -252,7 +248,7 @@ abstract class BaseNavActivity : BaseActivity() {
                                     if (activeFragment is NavMovement) {
                                         val fromId = NavBundleUtil.fromNavigationId(result)
                                         if (fromId != 0) {
-                                            activeFragment.setFragmentResult(fromId.toString(), result)
+                                            activeFragment.onNavigateResults(fromId, result)
                                         }
                                     }
 
@@ -280,7 +276,7 @@ abstract class BaseNavActivity : BaseActivity() {
                                             } else {
                                                 val fromId = NavBundleUtil.fromNavigationId(result)
                                                 if (fromId != 0) {
-                                                    activeFragment.setFragmentResult(fromId.toString(), result)
+                                                    activeFragment.onNavigateResults(fromId, result)
                                                 }
 
                                                 fragmentNavigateUpResult = null
@@ -310,7 +306,7 @@ abstract class BaseNavActivity : BaseActivity() {
     }
 }
 
-class SavedViewModel : ViewModel() {
+class SavedViewModel: ViewModel() {
     private val navigateManager = MutableLiveData<NavigationStack>()
 
     fun getNavigateManager(): LiveData<NavigationStack> = this.navigateManager
@@ -323,10 +319,8 @@ class SavedViewModel : ViewModel() {
 @Suppress("unused")
 class NavigationStack {
     private val hosts = HashMap<Int, NavHostFragment>()
-
     // saves
     private val stack: MutableList<Int> = mutableListOf()
-
     // saves NavHostFragment.ID and entry counts
     private val hostBackStackEntryCounts: HashMap<Int, Int> = HashMap()
 
@@ -345,9 +339,7 @@ class NavigationStack {
     }
 
     fun navigateUp() {
-        if (stack.size > 0) {
-            stack.removeAt(stack.size - 1)
-        }
+        stack.removeLastOrNull()
     }
 
     fun popUpToHost(item: NavHostFragment) {

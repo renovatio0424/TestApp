@@ -62,11 +62,6 @@
         tools:layout="@layout/pick_list_fragment" />
 
     <fragment
-        android:id="@+id/nested_fragments_list_fragment"
-        android:name="com.herry.test.app.nestedfragments.list.NestedFragmentsListFragment"
-        tools:layout="@layout/nested_fragments_list_fragment" />
-
-    <fragment
         android:id="@+id/app_dialog_list_fragment"
         android:name="com.herry.test.app.dialog.AppDialogListFragment"
         tools:layout="@layout/app_dialog_list_fragment" />

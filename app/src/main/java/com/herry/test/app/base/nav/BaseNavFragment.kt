@@ -3,18 +3,15 @@ package com.herry.test.app.base.nav
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import androidx.annotation.TransitionRes
-import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
 import com.herry.libs.app.nav.NavBundleUtil
 import com.herry.libs.app.nav.NavMovement
-import com.herry.libs.helper.TransitionHelper
 import com.herry.libs.util.BundleUtil
 import com.herry.libs.util.ViewUtil
 import com.herry.test.app.base.BaseActivity
 import com.herry.test.app.base.BaseFragment
 
-@Suppress("SameParameterValue")
+@Suppress("SameParameterValue", "KDocUnresolvedReference")
 open class BaseNavFragment : BaseFragment(), NavMovement {
 
     /**
@@ -29,21 +26,16 @@ open class BaseNavFragment : BaseFragment(), NavMovement {
         return NavBundleUtil.createNavigationBundle(false)
     }
 
-    protected open fun navigateUp(resultOK: Boolean = false) {
-        navigateUp(NavBundleUtil.createNavigationBundle(resultOK))
+    override fun onNavigateResults(from: Int, result: Bundle) {}
+
+    protected open fun navigateUp(resultOK: Boolean = false, result: Bundle? = null) {
+        navigateUp(NavBundleUtil.createNavigationBundle(resultOK, result))
     }
 
-    protected open fun navigateUp(bundle: Bundle?) {
+    protected open fun navigateUp(bundle: Bundle? = null) {
         try {
-            val currentDestinationId = findNavController().currentBackStackEntry?.destination?.id
-            if (currentDestinationId != null) {
-                NavBundleUtil.addFromNavigationId(bundle, currentDestinationId)
-
-                if (activity is BaseNavActivity) {
-                    (activity as BaseNavActivity).setNavigationUpResult(bundle ?: NavBundleUtil.createNavigationBundle(false))
-                }
-            }
-            if (!navigateUp()) {
+            setNavigateResults(bundle)
+            if (!findNavController().navigateUp()) {
                 finishAndResults(bundle)
             }
         } catch (ex: IllegalStateException) {
@@ -51,25 +43,19 @@ open class BaseNavFragment : BaseFragment(), NavMovement {
         }
     }
 
-    fun navigateUp(): Boolean = findNavController().navigateUp()
+    @Throws(IllegalStateException::class)
+    protected fun setNavigateResults(bundle: Bundle?) {
+        val currentDestinationId = findNavController().currentBackStackEntry?.destination?.id
+        if (currentDestinationId != null) {
+            NavBundleUtil.addFromNavigationId(bundle, currentDestinationId)
+
+            if (activity is BaseNavActivity) {
+                (activity as BaseNavActivity).setNavigationUpResult(bundle ?: NavBundleUtil.createNavigationBundle(false))
+            }
+        }
+    }
 
     override fun isTransition(): Boolean = transitionHelper.isTransition()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        transitionHelper.onCreate(activity, this)
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        transitionHelper.onDestroy(activity)
-    }
 
     /**
      * finish fragment.
@@ -121,35 +107,5 @@ open class BaseNavFragment : BaseFragment(), NavMovement {
             })
             activity.finishAfterTransition()
         }
-    }
-
-    private val transitionHelper by lazy {
-        TransitionHelper(
-            enterTransition = enterTransition,
-            exitTransition = exitTransition,
-            listener = object : TransitionHelper.TransitionHelperListener {
-                override fun onTransitionStart() {
-                    this@BaseNavFragment.onTransitionStart()
-                }
-
-                override fun onTransitionEnd() {
-                    this@BaseNavFragment.onTransitionEnd()
-                }
-            }
-        )
-    }
-
-    @TransitionRes
-    protected open val enterTransition: Int = 0
-
-    @TransitionRes
-    protected open val exitTransition: Int = 0
-
-    protected open fun onTransitionStart() {
-
-    }
-
-    protected open fun onTransitionEnd() {
-
     }
 }

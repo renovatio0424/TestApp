@@ -47,8 +47,8 @@ object NavBundleUtil {
         }
     }
 
-    fun createNavigationBundle(resultOk: Boolean): Bundle {
-        val bundle = Bundle()
+    fun createNavigationBundle(resultOk: Boolean, result: Bundle? = null): Bundle {
+        val bundle = result ?: Bundle()
         bundle.putBoolean(NavMovement.NAV_UP_RESULT_OK, resultOk)
         return bundle
     }

@@ -144,13 +144,13 @@ class LayoutSampleFragment : BaseNavView<LayoutSampleContract.View, LayoutSample
 
         private fun getRatioIcon(model: LayoutSampleContract.AspectRatioType) : Int {
             return when(model) {
-                LayoutSampleContract.AspectRatioType.RATIO_16v9 -> R.mipmap.ratio_square_16_9_enabled
-                LayoutSampleContract.AspectRatioType.RATIO_9v16 -> R.mipmap.ratio_square_9_16_enabled
-                LayoutSampleContract.AspectRatioType.RATIO_1v1 -> R.mipmap.ratio_square_1_1_enabled
-                LayoutSampleContract.AspectRatioType.RATIO_4v3 -> R.mipmap.ratio_square_4_3_enabled
-                LayoutSampleContract.AspectRatioType.RATIO_3v4 -> R.mipmap.ratio_square_3_4_enabled
-                LayoutSampleContract.AspectRatioType.RATIO_4v5 -> R.mipmap.ratio_square_4_5_enabled
-                LayoutSampleContract.AspectRatioType.RATIO_2_35v1 -> R.mipmap.ratio_square_235_1_enabled
+                LayoutSampleContract.AspectRatioType.RATIO_16v9 -> R.drawable.ic_ratio_16_9_enabled
+                LayoutSampleContract.AspectRatioType.RATIO_9v16 -> R.drawable.ic_ratio_9_16_enabled
+                LayoutSampleContract.AspectRatioType.RATIO_1v1 -> R.drawable.ic_ratio_1_1_enabled
+                LayoutSampleContract.AspectRatioType.RATIO_4v3 -> R.drawable.ic_ratio_4_3_enable
+                LayoutSampleContract.AspectRatioType.RATIO_3v4 -> R.drawable.ic_ratio_3_4_enabled
+                LayoutSampleContract.AspectRatioType.RATIO_4v5 -> R.drawable.ic_ratio_4_5_enabled
+                LayoutSampleContract.AspectRatioType.RATIO_2_35v1 -> R.drawable.ic_ratio_235_1_enabled
             }
         }
 

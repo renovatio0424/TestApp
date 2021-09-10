@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/nested_nav_fragments_main_fragment"
-        android:name="com.herry.test.app.nestedfragments.nav.main.NestedNavFragmentsMainFragment"
+        android:name="com.herry.test.app.nestedfragments.main.NestedNavFragmentsMainFragment"
         tools:layout="@layout/nested_nav_fragments_main_fragment" >
 
         <action
@@ -19,16 +19,16 @@
 
     <fragment
         android:id="@+id/nested_nav_fragments_second_fragment"
-        android:name="com.herry.test.app.nestedfragments.nav.next.NestedNavFragmentsSecondFragment"
+        android:name="com.herry.test.app.nestedfragments.next.NestedNavFragmentsSecondFragment"
         tools:layout="@layout/nested_nav_fragments_second_fragment" />
 
     <fragment
         android:id="@+id/nested_nav_fragments_third_fragment"
-        android:name="com.herry.test.app.nestedfragments.nav.next.NestedNavFragmentsThirdFragment"
+        android:name="com.herry.test.app.nestedfragments.next.NestedNavFragmentsThirdFragment"
         tools:layout="@layout/nested_nav_fragments_third_fragment" />
 
     <fragment
         android:id="@+id/nested_nav_fragments_4th_fragment"
-        android:name="com.herry.test.app.nestedfragments.nav.next.NestedNavFragments4thFragment"
+        android:name="com.herry.test.app.nestedfragments.next.NestedNavFragments4thFragment"
         tools:layout="@layout/nested_nav_fragments_4th_fragment" />
 </navigation>

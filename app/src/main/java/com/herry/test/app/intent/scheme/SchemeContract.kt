@@ -24,9 +24,10 @@ interface SchemeContract {
         TEXT_ARABIC ("kinemaster://kinemaster/kmasset/category/4/subcategory/7"),
         ASSET_DYNAMIC_LINK("https://qf58u.app.goo.gl/FNwL"),
         KINEMASTER_DEEP_LINK("kinemaster://kinemaster"),
-        KINEMASTER_DINAMIC_LINK("https://qf58u.app.goo.gl/oh4W"),
+//        KINEMASTER_DINAMIC_LINK("https://qf58u.app.goo.gl/oh4W"),
+        KINEMASTER_DINAMIC_LINK("https://qf58u.app.goo.gl/fTeQ"),
 
-
+        KINEMASTER_NEW_PROJECT ("kinemaster://kinemaster/kmproject"),
         PROJECT_FEED_HOME ("kinemaster://kinemaster/projectfeed"),
         PROJECT_FEED_HOME_DYNAMIC_LINK("https://qf58u.app.goo.gl/pmp7"),
         PROJECT_FEED_CATEGORY ("kinemaster://kinemaster/projectfeed/category/5fbcff7150ab1428a91ee16f"),

@@ -8,21 +8,21 @@
 
     <fragment
         android:id="@+id/nested_nav_fragments_overlay_base_fragment"
-        android:name="com.herry.test.app.nestedfragments.nav.overlay.NestedNavFragmentsOverlayBaseFragment" />
+        android:name="com.herry.test.app.nestedfragments.overlay.NestedNavFragmentsOverlayBaseFragment" />
 
     <fragment
         android:id="@+id/nested_nav_fragments_overlay_main1_fragment"
-        android:name="com.herry.test.app.nestedfragments.nav.overlay.main1.NestedNavFragmentsOverlayMain1Fragment"
+        android:name="com.herry.test.app.nestedfragments.overlay.main1.NestedNavFragmentsOverlayMain1Fragment"
         tools:layout="@layout/nested_nav_fragments_overlay_main1_fragment" />
 
     <fragment
         android:id="@+id/nested_nav_fragments_overlay_main1_sub1_fragment"
-        android:name="com.herry.test.app.nestedfragments.nav.overlay.main1.NestedNavFragmentsOverlayMain1Sub1Fragment"
+        android:name="com.herry.test.app.nestedfragments.overlay.main1.NestedNavFragmentsOverlayMain1Sub1Fragment"
         tools:layout="@layout/nested_nav_fragments_overlay_main1_sub1_fragment" />
 
     <fragment
         android:id="@+id/nested_nav_fragments_overlay_main2_fragment"
-        android:name="com.herry.test.app.nestedfragments.nav.overlay.main2.NestedNavFragmentsOverlayMain2Fragment"
+        android:name="com.herry.test.app.nestedfragments.overlay.main2.NestedNavFragmentsOverlayMain2Fragment"
         tools:layout="@layout/nested_nav_fragments_overlay_main2_fragment" />
 
 </navigation>

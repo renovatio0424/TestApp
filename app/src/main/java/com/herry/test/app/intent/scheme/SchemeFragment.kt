@@ -110,6 +110,7 @@ class SchemeFragment : BaseNavView<SchemeContract.View, SchemeContract.Presenter
                 SchemeContract.SchemeItemType.PROJECT_FEED_SEARCH_DYNAMIC_LINK -> "Project Feed Search (Dynamic Link)"
                 SchemeContract.SchemeItemType.PROJECT_FEED_DETAIL -> "Project Feed Detail (Deep Link)"
                 SchemeContract.SchemeItemType.PROJECT_FEED_DETAIL_DYNAMIC_LINK -> "Project Feed Detail (Dynamic Link)"
+                SchemeContract.SchemeItemType.KINEMASTER_NEW_PROJECT -> "KineMaster New Project"
             }
         }
     }
