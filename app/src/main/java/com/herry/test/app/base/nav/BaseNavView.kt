@@ -21,7 +21,7 @@ abstract class BaseNavView<V: MVPView<P>, P: MVPPresenter<V>>: BaseNavFragment()
                 reloaded(viewModel.reloaded)
             }
         }
-        this.presenter?.onAttach(onCreatePresenterView()) ?: finishAndResults(null)
+        this.presenter?.onAttach(onCreatePresenterView()) ?: finishFragment(null)
     }
 
     override fun onDestroy() {
@@ -44,9 +44,9 @@ abstract class BaseNavView<V: MVPView<P>, P: MVPPresenter<V>>: BaseNavFragment()
 
     override fun error(throwable: Throwable) {
         activityCaller?.call(
-            ACError.Caller(throwable) {
-                onError(it)
-            }
+                ACError.Caller(throwable) {
+                    onError(it)
+                }
         )
     }
 
@@ -57,24 +57,24 @@ abstract class BaseNavView<V: MVPView<P>, P: MVPPresenter<V>>: BaseNavFragment()
     override fun onTransitionStart() {
         super.onTransitionStart()
 
-        if(presenter is BaseNavPresent<*>) {
-            (presenter as BaseNavPresent<*>).navTransitionStart()
+        if(presenter is BaseNavPresenter<*>) {
+            (presenter as BaseNavPresenter<*>).navTransitionStart()
         }
     }
 
     override fun onTransitionEnd() {
         super.onTransitionEnd()
 
-        if(presenter is BaseNavPresent<*>) {
-            (presenter as BaseNavPresent<*>).navTransitionEnd()
+        if(presenter is BaseNavPresenter<*>) {
+            (presenter as BaseNavPresenter<*>).navTransitionEnd()
         }
     }
 
-    override fun showViewLoading() {
-        showLoading()
+    final override fun showViewLoading() {
+        super.showLoading()
     }
 
-    override fun hideViewLoading(success: Boolean) {
-        hideLoading()
+    final override fun hideViewLoading(success: Boolean) {
+        super.hideLoading()
     }
 }

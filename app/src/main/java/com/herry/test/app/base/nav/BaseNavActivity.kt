@@ -19,6 +19,7 @@ import com.herry.libs.app.nav.NavMovement
 import com.herry.libs.widget.extension.*
 import com.herry.test.R
 import com.herry.test.app.base.BaseActivity
+import com.herry.test.app.base.nestednav.NestedNavMovement
 
 abstract class BaseNavActivity : BaseActivity() {
 
@@ -83,22 +84,28 @@ abstract class BaseNavActivity : BaseActivity() {
     final override fun onBackPressed() {
         if (navigateUpResult()) {
             if (!navigateUp()) {
-                navFinish(fragmentNavigateUpResult)
+                finish(getNavigationUpResult())
             }
         }
     }
 
-    protected open fun navigateUp(): Boolean = getActiveNavHostFragment()?.navController?.navigateUp() ?: false
+    private fun navigateUp(): Boolean = getActiveNavHostFragment()?.navController?.navigateUp() ?: false
 
     private fun isNavigationUpBlocked(fragment: Fragment?): Boolean {
         if (fragment is NavMovement) {
-            return NavBundleUtil.isNavigationUpBlocked(fragment.onNavigateUp())
+            return fragment.onNavigateUp()
         }
 
         return false
     }
 
     private fun navigateUpResult(): Boolean {
+        val baseActiveFragment = this.navHostFragment?.childFragmentManager?.primaryNavigationFragment
+        if (baseActiveFragment is NestedNavMovement && baseActiveFragment.onInterceptNavigateUp()) {
+            // previous processing on base nested navigation fragment
+            return false
+        }
+
         // find lasted added fragment for back key processing
         val activeFragment = getActiveFragment()
         if (activeFragment == null) {
@@ -123,7 +130,7 @@ abstract class BaseNavActivity : BaseActivity() {
                 }
             }
 
-            if (isNavigationUpBlocked(this.navHostFragment?.childFragmentManager?.primaryNavigationFragment)) {
+            if (isNavigationUpBlocked(baseActiveFragment)) {
                 // blocked start fragment of base the NavHostFragment
                 return false
             }
@@ -132,15 +139,17 @@ abstract class BaseNavActivity : BaseActivity() {
                 return false
             }
 
-            fragmentNavigateUpResult = activeFragment.onNavigateUp().apply {
-                if (getBoolean(NavMovement.NAV_UP_BLOCK, false)) {
-                    fragmentNavigateUpResult = null
-                    return false
-                }
+            if (activeFragment.onNavigateUp()) {
+                setNavigationUpResult(null)
+                return false
+            }
+
+            // sets result of the current screen
+            setNavigationUpResult(activeFragment.getNavigateUpResult()?.apply {
                 getCurrentDestination()?.let {
                     NavBundleUtil.addFromNavigationId(this, it.id)
                 }
-            }
+            })
         }
 
         return true
@@ -184,17 +193,17 @@ abstract class BaseNavActivity : BaseActivity() {
         return if (intent != null) intent.getIntExtra(NavMovement.NAV_START_DESTINATION, 0) else 0
     }
 
-    fun finishAndResults(bundle: Bundle?) {
-        fragmentNavigateUpResult = bundle
+    fun finishActivity(bundle: Bundle?) {
+        setNavigationUpResult(bundle)
         navController?.currentDestination?.let {
-            NavBundleUtil.addFromNavigationId(fragmentNavigateUpResult, it.id)
+            NavBundleUtil.addFromNavigationId(getNavigationUpResult(), it.id)
         }
         if (!navigateUp()) {
-            navFinish(bundle)
+            finish(bundle)
         }
     }
 
-    fun navFinish(bundle: Bundle?) {
+    private fun finish(bundle: Bundle?) {
         if (bundle != null) {
             val intent = Intent()
             intent.putExtra(NavMovement.NAV_BUNDLE, bundle)
@@ -235,7 +244,7 @@ abstract class BaseNavActivity : BaseActivity() {
                     when {
                         previousBackEntryCounts < currentBackEntryCounts -> {
                             // called by navigate()
-                            navigationStack.navigate(navHostFragment)
+                            navigationStack.pushNavigate(navHostFragment)
                         }
                         previousBackEntryCounts > currentBackEntryCounts -> {
                             // called by navigateUp() or popToNavHost()
@@ -244,21 +253,21 @@ abstract class BaseNavActivity : BaseActivity() {
                                 navigationStack.popUpToHost(navHostFragment)
 
                                 // process navigate up result data
-                                fragmentNavigateUpResult?.let { result ->
+                                getNavigationUpResult()?.let { result ->
                                     if (activeFragment is NavMovement) {
-                                        val fromId = NavBundleUtil.fromNavigationId(result)
-                                        if (fromId != 0) {
-                                            activeFragment.onNavigateResults(fromId, result)
+                                        val currentId = activeFragment.getNavCurrentDestinationID()
+                                        if (currentId != 0) {
+                                            activeFragment.setFragmentResult(requestKey = currentId.toString(), result)
                                         }
                                     }
 
-                                    fragmentNavigateUpResult = null
+                                    setNavigationUpResult(null)
                                 }
                             } else {
-                                navigationStack.navigateUp()
+                                navigationStack.popNavigate()
 
                                 // process navigate up result data
-                                fragmentNavigateUpResult?.let { result ->
+                                getNavigationUpResult()?.let { result ->
                                     if (activeFragment is NavMovement) {
                                         val navDestination = navHostFragment.navController.currentDestination
                                         if (navDestination != null) {
@@ -267,19 +276,19 @@ abstract class BaseNavActivity : BaseActivity() {
                                             if (navUpDesId != 0 &&
                                                 navUpDesId != currentDesId
                                             ) {
-                                                NavBundleUtil.addFromNavigationId(result, currentDesId)
+//                                                NavBundleUtil.addFromNavigationId(result, currentDesId)
                                                 if (!navigateUp()) {
                                                     if (isBase) {
-                                                        navFinish(result)
+                                                        finish(result)
                                                     }
                                                 }
                                             } else {
-                                                val fromId = NavBundleUtil.fromNavigationId(result)
-                                                if (fromId != 0) {
-                                                    activeFragment.onNavigateResults(fromId, result)
+                                                val currentId = activeFragment.getNavCurrentDestinationID()
+                                                if (currentId != 0) {
+                                                    activeFragment.setFragmentResult(requestKey = currentId.toString(), result)
                                                 }
 
-                                                fragmentNavigateUpResult = null
+                                                setNavigationUpResult(null)
                                             }
                                         }
                                     }
@@ -301,9 +310,11 @@ abstract class BaseNavActivity : BaseActivity() {
         addOnBackStackChangedListener(navHostFragment, false)
     }
 
-    internal fun setNavigationUpResult(result: Bundle) {
+    internal fun setNavigationUpResult(result: Bundle?) {
         this.fragmentNavigateUpResult = result
     }
+
+    private fun getNavigationUpResult(): Bundle? = this.fragmentNavigateUpResult
 }
 
 class SavedViewModel: ViewModel() {
@@ -334,11 +345,11 @@ class NavigationStack {
         hostBackStackEntryCounts.remove(item.id)
     }
 
-    fun navigate(item: NavHostFragment) {
+    internal fun pushNavigate(item: NavHostFragment) {
         stack.add(item.id)
     }
 
-    fun navigateUp() {
+    internal fun popNavigate() {
         stack.removeLastOrNull()
     }
 

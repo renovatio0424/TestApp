@@ -17,7 +17,8 @@ import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.libs.util.AppUtil
 import com.herry.libs.util.BundleUtil
-import com.herry.libs.widget.extension.navigate
+import com.herry.libs.widget.extension.navigateTo
+import com.herry.libs.widget.extension.navigateTo
 import com.herry.libs.widget.extension.setOnProtectClickListener
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
@@ -82,7 +83,7 @@ class DataCheckerMainFragment : BaseNavView<DataCheckerMainContract.View, DataCh
             init {
                 view.setOnProtectClickListener {
                     NodeRecyclerForm.getBindModel(this@DataCheckerPasswordItemForm, this@Holder)?.let {
-                        navigate(R.id.password_setting_fragment)
+                        navigateTo(R.id.password_setting_fragment)
                     }
                 }
             }
@@ -97,7 +98,7 @@ class DataCheckerMainFragment : BaseNavView<DataCheckerMainContract.View, DataCh
         }
     }
 
-    override fun onNavigateResults(from: Int, result: Bundle) {
+    override fun onNavigateUpResult(from: Int, result: Bundle) {
         when(from) {
             R.id.password_setting_fragment ->
                 if (NavBundleUtil.isNavigationResultOk(result)) {

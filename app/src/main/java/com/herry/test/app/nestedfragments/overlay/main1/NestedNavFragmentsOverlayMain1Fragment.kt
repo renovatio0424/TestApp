@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.herry.libs.app.nav.NavBundleUtil
 import com.herry.libs.helper.ToastHelper
-import com.herry.libs.widget.extension.navigate
+import com.herry.libs.widget.extension.navigateTo
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavFragment
 import com.herry.test.databinding.NestedNavFragmentsOverlayMain1FragmentBinding
@@ -24,7 +24,7 @@ class NestedNavFragmentsOverlayMain1Fragment : BaseNavFragment() {
             _binding = NestedNavFragmentsOverlayMain1FragmentBinding.inflate(inflater, container, false)
 
             binding.nestedNavFragmentsOverlayMain1FragmentGoSub.setOnClickListener { view ->
-                navigate(R.id.nested_nav_fragments_overlay_main1_sub1_fragment)
+                navigateTo(R.id.nested_nav_fragments_overlay_main1_sub1_fragment)
 //                { bundle ->
 //                    val result = NavBundleUtil.isNavigationResultOk(bundle)
 //                    val fromId = NavBundleUtil.fromNavigationId(bundle)

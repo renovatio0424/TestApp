@@ -14,7 +14,7 @@ import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.nodeview.model.NodeRoot
 import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
-import com.herry.libs.widget.extension.navigate
+import com.herry.libs.widget.extension.navigateTo
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
 import com.herry.test.widget.TitleBarForm
@@ -72,10 +72,10 @@ class IntentListFragment : BaseNavView<IntentListContract.View, IntentListContra
     override fun onScreen(type: IntentListContract.TestItemType) {
         when (type) {
             IntentListContract.TestItemType.SCHEME_TEST -> {
-                navigate(R.id.scheme_fragment)
+                navigateTo(R.id.scheme_fragment)
             }
             IntentListContract.TestItemType.MEDIA_SHARE_TEST -> {
-                navigate(R.id.share_media_list_fragment)
+                navigateTo(R.id.share_media_list_fragment)
             }
         }
     }

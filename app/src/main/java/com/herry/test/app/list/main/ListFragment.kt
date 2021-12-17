@@ -14,7 +14,7 @@ import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.nodeview.model.NodeRoot
 import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
-import com.herry.libs.widget.extension.navigate
+import com.herry.libs.widget.extension.navigateTo
 import com.herry.libs.widget.extension.setOnProtectClickListener
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
@@ -64,9 +64,9 @@ class ListFragment : BaseNavView<ListContract.View, ListContract.Presenter>(), L
         override fun onBindForms(list: MutableList<NodeForm<out NodeHolder, *>>) {
             list.add(ListItemForm { type ->
                 when(type) {
-                    ListContract.Type.FAST_SCROLLER -> navigate(R.id.fast_scroller_list_fragment)
-                    ListContract.Type.ENDLESS -> navigate(R.id.endless_list_fragment)
-                    ListContract.Type.INDEXER -> navigate(R.id.indexer_list_fragment)
+                    ListContract.Type.FAST_SCROLLER -> navigateTo(R.id.fast_scroller_list_fragment)
+                    ListContract.Type.ENDLESS -> navigateTo(R.id.endless_list_fragment)
+                    ListContract.Type.INDEXER -> navigateTo(R.id.indexer_list_fragment)
                 }
             })
         }

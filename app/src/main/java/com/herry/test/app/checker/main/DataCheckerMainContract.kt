@@ -2,7 +2,7 @@ package com.herry.test.app.checker.main
 
 import com.herry.libs.mvp.MVPView
 import com.herry.libs.nodeview.INodeRoot
-import com.herry.test.app.base.mvp.BasePresent
+import com.herry.test.app.base.mvp.BasePresenter
 
 /**
  * Created by herry.park on 2020/7/7
@@ -11,7 +11,7 @@ interface DataCheckerMainContract {
 
     interface View : MVPView<Presenter>, INodeRoot
 
-    abstract class Presenter : BasePresent<View>() {
+    abstract class Presenter : BasePresenter<View>() {
         abstract fun refresh()
     }
 

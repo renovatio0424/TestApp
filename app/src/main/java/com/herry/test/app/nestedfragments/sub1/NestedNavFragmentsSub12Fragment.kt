@@ -8,7 +8,7 @@ import androidx.core.os.bundleOf
 import com.herry.libs.app.nav.NavBundleUtil
 import com.herry.libs.helper.ToastHelper
 import com.herry.libs.widget.extension.getNavCurrentDestinationID
-import com.herry.libs.widget.extension.navigate
+import com.herry.libs.widget.extension.navigateTo
 import com.herry.libs.widget.extension.notifyToNavHost
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavFragment
@@ -28,7 +28,7 @@ class NestedNavFragmentsSub12Fragment : BaseNavFragment() {
             _binding = NestedNavFragmentsSub12FragmentBinding.inflate(inflater, container, false)
 
             binding.nestedNavFragmentsSub2FragmentGoSub3.setOnClickListener { view ->
-                navigate(R.id.nested_nav_fragments_sub13_fragment)
+                navigateTo(R.id.nested_nav_fragments_sub13_fragment)
 //                { bundle ->
 //                    val result = NavBundleUtil.isNavigationResultOk(bundle)
 //                    val fromId = NavBundleUtil.fromNavigationId(bundle)
@@ -50,7 +50,7 @@ class NestedNavFragmentsSub12Fragment : BaseNavFragment() {
         return binding.root
     }
 
-    override fun onNavigateUp(): Bundle {
+    override fun getNavigateUpResult(): Bundle {
         return NavBundleUtil.createNavigationBundle(true)
     }
 }

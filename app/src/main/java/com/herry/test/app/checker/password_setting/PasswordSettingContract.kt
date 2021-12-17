@@ -1,7 +1,7 @@
 package com.herry.test.app.checker.password_setting
 
 import com.herry.libs.mvp.MVPView
-import com.herry.test.app.base.mvp.BasePresent
+import com.herry.test.app.base.mvp.BasePresenter
 
 /**
  * Created by herry.park on 2020/7/7
@@ -12,7 +12,7 @@ interface PasswordSettingContract {
         fun onDisplayPassword(password: String)
     }
 
-    abstract class Presenter : BasePresent<View>() {
+    abstract class Presenter : BasePresenter<View>() {
         abstract fun setPassword(password: String?)
         abstract fun isChangedPassword(): Boolean
     }

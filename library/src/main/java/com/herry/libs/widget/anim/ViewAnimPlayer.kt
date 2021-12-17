@@ -30,7 +30,7 @@ class ViewAnimPlayer {
         }
     }
 
-    fun start() {
+    fun start(delay: Long = 0) {
         animatorSet?.cancel()
         animatorSet = null
 
@@ -43,9 +43,15 @@ class ViewAnimPlayer {
                 animator.repeatCount = if (0 > repeatCount) ObjectAnimator.INFINITE else repeatCount
                 animator.repeatMode = repeatMode
             }
+            if (delay > 0) {
+                startDelay = delay
+            } else {
+                startDelay = 0
+            }
             this.start()
         }
     }
+
 
     fun cancel() {
         animatorSet?.cancel()

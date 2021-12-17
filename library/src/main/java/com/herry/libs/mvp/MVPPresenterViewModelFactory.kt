@@ -8,19 +8,27 @@ class MVPPresenterViewModelFactory<V: MVPView<P>, P: MVPPresenter<V>>(private va
 
     private var created = false
 
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         created = true
 
         @Suppress("UNCHECKED_CAST")
-        return view.onCreatePresenter() as T
+        return try {
+            view.onCreatePresenter() as T
+        } catch (ex: Exception) {
+            modelClass.newInstance()
+        }
     }
 
     companion object {
         fun <V: MVPView<P>, P: MVPPresenter<V>> create(owner: ViewModelStoreOwner, viewModelView: MVPViewCreation<V, P>): MVPPresenterViewModel<V, P>? {
             val factory = MVPPresenterViewModelFactory(viewModelView)
             @Suppress("UNCHECKED_CAST")
-            val viewModel = ViewModelProvider(owner, factory).get(MVPPresenter::class.java) as P?
-            return MVPPresenterViewModel(viewModel, !factory.created)
+            val viewModel = ViewModelProvider(owner, factory)[MVPPresenter::class.java] as? P
+            return if (viewModel != null) {
+                MVPPresenterViewModel(viewModel, !factory.created)
+            } else {
+                null
+            }
         }
     }
 }

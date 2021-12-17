@@ -41,6 +41,25 @@ class MainPresenter : MainContract.Presenter() {
         this.nodes.endTransition()
     }
 
+//    private fun throttleFirst() {
+//        subscribeObservable(
+//            Observable.create<Int> { emitter ->
+//                for (i in 0..9) {
+//                    emitter.onNext(i)
+//                    try {
+//                        Thread.sleep(100)
+//                    } catch (e: InterruptedException) {
+//                        e.printStackTrace()
+//                    }
+//                }
+//                emitter.onComplete()
+//            }.throttleFirst(200, TimeUnit.MILLISECONDS)
+//        , {
+//                Log.d("Herry", "throttle: $it")
+//            }
+//        )
+//    }
+
     override fun moveToScreen(type: MainContract.TestItemType) {
         view?.onScreen(type)
     }

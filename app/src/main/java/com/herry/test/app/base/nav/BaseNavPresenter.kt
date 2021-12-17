@@ -2,9 +2,9 @@ package com.herry.test.app.base.nav
 
 import android.os.Handler
 import android.os.Looper
-import com.herry.test.app.base.mvp.BasePresent
+import com.herry.test.app.base.mvp.BasePresenter
 
-abstract class BaseNavPresent<V>: BasePresent<V>() {
+abstract class BaseNavPresenter<V>: BasePresenter<V>() {
 
     private var isNavTransition = false
 
@@ -27,12 +27,12 @@ abstract class BaseNavPresent<V>: BasePresent<V>() {
         }
     }
 
-    override fun launched(function: () -> Unit) {
+    override fun launch(function: () -> Unit) {
         if (view != null) {
             if (isNavTransition) {
                 launchFunctions.add(function)
             } else {
-                function.invoke()
+                runOnUIThread(function)
             }
         }
     }

@@ -45,7 +45,6 @@ abstract class BaseActivity : ACActivity() {
         }
     }
 
-
     @SuppressLint("SourceLockedOrientationActivity")
     open fun onActivityOrientation() {
         if (ApiHelper.hasOreo()) {
@@ -77,16 +76,9 @@ abstract class BaseActivity : ACActivity() {
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-
-//        if(notificationBroadcastReceiverRegister) {
-//            LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(notificationBroadcastReceiver)
-//            notificationBroadcastReceiverRegister = false
-//        }
+    override fun getBlockedPermissionPopup(permissions: Array<String>): Dialog? {
+        return PermissionHelper.createPermissionSettingScreenPopup(this, permissions)?.getDialog()
     }
-
-    private fun getActivity() : BaseActivity = this
 
     protected fun finish(withoutAnimation: Boolean) {
         super.finish()
@@ -103,18 +95,14 @@ abstract class BaseActivity : ACActivity() {
 
     override fun onBackPressed() {
         val backStackFragment = AppUtil.getLastBackStackFragment(supportFragmentManager)
-        if (null != backStackFragment && backStackFragment.fragment is BaseFragment) {
-            val fragment = backStackFragment.fragment as BaseFragment
+        if (null != backStackFragment) {
+            val fragment = backStackFragment.fragment as? BaseFragment
 
-            if (fragment.onBackPressed()) {
+            if (fragment?.onBackPressed() == true) {
                 return
             }
         }
 
         super.onBackPressed()
-    }
-
-    override fun getBlockedPermissionPopup(permissions: Array<String>): Dialog? {
-        return PermissionHelper.createPermissionSettingScreenPopup(this, permissions)?.getDialog()
     }
 }

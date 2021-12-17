@@ -19,7 +19,7 @@ class GifDecoderPresenter(private val data: GifMediaFileInfoData) : GifDecoderCo
         subscribeObservable(
             getDecodedGif(data)
             , {
-                launched {
+                launch {
                     view?.onDecoded(it)
                 }
             },

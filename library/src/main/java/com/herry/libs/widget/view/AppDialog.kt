@@ -30,6 +30,10 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
         fun onLongClick(dialog: DialogInterface, which: Int) : Boolean
     }
 
+    interface OnBackPressedListener {
+        fun onBackPressed(): Boolean
+    }
+
     private val context: ContextThemeWrapper? = if (context != null) ContextThemeWrapper(context, themeResId) else null
     private var dialog: Dialog? = null
 
@@ -71,6 +75,8 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
     private var onCancelListener: DialogInterface.OnCancelListener? = null
     private var onDismissListener: DialogInterface.OnDismissListener? = null
     private var onShowListener: DialogInterface.OnShowListener? = null
+
+    private var onBackPressedListener: OnBackPressedListener? = null
 
     // view information
     private var dialogWidth = 0
@@ -1503,6 +1509,10 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
         }
     }
 
+    fun setOnBackPressedListener(listener: OnBackPressedListener?) {
+        this.onBackPressedListener = listener
+    }
+
     companion object {
         const val MATCH_PARENT = WindowManager.LayoutParams.MATCH_PARENT
         const val WRAP_CONTENT = WindowManager.LayoutParams.WRAP_CONTENT
@@ -1539,6 +1549,13 @@ open class AppDialog(context: Context?, @StyleRes themeResId: Int = 0, @StyleRes
             }
 
             this.dialog = object : Dialog(_context, dialogThemeResId) {
+                override fun onBackPressed() {
+                    if (onBackPressedListener?.onBackPressed() == true) {
+                        return
+                    }
+                    super.onBackPressed()
+                }
+
                 override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
                     if (this@AppDialog.onKeyDown(keyCode, event)) {
                         return true

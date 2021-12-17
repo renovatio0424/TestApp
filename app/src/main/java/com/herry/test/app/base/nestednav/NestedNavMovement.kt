@@ -10,4 +10,6 @@ interface NestedNavMovement {
             activity.addChildNavHostFragment(subNavHostFragment)
         }
     }
+
+    fun onInterceptNavigateUp(): Boolean = false
 }

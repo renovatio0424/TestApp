@@ -2,7 +2,7 @@ package com.herry.test.app.intent.scheme
 
 import com.herry.libs.mvp.MVPView
 import com.herry.libs.nodeview.INodeRoot
-import com.herry.test.app.base.mvp.BasePresent
+import com.herry.test.app.base.mvp.BasePresenter
 
 /**
  * Created by herry.park on 2020/06/11.
@@ -13,7 +13,7 @@ interface SchemeContract {
         fun onGotoScheme(scheme: String)
     }
 
-    abstract class Presenter : BasePresent<View>() {
+    abstract class Presenter : BasePresenter<View>() {
         abstract fun gotoScheme(type: SchemeItemType)
     }
 

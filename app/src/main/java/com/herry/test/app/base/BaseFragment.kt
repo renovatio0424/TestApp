@@ -1,6 +1,5 @@
 package com.herry.test.app.base
 
-import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
@@ -12,16 +11,15 @@ import androidx.annotation.TransitionRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.DialogFragment
 import com.herry.libs.app.activity_caller.AC
-import com.herry.libs.helper.ApiHelper
 import com.herry.libs.helper.TransitionHelper
 import com.herry.libs.widget.view.LoadingCountView
 
-open class BaseFragment: Fragment() {
+open class BaseFragment : DialogFragment() {
     internal open var activityCaller: AC? = null
 
-    private val fragmentTag: String = createTag()
+    internal val fragmentTag: String = createTag()
 
     companion object {
         private const val TAG = "ARG_TAG"
@@ -51,25 +49,9 @@ open class BaseFragment: Fragment() {
         transitionHelper.onDestroy(activity)
     }
 
-    @Suppress("DEPRECATION")
-    override fun onAttach(activity: Activity) {
-        super.onAttach(activity)
-
-        if (ApiHelper.hasMarshmallow()) {
-            return
-        }
-
-        onAttachToContext(activity)
-    }
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (ApiHelper.hasMarshmallow()) {
-            onAttachToContext(context)
-        }
-    }
 
-    protected open fun onAttachToContext(context: Context?) {
         activityCaller = if(context is AC) {
             context
         } else {
@@ -78,8 +60,8 @@ open class BaseFragment: Fragment() {
     }
 
     override fun onDetach() {
-        super.onDetach()
         activityCaller = null
+        super.onDetach()
     }
 
     open fun onBackPressed(): Boolean = false

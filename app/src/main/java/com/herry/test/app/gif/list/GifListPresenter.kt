@@ -38,7 +38,7 @@ class GifListPresenter : GifListContract.Presenter() {
         subscribeObservable(
             getGifContentsFromMediaStore()
             , {
-                launched {
+                launch {
                     updateGifList(it)
                 }
             }

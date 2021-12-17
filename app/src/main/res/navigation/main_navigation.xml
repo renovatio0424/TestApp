@@ -91,4 +91,9 @@
         android:id="@+id/skeleton_fragment"
         android:name="com.herry.test.app.skeleton.SkeletonFragment"
         tools:layout="@layout/skeleton_fragment" />
+
+    <fragment
+        android:id="@+id/resizing_ui_fragment"
+        android:name="com.herry.test.app.resizing.ResizingUIFragment"
+        tools:layout="@layout/resizing_ui_fragment" />
 </navigation>

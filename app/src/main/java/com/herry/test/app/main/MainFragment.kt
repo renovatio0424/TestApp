@@ -22,7 +22,7 @@ import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.nodeview.model.NodeRoot
 import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
-import com.herry.libs.widget.extension.navigate
+import com.herry.libs.widget.extension.navigateTo
 import com.herry.libs.widget.extension.setOnProtectClickListener
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
@@ -81,7 +81,7 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
     override fun onScreen(type: MainContract.TestItemType) {
         when (type) {
             MainContract.TestItemType.SCHEME_TEST -> {
-                navigate(R.id.intent_list_fragment)
+                navigateTo(R.id.intent_list_fragment)
             }
             MainContract.TestItemType.GIF_DECODER -> {
                 activityCaller?.call(
@@ -89,22 +89,22 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
                         arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
                         onGranted = {
                             Handler(Looper.getMainLooper()).post {
-                                navigate(R.id.gif_list_fragment)
+                                navigateTo(R.id.gif_list_fragment)
                             }
                         }
                     ))
             }
             MainContract.TestItemType.CHECKER_LIST -> {
-                navigate(R.id.data_checker_main_fragment)
+                navigateTo(R.id.data_checker_main_fragment)
             }
             MainContract.TestItemType.LAYOUT_SAMPLE -> {
-                navigate(R.id.layout_sample_fragment)
+                navigateTo(R.id.layout_sample_fragment)
             }
             MainContract.TestItemType.PICK -> {
-                navigate(R.id.pick_list_fragment)
+                navigateTo(R.id.pick_list_fragment)
             }
             MainContract.TestItemType.NESTED_FRAGMENTS -> {
-                //.navigate(R.id.nested_nav_fragments_navigation)
+                //.navigateTo(R.id.nested_nav_fragments_navigation)
                 activityCaller?.call(
                     ACNavigation.IntentCaller(
                         Intent(requireActivity(), NestedNavFragmentsActivity::class.java), onResult = { result ->
@@ -115,13 +115,16 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
                     ))
             }
             MainContract.TestItemType.APP_DIALOG -> {
-                navigate(R.id.app_dialog_list_fragment)
+                navigateTo(R.id.app_dialog_list_fragment)
             }
             MainContract.TestItemType.LIST -> {
-                navigate(R.id.list_fragment)
+                navigateTo(R.id.list_fragment)
             }
             MainContract.TestItemType.SKELETON -> {
-                navigate(R.id.skeleton_fragment)
+                navigateTo(R.id.skeleton_fragment)
+            }
+            MainContract.TestItemType.RESIZING_UI -> {
+                navigateTo(R.id.resizing_ui_fragment)
             }
         }
     }
@@ -153,6 +156,7 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
                 MainContract.TestItemType.APP_DIALOG -> "App Dialog"
                 MainContract.TestItemType.LIST -> "List"
                 MainContract.TestItemType.SKELETON -> "Skeleton"
+                MainContract.TestItemType.RESIZING_UI -> "Resizing UI"
             }
         }
     }

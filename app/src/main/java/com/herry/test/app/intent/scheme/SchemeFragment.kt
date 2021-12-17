@@ -1,5 +1,6 @@
 package com.herry.test.app.intent.scheme
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -11,6 +12,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
+import com.herry.libs.helper.ToastHelper
 import com.herry.libs.nodeview.NodeForm
 import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.nodeview.model.NodeRoot
@@ -68,7 +70,11 @@ class SchemeFragment : BaseNavView<SchemeContract.View, SchemeContract.Presenter
     }
 
     override fun onGotoScheme(scheme: String) {
-        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(scheme)))
+        try {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(scheme)))
+        } catch (ex: ActivityNotFoundException) {
+            ToastHelper.showToast(activity, ex.message)
+        }
     }
 
     inner class Adapter: NodeRecyclerAdapter(::requireContext) {

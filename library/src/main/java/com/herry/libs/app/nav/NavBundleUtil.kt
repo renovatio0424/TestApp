@@ -8,20 +8,16 @@ object NavBundleUtil {
         return bundle != null && bundle.getBoolean(NavMovement.NAV_UP_RESULT_OK, false)
     }
 
-    fun isNavigationUpBlocked(bundle: Bundle?): Boolean {
-        return bundle != null && bundle.getBoolean(NavMovement.NAV_UP_BLOCK, false)
-    }
-
     fun getNavigationAction(bundle: Bundle?): String {
         return bundle?.getString(NavMovement.NAV_ACTION_KEY, "") ?: ""
     }
 
-    fun createNavigationAction(action: String): Bundle {
+    fun createNavigationAction(action: String, bundle: Bundle? = null): Bundle {
         if (action.isBlank()) {
             throw IllegalArgumentException("action is blank")
         }
 
-        return Bundle().apply {
+        return (bundle ?: Bundle()).apply {
             putString(NavMovement.NAV_ACTION_KEY, action)
         }
     }
@@ -51,9 +47,5 @@ object NavBundleUtil {
         val bundle = result ?: Bundle()
         bundle.putBoolean(NavMovement.NAV_UP_RESULT_OK, resultOk)
         return bundle
-    }
-
-    fun createBlockNavigateUp(): Bundle = Bundle().apply {
-        putBoolean(NavMovement.NAV_UP_BLOCK, true)
     }
 }

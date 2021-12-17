@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.herry.libs.widget.extension.navigate
+import com.herry.libs.widget.extension.navigateTo
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavFragment
 import com.herry.test.databinding.NestedNavFragmentsThirdFragmentBinding
@@ -25,7 +25,7 @@ class NestedNavFragmentsThirdFragment : BaseNavFragment() {
             _binding = NestedNavFragmentsThirdFragmentBinding.inflate(inflater, container, false)
 
             binding.nestedNavFragmentsThirdFragmentGoToNext.setOnClickListener {
-                navigate(R.id.nested_nav_fragments_4th_fragment)
+                navigateTo(R.id.nested_nav_fragments_4th_fragment)
             }
         }
 

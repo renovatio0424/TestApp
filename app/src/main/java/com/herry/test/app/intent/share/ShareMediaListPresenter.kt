@@ -37,7 +37,7 @@ class ShareMediaListPresenter : ShareMediaListContract.Presenter() {
         subscribeObservable(
             getMediaContentsFromMediaStore()
             , {
-                launched {
+                launch {
                     updateMediaList(it)
                 }
             }

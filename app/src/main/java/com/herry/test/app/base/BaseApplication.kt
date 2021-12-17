@@ -28,41 +28,39 @@ class BaseApplication: Application() {
 
         // register to be informed of activities starting up
         registerActivityLifecycleCallbacks(
-            object : ActivityLifecycleCallbacks {
-                override fun onActivityPaused(activity: Activity?) {
-                }
-
-                override fun onActivityResumed(activity: Activity?) {
-                    activity ?: return
-
-                    notifyBackground(false)
-                }
-
-                override fun onActivityStarted(activity: Activity?) {
-                }
-
-                override fun onActivityDestroyed(activity: Activity?) {
-                    activity ?: return
-
-                    appActivityManager.removeActivity(activity)
-                }
-
-                override fun onActivitySaveInstanceState(activity: Activity?, outState: Bundle?) {
-                }
-
-                override fun onActivityStopped(activity: Activity?) {
-                }
-
-                override fun onActivityCreated(activity: Activity?, savedInstanceState: Bundle?) {
-                    activity ?: return
-
-                    // new activity created; force its orientation to portrait
-                    if (activity is BaseActivity) {
-                        activity.onActivityOrientation()
+                object : ActivityLifecycleCallbacks {
+                    override fun onActivityPaused(activity: Activity) {
                     }
-                    appActivityManager.addActivity(activity)
-                }
-            })
+
+                    override fun onActivityResumed(activity: Activity) {
+                        notifyBackground(false)
+                    }
+
+                    override fun onActivityStarted(activity: Activity) {
+                    }
+
+                    override fun onActivityDestroyed(activity: Activity) {
+                        activity ?: return
+
+                        appActivityManager.removeActivity(activity)
+                    }
+
+                    override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
+                    }
+
+                    override fun onActivityStopped(activity: Activity) {
+                    }
+
+                    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+                        activity ?: return
+
+                        // new activity created; force its orientation to portrait
+                        if (activity is BaseActivity) {
+                            activity.onActivityOrientation()
+                        }
+                        appActivityManager.addActivity(activity)
+                    }
+                })
 
         val screenOffFilter = IntentFilter(Intent.ACTION_SCREEN_OFF)
         registerReceiver(object : BroadcastReceiver() {
@@ -86,10 +84,6 @@ class BaseApplication: Application() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-    }
-
-    override fun onLowMemory() {
-        super.onLowMemory()
     }
 
     override fun onTrimMemory(level: Int) {

@@ -44,16 +44,15 @@ abstract class BaseView<V: MVPView<P>, P: MVPPresenter<V>>: BaseFragment(), MVPV
 
     override fun error(throwable: Throwable) {
         activityCaller?.call(
-            ACError.Caller(throwable) {
-                onError(it)
-            }
+                ACError.Caller(throwable) {
+                    onError(it)
+                }
         )
     }
 
     open fun onError(throwable: Throwable) {
 
     }
-
 
     override fun showViewLoading() {
         // implements show loading view to base fragment

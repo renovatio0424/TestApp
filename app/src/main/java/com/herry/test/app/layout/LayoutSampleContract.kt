@@ -1,7 +1,7 @@
 package com.herry.test.app.layout
 
 import com.herry.libs.mvp.MVPView
-import com.herry.test.app.base.mvp.BasePresent
+import com.herry.test.app.base.mvp.BasePresenter
 
 /**
  * Created by herry.park on 2020/08/19.
@@ -12,7 +12,7 @@ interface LayoutSampleContract {
         fun onUpdateRatios(selected: AspectRatioType?)
     }
 
-    abstract class Presenter : BasePresent<View>() {
+    abstract class Presenter : BasePresenter<View>() {
         abstract fun selectRatio(type: AspectRatioType?)
     }
 

@@ -3,7 +3,7 @@ package com.herry.test.app.pick
 import android.net.Uri
 import com.herry.libs.mvp.MVPView
 import com.herry.libs.nodeview.INodeRoot
-import com.herry.test.app.base.mvp.BasePresent
+import com.herry.test.app.base.mvp.BasePresenter
 import java.io.File
 
 interface PickListContract {
@@ -11,7 +11,7 @@ interface PickListContract {
         fun onScreen(type: PickType)
     }
 
-    abstract class Presenter : BasePresent<View>() {
+    abstract class Presenter : BasePresenter<View>() {
         abstract fun pick(type: PickType)
         abstract fun getToTakeTempFile(type: PickType): File?
         abstract fun getUriForFileProvider(file: File?): Uri?
