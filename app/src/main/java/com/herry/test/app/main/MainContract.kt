@@ -27,6 +27,7 @@ interface MainContract {
         APP_DIALOG,
         LIST,
         SKELETON,
-        RESIZING_UI
+        RESIZING_UI,
+        BOTTOM_NAV_SAMPLE
     }
 }

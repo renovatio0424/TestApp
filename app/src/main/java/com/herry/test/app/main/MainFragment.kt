@@ -26,6 +26,7 @@ import com.herry.libs.widget.extension.navigateTo
 import com.herry.libs.widget.extension.setOnProtectClickListener
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
+import com.herry.test.app.bottomnav.BottomNavActivity
 import com.herry.test.app.nestedfragments.NestedNavFragmentsActivity
 import com.herry.test.widget.TitleBarForm
 
@@ -126,6 +127,12 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
             MainContract.TestItemType.RESIZING_UI -> {
                 navigateTo(R.id.resizing_ui_fragment)
             }
+            MainContract.TestItemType.BOTTOM_NAV_SAMPLE -> {
+                activityCaller?.call(
+                    ACNavigation.IntentCaller(
+                        Intent(requireActivity(), BottomNavActivity::class.java)
+                    ))
+            }
         }
     }
 
@@ -157,6 +164,7 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
                 MainContract.TestItemType.LIST -> "List"
                 MainContract.TestItemType.SKELETON -> "Skeleton"
                 MainContract.TestItemType.RESIZING_UI -> "Resizing UI"
+                MainContract.TestItemType.BOTTOM_NAV_SAMPLE -> "Bottom Navigation Sample"
             }
         }
     }

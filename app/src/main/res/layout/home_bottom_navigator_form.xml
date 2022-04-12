@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/size60"
+    android:background="@color/tbc_100_a50"
+    tools:ignore="ContentDescription, SpUsage, HardcodedText, UseCompoundDrawables"
+    tools:viewBindingIgnore="false">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:baselineAligned="false"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:id="@+id/home_bottom_navigator_form_feature"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            tools:ignore="">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="@dimen/size74"
+                android:layout_height="@dimen/size54"
+                android:layout_gravity="center"
+                android:foreground="@drawable/selector_bottom_nav"
+                app:cardCornerRadius="@dimen/size10"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@android:color/transparent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="@dimen/size28"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/ic_navigation_feature" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Feature"
+                        android:textStyle="bold"
+                        android:textSize="@dimen/size11"
+                        android:textColor="@color/selector_text" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/home_bottom_navigator_form_discover"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            tools:ignore="">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="@dimen/size74"
+                android:layout_height="@dimen/size54"
+                android:layout_gravity="center"
+                android:foreground="@drawable/selector_bottom_nav"
+                app:cardCornerRadius="@dimen/size10"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@android:color/transparent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="@dimen/size28"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/ic_navigation_discover" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Discover"
+                        android:textStyle="bold"
+                        android:textSize="@dimen/size11"
+                        android:textColor="@color/selector_text" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/home_bottom_navigator_form_create"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            tools:ignore="">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="@dimen/size74"
+                android:layout_height="@dimen/size54"
+                android:layout_gravity="center"
+                android:foreground="@drawable/selector_bottom_nav"
+                app:cardCornerRadius="@dimen/size10"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@android:color/transparent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="@dimen/size28"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/ic_navigation_create" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Create"
+                        android:textStyle="bold"
+                        android:textSize="@dimen/size11"
+                        android:textColor="@color/selector_text" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/home_bottom_navigator_form_me"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            tools:ignore="">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="@dimen/size74"
+                android:layout_height="@dimen/size54"
+                android:layout_gravity="center"
+                android:foreground="@drawable/selector_bottom_nav"
+                app:cardCornerRadius="@dimen/size10"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@android:color/transparent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="@dimen/size28"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/ic_navigation_me" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Me"
+                        android:textStyle="bold"
+                        android:textSize="@dimen/size11"
+                        android:textColor="@color/selector_text" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+        </FrameLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size01"
+        android:background="@color/tbc_10_a20"
+        android:layout_gravity="top|center_horizontal" />
+</FrameLayout>

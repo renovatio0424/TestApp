@@ -1,5 +1,6 @@
 package com.herry.libs.util
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.res.ColorStateList
@@ -9,10 +10,7 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.ResultReceiver
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
@@ -196,4 +194,18 @@ object ViewUtil {
         /* Threshold size: dp to pixels, multiply with display density */return heightDiff > SOFT_KEYBOARD_HEIGHT_DP_THRESHOLD * dm.density
     }
 
+    @JvmStatic
+    @SuppressLint("ClickableViewAccessibility")
+    fun setProtectTouchLowLayer(view: View?, protect: Boolean) {
+        view?.setOnTouchListener { _: View?, _: MotionEvent? -> protect }
+    }
+
+    fun removeViewFormParent(view: View?) {
+        view ?: return
+
+        if (view.parent is ViewGroup) {
+            val parent = view.parent as ViewGroup
+            parent.removeView(view)
+        }
+    }
 }
