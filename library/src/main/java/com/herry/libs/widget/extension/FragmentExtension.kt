@@ -247,6 +247,8 @@ fun NavHostFragment.isCurrentStartDestinationFragment(): Boolean {
     return currentFragmentDestinationId != 0 && currentFragmentDestinationId == parentStartFragmentDestinationId
 }
 
+fun Fragment.isCurrentNavigateTo(@IdRes navigateId: Int): Boolean = getNavCurrentDestinationID() == navigateId
+
 fun Fragment.isParentViewVisible() : Boolean {
     return isParentViewVisible(view?.parent as? View)
 }

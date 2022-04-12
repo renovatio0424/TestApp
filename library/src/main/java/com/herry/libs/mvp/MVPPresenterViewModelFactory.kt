@@ -33,4 +33,4 @@ class MVPPresenterViewModelFactory<V: MVPView<P>, P: MVPPresenter<V>>(private va
     }
 }
 
-data class MVPPresenterViewModel<V: MVPView<P>, P: MVPPresenter<V>>(val presenter: P?, val reloaded: Boolean)
+data class MVPPresenterViewModel<V: MVPView<P>, P: MVPPresenter<V>>(val presenter: P?, val recreated: Boolean)

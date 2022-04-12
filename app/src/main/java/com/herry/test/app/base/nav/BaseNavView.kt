@@ -18,7 +18,7 @@ abstract class BaseNavView<V: MVPView<P>, P: MVPPresenter<V>>: BaseNavFragment()
         this.presenter = this.presenter ?: run {
             val viewModel = MVPPresenterViewModelFactory.create(this, this)
             viewModel?.presenter?.apply {
-                reloaded(viewModel.reloaded)
+                relaunched(viewModel.recreated)
             }
         }
         this.presenter?.onAttach(onCreatePresenterView()) ?: finishFragment(null)

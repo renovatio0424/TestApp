@@ -40,8 +40,6 @@ class BaseApplication: Application() {
                     }
 
                     override fun onActivityDestroyed(activity: Activity) {
-                        activity ?: return
-
                         appActivityManager.removeActivity(activity)
                     }
 
@@ -52,8 +50,6 @@ class BaseApplication: Application() {
                     }
 
                     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-                        activity ?: return
-
                         // new activity created; force its orientation to portrait
                         if (activity is BaseActivity) {
                             activity.onActivityOrientation()

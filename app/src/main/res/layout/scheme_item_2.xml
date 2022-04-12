@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="@dimen/size48"
+    android:paddingStart="@dimen/size16"
+    android:paddingEnd="@dimen/size16"
+    android:paddingTop="@dimen/size08"
+    android:paddingBottom="@dimen/size08"
+    android:background="?android:selectableItemBackground"
+    tools:ignore="SpUsage"
+    tools:viewBindingIgnore="true"
+    >
+
+    <TextView
+        android:id="@+id/scheme_item_2_title"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="start|center_vertical"
+        android:textSize="@dimen/size16"
+        android:textColor="@color/tbc_100"
+        android:textStyle="bold"
+        />
+
+    <TextView
+        android:id="@+id/scheme_item_2_app_link"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginVertical="4dp"
+        android:gravity="start|center_vertical"
+        android:textSize="@dimen/size14"
+        android:textColor="@color/tbc_100"
+        />
+
+    <TextView
+        android:id="@+id/scheme_item_2_dynamic_link"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginVertical="4dp"
+        android:gravity="start|center_vertical"
+        android:textSize="@dimen/size14"
+        android:textColor="@color/tbc_100"
+        />
+</LinearLayout>

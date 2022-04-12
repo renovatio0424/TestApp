@@ -80,6 +80,7 @@ class SchemeFragment : BaseNavView<SchemeContract.View, SchemeContract.Presenter
     inner class Adapter: NodeRecyclerAdapter(::requireContext) {
         override fun onBindForms(list: MutableList<NodeForm<out NodeHolder, *>>) {
             list.add(SchemeItemForm())
+            list.add(SchemeItem2Form())
         }
     }
 
@@ -118,6 +119,36 @@ class SchemeFragment : BaseNavView<SchemeContract.View, SchemeContract.Presenter
                 SchemeContract.SchemeItemType.PROJECT_FEED_DETAIL_DYNAMIC_LINK -> "Project Feed Detail (Dynamic Link)"
                 SchemeContract.SchemeItemType.KINEMASTER_NEW_PROJECT -> "KineMaster New Project"
             }
+        }
+    }
+
+    private inner class SchemeItem2Form : NodeForm<SchemeItem2Form.Holder, SchemeContract.SchemaData>(Holder::class, SchemeContract.SchemaData::class) {
+        inner class Holder(context: Context, view: View) : NodeHolder(context, view) {
+            val title: TextView? = view.findViewById(R.id.scheme_item_2_title)
+            val appLink: TextView? = view.findViewById(R.id.scheme_item_2_app_link)
+            val dynamicLink: TextView? = view.findViewById(R.id.scheme_item_2_dynamic_link)
+            init {
+                appLink?.setOnProtectClickListener {
+                    NodeRecyclerForm.getBindModel(this@SchemeItem2Form, this@Holder)?.let {
+                        presenter?.gotoScheme(it.appLink)
+                    }
+                }
+                dynamicLink?.setOnProtectClickListener {
+                    NodeRecyclerForm.getBindModel(this@SchemeItem2Form, this@Holder)?.let {
+                        presenter?.gotoScheme(it.dynamicLink)
+                    }
+                }
+            }
+        }
+
+        override fun onCreateHolder(context: Context, view: View): Holder = Holder(context, view)
+
+        override fun onLayout(): Int = R.layout.scheme_item_2
+
+        override fun onBindModel(context: Context, holder: Holder, model: SchemeContract.SchemaData) {
+            holder.title?.text = model.title
+            holder.appLink?.text = model.appLink
+            holder.dynamicLink?.text = model.dynamicLink
         }
     }
 }

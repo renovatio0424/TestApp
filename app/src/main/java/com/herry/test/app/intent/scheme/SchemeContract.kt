@@ -15,6 +15,7 @@ interface SchemeContract {
 
     abstract class Presenter : BasePresenter<View>() {
         abstract fun gotoScheme(type: SchemeItemType)
+        abstract fun gotoScheme(url: String)
     }
 
     enum class SchemeItemType(val url: String) {
@@ -37,4 +38,10 @@ interface SchemeContract {
         PROJECT_FEED_DETAIL ("kinemaster://kinemaster/projectfeed/5ffef0a09b485d21f62915e7"),
         PROJECT_FEED_DETAIL_DYNAMIC_LINK("https://qf58u.app.goo.gl/gBMK"),
     }
+
+    data class SchemaData (
+        val title: String,
+        val appLink: String,
+        val dynamicLink: String,
+    )
 }

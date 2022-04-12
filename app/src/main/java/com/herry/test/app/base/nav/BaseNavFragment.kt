@@ -40,7 +40,7 @@ open class BaseNavFragment : BaseFragment(), NavMovement {
 
     override fun getNavigateUpResult(): Bundle = NavBundleUtil.createNavigationBundle(false)
 
-    override fun onNavigateUpResult(fromNavigationId: Int, result: Bundle) {}
+    override fun onNavigateUpResult(@IdRes fromNavigationId: Int, result: Bundle) {}
 
     protected fun navigateUp(resultOK: Boolean = false, result: Bundle? = null, force: Boolean = false) {
         navigateUp(NavBundleUtil.createNavigationBundle(resultOK, result), force)
@@ -81,17 +81,20 @@ open class BaseNavFragment : BaseFragment(), NavMovement {
 
             // calls system(navController) navigate up action
             if (!findNavController().navigateUp()) {
-                finishFragment(result)
+                finishActivity(false, result)
             }
         } catch (ex: IllegalStateException) {
-            finishFragment(result)
+            finishActivity(false, result)
         }
     }
 
     private fun navigateUpDialogFragment(bundle: Bundle? = null) {
         val callNavigationId = findNavController().previousBackStackEntry?.destination?.id
         val currentDestinationId = findNavController().currentBackStackEntry?.destination?.id
+
         if (callNavigationId != null && currentDestinationId != null) {
+            findNavController().popBackStack()
+
             val result = bundle ?: NavBundleUtil.createNavigationBundle(false)
             NavBundleUtil.addFromNavigationId(result, currentDestinationId)
             setFragmentResult(
@@ -154,7 +157,7 @@ open class BaseNavFragment : BaseFragment(), NavMovement {
             activity.window?.let {
                 ViewUtil.hideSoftKeyboard(context, activity.window.decorView.rootView)
             }
-            navigateUp(bundle)
+            navigateUp(bundle, force = true)
         } else if (activity is BaseActivity) {
             finishActivity(NavBundleUtil.isNavigationResultOk(bundle), bundle)
         }

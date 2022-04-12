@@ -18,7 +18,7 @@ abstract class BaseView<V: MVPView<P>, P: MVPPresenter<V>>: BaseFragment(), MVPV
         this.presenter = this.presenter ?: run {
             val viewModel = MVPPresenterViewModelFactory.create(this, this)
             viewModel?.presenter?.apply {
-                reloaded(viewModel.reloaded)
+                relaunched(viewModel.recreated)
             }
         }
         this.presenter?.onAttach(onCreatePresenterView()) ?: activity?.finishAfterTransition()
@@ -55,10 +55,10 @@ abstract class BaseView<V: MVPView<P>, P: MVPPresenter<V>>: BaseFragment(), MVPV
     }
 
     override fun showViewLoading() {
-        // implements show loading view to base fragment
+        showLoading()
     }
 
     override fun hideViewLoading(success: Boolean) {
-        // implements hide loading view to base fragment
+        hideLoading()
     }
 }

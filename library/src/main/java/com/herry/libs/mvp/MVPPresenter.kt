@@ -12,5 +12,5 @@ abstract class MVPPresenter<in V>: ViewModel() {
 
     abstract fun onPause()
 
-    abstract fun reloaded(reloaded: Boolean)
+    abstract fun relaunched(recreated: Boolean)
 }

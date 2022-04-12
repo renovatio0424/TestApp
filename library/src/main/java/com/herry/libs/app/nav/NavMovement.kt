@@ -23,7 +23,7 @@ interface NavMovement {
 
     fun getNavigateUpResult(): Bundle?
 
-    fun onNavigateUpResult(@IdRes from: Int, result: Bundle)
+    fun onNavigateUpResult(@IdRes fromNavigationId: Int, result: Bundle)
 
     fun isTransition(): Boolean
 }

@@ -2,7 +2,9 @@ package com.herry.test.app.base.mvp
 
 import android.os.Handler
 import android.os.Looper
-import androidx.lifecycle.*
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import com.herry.libs.mvp.MVPPresenter
 import com.herry.libs.mvp.MVPView
 import com.herry.test.rx.RxSchedulerProvider
@@ -27,7 +29,7 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
 
     private var launched = false
 
-    private var reloaded = false
+    private var relaunched = false
 
     protected var lifecycleOwner: LifecycleOwner? = null
         private set
@@ -54,8 +56,8 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
         compositeDisposable.dispose()
     }
 
-    final override fun reloaded(reloaded: Boolean) {
-        this.reloaded = reloaded
+    final override fun relaunched(recreated: Boolean) {
+        this.relaunched = recreated
     }
 
     final override fun onLaunch() {
@@ -63,8 +65,8 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
             if (!launched) {
                 launched = true
                 onLaunch(it, false)
-            } else if (reloaded) {
-                reloaded = false
+            } else if (relaunched) {
+                relaunched = false
                 onLaunch(it, true)
             } else {
                 onResume(it)
@@ -78,6 +80,8 @@ abstract class BasePresenter<V> : MVPPresenter<V>(), LifecycleObserver {
             onPause(it)
         }
     }
+
+    fun isLaunched(): Boolean = launched && !relaunched
 
     protected abstract fun onLaunch(view: V, recreated: Boolean = false)
 

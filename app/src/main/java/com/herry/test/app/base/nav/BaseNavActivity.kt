@@ -21,6 +21,7 @@ import com.herry.test.R
 import com.herry.test.app.base.BaseActivity
 import com.herry.test.app.base.nestednav.NestedNavMovement
 
+@SuppressWarnings("unused")
 abstract class BaseNavActivity : BaseActivity() {
 
     private var navController: NavController? = null
@@ -193,6 +194,7 @@ abstract class BaseNavActivity : BaseActivity() {
         return if (intent != null) intent.getIntExtra(NavMovement.NAV_START_DESTINATION, 0) else 0
     }
 
+    @Suppress("unused")
     fun finishActivity(bundle: Bundle?) {
         setNavigationUpResult(bundle)
         navController?.currentDestination?.let {
@@ -223,7 +225,11 @@ abstract class BaseNavActivity : BaseActivity() {
     }
 
     private fun addOnBackStackChangedListener(navHostFragment: NavHostFragment, isBase: Boolean) {
-        val navigateManager = navActivityViewModel.getNavigateManager().value ?: return
+        val navigateManager = navActivityViewModel.getNavigateManager().value ?: kotlin.run {
+            navActivityViewModel.setNavigateManager(NavigationStack()).value
+        }
+
+        navigateManager ?: return
 
         navigateManager.addHost(navHostFragment)
 
@@ -322,8 +328,9 @@ class SavedViewModel: ViewModel() {
 
     fun getNavigateManager(): LiveData<NavigationStack> = this.navigateManager
 
-    fun setNavigateManager(value: NavigationStack) {
+    fun setNavigateManager(value: NavigationStack): LiveData<NavigationStack>{
         this.navigateManager.value = value
+        return this.navigateManager
     }
 }
 
