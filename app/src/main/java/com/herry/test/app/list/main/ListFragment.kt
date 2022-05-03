@@ -64,9 +64,9 @@ class ListFragment : BaseNavView<ListContract.View, ListContract.Presenter>(), L
         override fun onBindForms(list: MutableList<NodeForm<out NodeHolder, *>>) {
             list.add(ListItemForm { type ->
                 when(type) {
-                    ListContract.Type.FAST_SCROLLER -> navigateTo(R.id.fast_scroller_list_fragment)
-                    ListContract.Type.ENDLESS -> navigateTo(R.id.endless_list_fragment)
-                    ListContract.Type.INDEXER -> navigateTo(R.id.indexer_list_fragment)
+                    ListContract.Type.FAST_SCROLLER -> navigateTo(destinationId = R.id.fast_scroller_list_fragment)
+                    ListContract.Type.ENDLESS -> navigateTo(destinationId = R.id.endless_list_fragment)
+                    ListContract.Type.INDEXER -> navigateTo(destinationId = R.id.indexer_list_fragment)
                 }
             })
         }

@@ -72,10 +72,10 @@ class IntentListFragment : BaseNavView<IntentListContract.View, IntentListContra
     override fun onScreen(type: IntentListContract.TestItemType) {
         when (type) {
             IntentListContract.TestItemType.SCHEME_TEST -> {
-                navigateTo(R.id.scheme_fragment)
+                navigateTo(destinationId = R.id.scheme_fragment)
             }
             IntentListContract.TestItemType.MEDIA_SHARE_TEST -> {
-                navigateTo(R.id.share_media_list_fragment)
+                navigateTo(destinationId = R.id.share_media_list_fragment)
             }
         }
     }

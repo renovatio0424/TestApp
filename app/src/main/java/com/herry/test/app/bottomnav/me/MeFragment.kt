@@ -6,30 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import com.herry.libs.util.ViewUtil
 import com.herry.test.R
-import com.herry.test.app.base.mvp.BaseView
+import com.herry.test.app.base.nav.BaseNavFragment
 
-class MeFragment(private val onShowCreate: () -> Unit): BaseView<MeContract.View, MeContract.Presenter>(), MeContract.View {
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment
-     */
-    companion object {
-        fun newInstance(onShowCreate: () -> Unit)  = MeFragment(onShowCreate).apply{
-            arguments = Bundle()
-        }
-    }
-
-    override val enterTransition: Int
-        get() = android.R.transition.fade
-
-    override val exitTransition: Int
-        get() = 0
-
-    override fun onCreatePresenter(): MeContract.Presenter = MePresenter()
-
-    override fun onCreatePresenterView(): MeContract.View = this
+class MeFragment: BaseNavFragment() {
 
     private var container: View? = null
 

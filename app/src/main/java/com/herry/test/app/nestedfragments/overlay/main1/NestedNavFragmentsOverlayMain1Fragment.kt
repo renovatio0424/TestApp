@@ -24,7 +24,7 @@ class NestedNavFragmentsOverlayMain1Fragment : BaseNavFragment() {
             _binding = NestedNavFragmentsOverlayMain1FragmentBinding.inflate(inflater, container, false)
 
             binding.nestedNavFragmentsOverlayMain1FragmentGoSub.setOnClickListener { view ->
-                navigateTo(R.id.nested_nav_fragments_overlay_main1_sub1_fragment)
+                navigateTo(destinationId = R.id.nested_nav_fragments_overlay_main1_sub1_fragment)
 //                { bundle ->
 //                    val result = NavBundleUtil.isNavigationResultOk(bundle)
 //                    val fromId = NavBundleUtil.fromNavigationId(bundle)

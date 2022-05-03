@@ -6,38 +6,31 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
+import com.herry.libs.app.nav.NavBundleUtil
 import com.herry.libs.helper.ToastHelper
-import com.herry.libs.util.AppUtil
-import com.herry.libs.util.FragmentAddingOption
 import com.herry.libs.util.ViewUtil
+import com.herry.libs.widget.extension.navigateTo
 import com.herry.test.R
-import com.herry.test.app.base.nav.BaseNavView
-import com.herry.test.app.bottomnav.create.CreateFragment
-import com.herry.test.app.bottomnav.discover.DiscoverFragment
-import com.herry.test.app.bottomnav.feature.FeatureFragment
-import com.herry.test.app.bottomnav.form.HomeBottomNavigatorForm
-import com.herry.test.app.bottomnav.me.MeFragment
+import com.herry.test.app.base.nestednav.BaseNestedNavView
+import com.herry.test.app.bottomnav.helper.NavScreenActions
+import com.herry.test.app.bottomnav.home.form.HomeBottomNavControlForm
+import com.herry.test.app.bottomnav.home.form.HomeBottomNavFragmentForm
 
-class HomeFragment: BaseNavView<HomeContract.View, HomeContract.Presenter>(), HomeContract.View {
+class HomeFragment: BaseNestedNavView<HomeContract.View, HomeContract.Presenter>(), HomeContract.View {
     override fun onCreatePresenter(): HomeContract.Presenter = HomePresenter()
 
     override fun onCreatePresenterView(): HomeContract.View = this
 
     private var container: View? = null
 
-    private var fragmentContainer: View? = null
+    private val bottomNavFragmentForm = HomeBottomNavFragmentForm(this,
+        onNavNotify = { bundle ->
+            onReceivedFromBottomNavFragments(bundle)
+        })
 
-    private val fragments = LinkedHashMap<HomeBottomNavigatorForm.ItemType, Fragment>()
-
-    private val bottomNavigatorForm = HomeBottomNavigatorForm(
-        onClickItem = { type ->
-            lifecycleScope.launchWhenResumed {
-                setFragment(type)
-            }
-        }
-    )
+    private val bottomNavigatorForm = HomeBottomNavControlForm { selectedItemType ->
+        presenter?.setCurrent(selectedItemType)
+    }
 
     private var pressedBackKey = false
 
@@ -54,62 +47,73 @@ class HomeFragment: BaseNavView<HomeContract.View, HomeContract.Presenter>(), Ho
     }
 
     private fun init(view: View?) {
-        view ?: return
+        val context = view?.context ?: return
 
-        fragmentContainer = view.findViewById(R.id.home_fragment_container)
-        bottomNavigatorForm.bindFormHolder(view.context, view.findViewById(R.id.home_fragment_bottom_navigator))
+        bottomNavFragmentForm.bindHolder(context, view.findViewById(R.id.home_fragment_bottom_navigator_fragment_form))
+        bottomNavigatorForm.bindFormHolder(context, view.findViewById(R.id.home_fragment_bottom_navigator_form))
     }
 
-    override fun onNavigator(model: HomeBottomNavigatorForm.Model) {
+    override fun onSelectTab(model: HomeBottomNavControlForm.Model, isStart: Boolean, startArgs: Bundle?) {
         val context = this.context ?: return
 
-        if (bottomNavigatorForm.model?.selected == model.selected) return
-
+        // update bottom navigator
         bottomNavigatorForm.bindFormModel(context, model)
+        // update bottom navigated screen
+        bottomNavFragmentForm.setNavScreen(model.selected, isStart, startArgs)
+
+//        // update bottom navigator nav graph
+//        val destinationNavigationId = when (model.selected) {
+//            HomeBottomNavControlForm.ItemType.FEATURE -> R.id.bottom_nav_mix_navigation
+//            HomeBottomNavControlForm.ItemType.DISCOVER -> R.id.bottom_nav_search_navigation
+//            HomeBottomNavControlForm.ItemType.CREATE -> R.id.bottom_nav_create_navigation
+//            HomeBottomNavControlForm.ItemType.ME -> R.id.bottom_nav_me_navigation
+//        }
+//
+//        if (isStart) {
+//            val bottomNavigationController = bottomNavFragmentContainer?.findNavController()
+//            val bottomNavigatorGraph = bottomNavigationController?.graph
+//            if (bottomNavigationController != null && bottomNavigatorGraph != null) {
+//                if (bottomNavigatorGraph.startDestinationId != destinationNavigationId) {
+//                    bottomNavigatorGraph.setStartDestination(destinationNavigationId)
+//                    bottomNavigationController.setGraph(bottomNavigatorGraph, startDestinationArgs = startArgs)
+//                }
+//            }
+//            return
+//        }
+////        bottomNavFragmentContainer?.findNavController()?.graph?.setStartDestination(destination)
+//        navigateTo(
+//            navController = bottomNavFragmentContainer?.findNavController(),
+//            destinationId = destination,
+//            navOptions = NavOptions.Builder()
+//                .setPopUpTo(destinationId = destination, inclusive = false, saveState = true)
+//                .build()
+//        )
+
+//        val destinationNavGraph = when (model.selected) {
+//            HomeBottomNavigatorForm.ItemType.FEATURE -> R.navigation.bottom_nav_feature_navigation
+//            HomeBottomNavigatorForm.ItemType.DISCOVER -> R.id.discover_fragment
+//            HomeBottomNavigatorForm.ItemType.CREATE -> R.navigation.bottom_nav_create_navigation
+//            HomeBottomNavigatorForm.ItemType.ME -> R.id.me_fragment
+//        }
+//
+//        val bottomNavigationController = bottomNavFragmentContainer?.findNavController()
+//        bottomNavigationController?.setGraph(destinationNavGraph, startDestinationArgs = startArgs)
+////        if (bottomNavigationController != null && bottomNavigatorGraph != null) {
+////            if (bottomNavigatorGraph.startDestinationId != destination) {
+////                bottomNavigatorGraph.setStartDestination(destination)
+////                bottomNavigationController.setGraph(bottomNavigatorGraph, startDestinationArgs = startArgs)
+////            }
+////        }
     }
 
-    private fun setFragment(itemType: HomeBottomNavigatorForm.ItemType) {
-        resetPressedBackKey()
-
-        // protect double touch
-        if (presenter?.getCurrent() == itemType) return
-
-        var fragment: Fragment? = fragments[itemType]
-
-        if (null == fragment) {
-            fragment = when (itemType) {
-                HomeBottomNavigatorForm.ItemType.FEATURE -> FeatureFragment.newInstance()
-                HomeBottomNavigatorForm.ItemType.DISCOVER -> DiscoverFragment.newInstance()
-                HomeBottomNavigatorForm.ItemType.CREATE -> CreateFragment.newInstance()
-                HomeBottomNavigatorForm.ItemType.ME -> MeFragment.newInstance(
-                    onShowCreate = {
-                        bottomNavigatorForm.performClick(HomeBottomNavigatorForm.ItemType.CREATE)
-                    }
-                )
+    private fun onReceivedFromBottomNavFragments(bundle: Bundle) {
+        when (NavScreenActions.generate(NavBundleUtil.getNavigationAction(bundle))) {
+            NavScreenActions.SHOW_SETTINGS -> {
+                navigateTo(destinationId = R.id.setting_fragment)
             }
+            else -> {}
         }
-
-        val tag = when (itemType) {
-            HomeBottomNavigatorForm.ItemType.FEATURE -> HomeFragment::class.simpleName
-            HomeBottomNavigatorForm.ItemType.DISCOVER -> DiscoverFragment::class.simpleName
-            HomeBottomNavigatorForm.ItemType.CREATE -> CreateFragment::class.simpleName
-            HomeBottomNavigatorForm.ItemType.ME -> MeFragment::class.simpleName
-        }
-
-        fragments[itemType] = fragment
-
-        AppUtil.setChildFragment(
-            this,
-            this.fragmentContainer?.id ?: 0,
-            fragment,
-            FragmentAddingOption(
-                tag = tag,
-                isAddToBackStack = true
-            ))
-
-        presenter?.setCurrent(itemType)
     }
-
     override fun onResume() {
         super.onResume()
 
@@ -126,10 +130,10 @@ class HomeFragment: BaseNavView<HomeContract.View, HomeContract.Presenter>(), Ho
             ToastHelper.showToast(activity, "뒤로가기 버튼을 한번\n더 누르면 앱이 종료됩니다.")
             pressedBackKey = true
             pressedBackKeyHandler.postDelayed({ resetPressedBackKey() }, 2000L)
-
-            return true
+        } else {
+            finishActivity(false)
         }
 
-        return super.onNavigateUp()
+        return true
     }
 }

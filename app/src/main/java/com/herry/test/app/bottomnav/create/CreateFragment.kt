@@ -5,32 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.herry.libs.util.ViewUtil
+import com.herry.libs.widget.extension.setOnProtectClickListener
 import com.herry.test.R
-import com.herry.test.app.base.mvp.BaseView
+import com.herry.test.app.base.nav.BaseNavFragment
+import com.herry.test.app.bottomnav.helper.NavScreenActionHelper
 
-class CreateFragment: BaseView<CreateContract.View, CreateContract.Presenter>(), CreateContract.View {
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment
-     */
-    companion object {
-        fun newInstance()  = CreateFragment().apply{
-            arguments = Bundle()
-        }
-    }
-
-    override val enterTransition: Int
-        get() = android.R.transition.fade
-
-    override val exitTransition: Int
-        get() = 0
-
-    override fun onCreatePresenter(): CreateContract.Presenter = CreatePresenter()
-
-    override fun onCreatePresenterView(): CreateContract.View = this
+class CreateFragment: BaseNavFragment() {
 
     private var container: View? = null
 
@@ -48,5 +28,11 @@ class CreateFragment: BaseView<CreateContract.View, CreateContract.Presenter>(),
 
     private fun init(view: View?) {
         view ?: return
+
+        view.findViewById<View>(R.id.create_fragment_setting)?.apply {
+            setOnProtectClickListener {
+                NavScreenActionHelper.showSetting(this@CreateFragment)
+            }
+        }
     }
 }

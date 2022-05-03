@@ -110,7 +110,6 @@ abstract class NodeRecyclerAdapter(
     }
 
     @SuppressLint("SetTextI18n")
-    @ExperimentalStdlibApi
     override fun onBindViewHolder(p0: NodeRecyclerHolder, p1: Int) {
         getBindNode(p1)?.let { node ->
             val form = viewTypeToForms[p0.itemViewType]

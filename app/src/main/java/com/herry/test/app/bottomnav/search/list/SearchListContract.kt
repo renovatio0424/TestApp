@@ -1,9 +1,9 @@
-package com.herry.test.app.bottomnav.feature
+package com.herry.test.app.bottomnav.search.list
 
 import com.herry.libs.mvp.MVPView
 import com.herry.test.app.base.nav.BaseNavPresenter
 
-interface FeatureContract {
+interface SearchListContract {
     interface View : MVPView<Presenter> {
     }
 

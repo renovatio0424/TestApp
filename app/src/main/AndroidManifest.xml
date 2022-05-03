@@ -23,7 +23,8 @@
         <!-- requestLegacyExternalStorage: This attribute is "false" by default on apps targeting Android Q. -->
 
         <activity android:name=".app.main.MainActivity"
-            android:configChanges="orientation">
+            android:configChanges="orientation"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -35,7 +36,8 @@
 
         <activity android:name=".app.nestedfragments.NestedNavFragmentsActivity" />
 
-        <activity android:name=".app.share.ShareReceiverActivity">
+        <activity android:name=".app.share.ShareReceiverActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
             </intent-filter>

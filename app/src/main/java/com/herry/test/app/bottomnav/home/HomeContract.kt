@@ -1,16 +1,18 @@
 package com.herry.test.app.bottomnav.home
 
+import android.os.Bundle
 import com.herry.libs.mvp.MVPView
 import com.herry.test.app.base.nav.BaseNavPresenter
-import com.herry.test.app.bottomnav.form.HomeBottomNavigatorForm
+import com.herry.test.app.bottomnav.home.form.HomeBottomNavControlForm
+import com.herry.test.app.bottomnav.home.form.HomeBottomNavScreenId
 
 interface HomeContract {
     interface View : MVPView<Presenter> {
-        fun onNavigator(model: HomeBottomNavigatorForm.Model)
+        fun onSelectTab(model: HomeBottomNavControlForm.Model, isStart: Boolean = false, startArgs: Bundle? = null)
     }
 
     abstract class Presenter: BaseNavPresenter<View>() {
-        abstract fun setCurrent(type: HomeBottomNavigatorForm.ItemType)
-        abstract fun getCurrent(): HomeBottomNavigatorForm.ItemType?
+        abstract fun setCurrent(id: HomeBottomNavScreenId, isStart: Boolean = false, force: Boolean = false)
+        abstract fun getCurrent(): HomeBottomNavScreenId?
     }
 }

@@ -24,7 +24,7 @@ class NestedNavFragmentsSecondFragment : BaseNavFragment() {
             _binding = NestedNavFragmentsSecondFragmentBinding.inflate(inflater, container, false)
 
             binding.nestedNavFragmentsSecondFragmentGoToThird.setOnClickListener {
-                navigateTo(R.id.nested_nav_fragments_third_fragment)
+                navigateTo(destinationId = R.id.nested_nav_fragments_third_fragment)
             }
         }
 

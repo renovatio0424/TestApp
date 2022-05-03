@@ -1,34 +1,56 @@
 package com.herry.test.app.bottomnav.home
 
-import com.herry.test.app.bottomnav.form.HomeBottomNavigatorForm
+import com.herry.test.R
+import com.herry.test.app.bottomnav.home.form.HomeBottomNavControlForm
+import com.herry.test.app.bottomnav.home.form.HomeBottomNavControlItemForm
+import com.herry.test.app.bottomnav.home.form.HomeBottomNavScreenId
 
 class HomePresenter : HomeContract.Presenter() {
-    private var currentScreen: HomeBottomNavigatorForm.ItemType? = null
+    private var currentScreen: HomeBottomNavScreenId? = null
+    private val tabs = arrayListOf<HomeBottomNavControlItemForm.Model>(
+        // mix
+        HomeBottomNavControlItemForm.Model(id = R.id.bottom_nav_mix_navigation, icon = R.drawable.ic_navigation_feature, "Mix"),
+        // mix
+        HomeBottomNavControlItemForm.Model(id = R.id.bottom_nav_search_navigation, icon = R.drawable.ic_navigation_discover, "Search"),
+        // mix
+        HomeBottomNavControlItemForm.Model(id = R.id.bottom_nav_create_navigation, icon = R.drawable.ic_navigation_create, "Create"),
+        // mix
+        HomeBottomNavControlItemForm.Model(id = R.id.bottom_nav_me_navigation, icon = R.drawable.ic_navigation_me, "Me")
+    )
 
     override fun onLaunch(view: HomeContract.View, recreated: Boolean) {
-        loadNavigator()
+        launch {
+            loadNavigator(!recreated)
+        }
     }
 
-    private fun loadNavigator() {
-        displayNavigator(false)
+    private fun loadNavigator(init: Boolean) {
+        displayNavigator(false, init)
     }
 
-    private fun displayNavigator(hasNewNotice: Boolean) {
+    private fun displayNavigator(hasNewNotice: Boolean, isStart: Boolean) {
         view?.getContext() ?: return
 
-        val currentScreen = this.currentScreen ?: HomeBottomNavigatorForm.ItemType.FEATURE
+        val currentScreen = this.currentScreen ?: HomeBottomNavScreenId.CREATE
 
-        view?.onNavigator(
-            HomeBottomNavigatorForm.Model(
-                hasNew = hasNewNotice,
-                selected = currentScreen
-            )
+        setCurrent(currentScreen, isStart = isStart, force = true)
+    }
+
+    override fun setCurrent(id: HomeBottomNavScreenId, isStart: Boolean, force: Boolean) {
+        if (this.currentScreen == id && !force) {
+            return
+        }
+
+        this.currentScreen = id
+
+        view?.onSelectTab(
+            model = HomeBottomNavControlForm.Model(
+                selected = id,
+                items = tabs
+            ),
+            isStart = isStart
         )
     }
 
-    override fun setCurrent(type: HomeBottomNavigatorForm.ItemType) {
-        this.currentScreen = type
-    }
-
-    override fun getCurrent(): HomeBottomNavigatorForm.ItemType? = this.currentScreen
+    override fun getCurrent(): HomeBottomNavScreenId? = this.currentScreen
 }

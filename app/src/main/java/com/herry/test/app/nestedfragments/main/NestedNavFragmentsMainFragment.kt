@@ -68,7 +68,7 @@ class NestedNavFragmentsMainFragment : BaseNestedNavFragment() {
         }
 
         view.findViewById<View>(R.id.nested_nav_fragments_main_fragment_bottom_show_sub_3).setOnClickListener {
-            subNavHostFragment?.navigateTo(R.id.nested_nav_fragments_sub13_fragment)
+            subNavHostFragment?.navigateTo(destinationId = R.id.nested_nav_fragments_sub13_fragment)
         }
 
         view.findViewById<View>(R.id.nested_nav_fragments_main_fragment_bottom_popup_to_sub1).setOnClickListener {
@@ -84,11 +84,11 @@ class NestedNavFragmentsMainFragment : BaseNestedNavFragment() {
         }
 
         view.findViewById<View>(R.id.nested_nav_fragments_main_fragment_bottom_show_second).setOnClickListener {
-            navigateTo(R.id.action_nested_nav_fragments_main_to_second)
+            navigateTo(destinationId = R.id.action_nested_nav_fragments_main_to_second)
         }
 
         view.findViewById<View>(R.id.nested_nav_fragments_main_fragment_bottom_show_second_with_id).setOnClickListener {
-            navigateTo(R.id.nested_nav_fragments_second_fragment)
+            navigateTo(destinationId = R.id.nested_nav_fragments_second_fragment)
         }
     }
     private fun onSubScreenResults(bundle: Bundle) {
@@ -102,7 +102,7 @@ class NestedNavFragmentsMainFragment : BaseNestedNavFragment() {
             }
             R.id.nested_nav_fragments_sub13_fragment -> {
                 Toast.makeText(requireContext(), "from sub 3", Toast.LENGTH_SHORT).show()
-                navigateTo(NestedNavFragmentsMainFragmentDirections.actionNestedNavFragmentsMainToSecond())
+                navigateTo(directions = NestedNavFragmentsMainFragmentDirections.actionNestedNavFragmentsMainToSecond())
             }
         }
     }
@@ -115,10 +115,10 @@ class NestedNavFragmentsMainFragment : BaseNestedNavFragment() {
     private fun showOverlay(type: Int) {
         when (type) {
             1 -> {
-                overlayNavHostFragment?.navigateTo(R.id.nested_nav_fragments_overlay_main1_fragment)
+                overlayNavHostFragment?.navigateTo(destinationId = R.id.nested_nav_fragments_overlay_main1_fragment)
             }
             else -> {
-                overlayNavHostFragment?.navigateTo(R.id.nested_nav_fragments_overlay_main2_fragment)
+                overlayNavHostFragment?.navigateTo(destinationId = R.id.nested_nav_fragments_overlay_main2_fragment)
             }
         }
     }

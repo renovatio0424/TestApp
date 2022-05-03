@@ -4,29 +4,24 @@ package com.herry.libs.widget.extension
 
 import android.os.Bundle
 import android.view.View
+import androidx.annotation.AnimRes
+import androidx.annotation.AnimatorRes
 import androidx.annotation.IdRes
 import androidx.annotation.NavigationRes
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.navigation.NavDirections
-import androidx.navigation.NavOptions
-import androidx.navigation.Navigator
+import androidx.navigation.*
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
+import com.herry.libs.app.nav.BottomNavHostFragment
 import com.herry.libs.app.nav.NavBundleUtil
+import java.lang.IllegalArgumentException
 
 fun Fragment.getNavCurrentDestinationID(): Int = findNavController().currentDestination?.id ?: 0
 
 fun Fragment.hasNavDestinationID(@IdRes id: Int): Boolean {
-    val iterator = findNavController().backStack.descendingIterator() ?: return false
-    while (iterator.hasNext()) {
-        val backStack = iterator.next()
-        if (backStack?.destination?.id == id) {
-            return true
-        }
-    }
-
-    return false
+    return findNavController().backQueue.firstOrNull { backStack -> backStack.destination.id == id } != null
 }
 
 fun Fragment.addNestedNavHostFragment(@IdRes containerViewId: Int, navHostFragment: NavHostFragment?, tag: String? = null, listener: ((requestKey: String, bundle: Bundle) -> Unit)? = null): Boolean {
@@ -110,7 +105,7 @@ fun Fragment.popToNavHost(bundle: Bundle? = null) {
         this.findParentNavHostFragment()
     } ?: return
 
-    val targetDestinationId = navHostFragment.findNavController().graph.startDestination
+    val targetDestinationId = navHostFragment.findNavController().graph.startDestinationId
     val currentDestinationId = getNavCurrentDestinationID()
 
     findNavController().run {
@@ -128,7 +123,7 @@ fun Fragment.isNavigateStartDestination(): Boolean {
         this.findParentNavHostFragment()
     } ?: return false
 
-    val targetDestinationId = navHostFragment.findNavController().graph.startDestination
+    val targetDestinationId = navHostFragment.findNavController().graph.startDestinationId
     val currentDestinationId = getNavCurrentDestinationID()
 
     return targetDestinationId == currentDestinationId
@@ -181,16 +176,16 @@ fun NavHostFragment.notifyToCurrent(bundle: Bundle) {
 /**
  * Changes screen to
  */
-fun Fragment.navigateTo(@IdRes resId: Int) {
-    navigateTo(resId, null)
+fun Fragment.navigateTo(navController: NavController? = null, @IdRes destinationId: Int) {
+    navigateTo(navController, destinationId, null)
 }
 
-fun Fragment.navigateTo(@IdRes resId: Int, args: Bundle? = null) {
-    navigateTo(resId, args, null)
+fun Fragment.navigateTo(navController: NavController? = null, @IdRes destinationId: Int, args: Bundle? = null) {
+    navigateTo(navController, destinationId, args, null)
 }
 
-fun Fragment.navigateTo(@IdRes resId: Int, args: Bundle? = null, navOptions: NavOptions? = null) {
-    navigateTo(resId, args, navOptions, null)
+fun Fragment.navigateTo(navController: NavController? = null, @IdRes destinationId: Int, args: Bundle? = null, navOptions: NavOptions? = null) {
+    navigateTo(navController, destinationId, args, navOptions, null)
 }
 
 /**
@@ -198,8 +193,8 @@ fun Fragment.navigateTo(@IdRes resId: Int, args: Bundle? = null, navOptions: Nav
  *
  * @param directions directions that describe this navigation operation
  */
-fun Fragment.navigateTo(directions: NavDirections) {
-    navigateTo(directions.actionId, directions.arguments)
+fun Fragment.navigateTo(navController: NavController? = null, directions: NavDirections) {
+    navigateTo(navController, directions.actionId, directions.arguments)
 }
 
 /**
@@ -208,8 +203,8 @@ fun Fragment.navigateTo(directions: NavDirections) {
  * @param directions directions that describe this navigation operation
  * @param navOptions special options for this navigation operation
  */
-fun Fragment.navigateTo(directions: NavDirections, navOptions: NavOptions?) {
-    navigateTo(directions.actionId, directions.arguments, navOptions)
+fun Fragment.navigateTo(navController: NavController? = null, directions: NavDirections, navOptions: NavOptions?) {
+    navigateTo(navController, directions.actionId, directions.arguments, navOptions)
 }
 
 /**
@@ -218,8 +213,8 @@ fun Fragment.navigateTo(directions: NavDirections, navOptions: NavOptions?) {
  * @param directions directions that describe this navigation operation
  * @param navigatorExtras extras to pass to the [Navigator]
  */
-fun Fragment.navigateTo(directions: NavDirections, navigatorExtras: Navigator.Extras) {
-    navigateTo(directions.actionId, directions.arguments, null, navigatorExtras)
+fun Fragment.navigateTo(navController: NavController? = null, directions: NavDirections, navigatorExtras: Navigator.Extras) {
+    navigateTo(navController, directions.actionId, directions.arguments, null, navigatorExtras)
 }
 
 /**
@@ -232,8 +227,9 @@ fun Fragment.navigateTo(directions: NavDirections, navigatorExtras: Navigator.Ex
  * @param navOptions special options for this navigation operation
  * @param navigatorExtras extras to pass to the Navigator
  */
-fun Fragment.navigateTo(@IdRes resId: Int, args: Bundle?, navOptions: NavOptions?, navigatorExtras: Navigator.Extras?) {
-    findNavController().navigate(resId, args, navOptions, navigatorExtras)
+fun Fragment.navigateTo(navController: NavController? = null, @IdRes destinationId: Int, args: Bundle?, navOptions: NavOptions?, navigatorExtras: Navigator.Extras?) {
+    val findNavController = navController ?: findNavController()
+    findNavController.navigate(destinationId, args, navOptions, navigatorExtras)
 }
 
 fun NavHostFragment.getFragmentByViewID(): Fragment? {
@@ -242,7 +238,7 @@ fun NavHostFragment.getFragmentByViewID(): Fragment? {
 
 fun NavHostFragment.isCurrentStartDestinationFragment(): Boolean {
     val currentFragmentDestinationId = findNavController().currentBackStackEntry?.destination?.id ?: 0
-    val parentStartFragmentDestinationId = findNavController().graph.startDestination
+    val parentStartFragmentDestinationId = findNavController().currentDestination?.parent?.startDestinationId
 
     return currentFragmentDestinationId != 0 && currentFragmentDestinationId == parentStartFragmentDestinationId
 }
@@ -280,5 +276,38 @@ fun Fragment.isNavigateToEnabled(): Boolean {
         true
     } catch (ex: Exception) {
         false
+    }
+}
+
+class NavAnim {
+    @AnimRes @AnimatorRes val enterAnim = -1
+    @AnimRes @AnimatorRes val exitAnim = -1
+    @AnimRes @AnimatorRes val popEnterAnim = -1
+    @AnimRes @AnimatorRes val popExitAnim = -1
+}
+
+fun BottomNavHostFragment.setNavigate(@IdRes destinationId: Int, navAnim: NavAnim? = null) {
+    val navController = this.navController
+    if (navController.currentDestination?.id == destinationId) {
+        return
+    }
+
+    try {
+        this.navigateTo(
+            navController = navController,
+            destinationId = destinationId,
+            navOptions = NavOptions.Builder().apply {
+                this.setLaunchSingleTop(true).setRestoreState(true)
+                if (navAnim != null) {
+                    this.setEnterAnim(navAnim.enterAnim)
+                        .setExitAnim(navAnim.exitAnim)
+                        .setPopEnterAnim(navAnim.popEnterAnim)
+                        .setPopExitAnim(navAnim.popExitAnim)
+                }
+                val entryDestination = navController.graph.findStartDestination()
+                this.setPopUpTo(destinationId = entryDestination.id, inclusive = false, saveState = true)
+            }.build()
+        )
+    } catch (e: IllegalArgumentException) {
     }
 }

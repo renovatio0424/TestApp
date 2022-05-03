@@ -83,7 +83,7 @@ class DataCheckerMainFragment : BaseNavView<DataCheckerMainContract.View, DataCh
             init {
                 view.setOnProtectClickListener {
                     NodeRecyclerForm.getBindModel(this@DataCheckerPasswordItemForm, this@Holder)?.let {
-                        navigateTo(R.id.password_setting_fragment)
+                        navigateTo(destinationId = R.id.password_setting_fragment)
                     }
                 }
             }

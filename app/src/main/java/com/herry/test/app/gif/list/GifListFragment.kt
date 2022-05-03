@@ -72,7 +72,7 @@ class GifListFragment : BaseNavView<GifListContract.View, GifListContract.Presen
     }
 
     override fun onDetail(content: GifMediaFileInfoData) {
-        navigateTo(R.id.gif_decoder_fragment, Bundle().apply {
+        navigateTo(destinationId = R.id.gif_decoder_fragment, args = Bundle().apply {
             putSerializable(GifDecoderFragment.ARG_GIF_INFO_DATA, content)
         })
     }

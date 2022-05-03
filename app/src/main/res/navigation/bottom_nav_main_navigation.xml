@@ -11,4 +11,8 @@
         android:name="com.herry.test.app.bottomnav.home.HomeFragment"
         tools:layout="@layout/home_fragment" />
 
+    <fragment
+        android:id="@+id/setting_fragment"
+        android:name="com.herry.test.app.bottomnav.setting.SettingFragment"
+        tools:layout="@layout/setting_fragment" />
 </navigation>

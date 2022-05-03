@@ -82,7 +82,7 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
     override fun onScreen(type: MainContract.TestItemType) {
         when (type) {
             MainContract.TestItemType.SCHEME_TEST -> {
-                navigateTo(R.id.intent_list_fragment)
+                navigateTo(destinationId = R.id.intent_list_fragment)
             }
             MainContract.TestItemType.GIF_DECODER -> {
                 activityCaller?.call(
@@ -90,22 +90,22 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
                         arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
                         onGranted = {
                             Handler(Looper.getMainLooper()).post {
-                                navigateTo(R.id.gif_list_fragment)
+                                navigateTo(destinationId = R.id.gif_list_fragment)
                             }
                         }
                     ))
             }
             MainContract.TestItemType.CHECKER_LIST -> {
-                navigateTo(R.id.data_checker_main_fragment)
+                navigateTo(destinationId = R.id.data_checker_main_fragment)
             }
             MainContract.TestItemType.LAYOUT_SAMPLE -> {
-                navigateTo(R.id.layout_sample_fragment)
+                navigateTo(destinationId = R.id.layout_sample_fragment)
             }
             MainContract.TestItemType.PICK -> {
-                navigateTo(R.id.pick_list_fragment)
+                navigateTo(destinationId = R.id.pick_list_fragment)
             }
             MainContract.TestItemType.NESTED_FRAGMENTS -> {
-                //.navigateTo(R.id.nested_nav_fragments_navigation)
+                //.navigateTo(destinationId = R.id.nested_nav_fragments_navigation)
                 activityCaller?.call(
                     ACNavigation.IntentCaller(
                         Intent(requireActivity(), NestedNavFragmentsActivity::class.java), onResult = { result ->
@@ -116,16 +116,16 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
                     ))
             }
             MainContract.TestItemType.APP_DIALOG -> {
-                navigateTo(R.id.app_dialog_list_fragment)
+                navigateTo(destinationId = R.id.app_dialog_list_fragment)
             }
             MainContract.TestItemType.LIST -> {
-                navigateTo(R.id.list_fragment)
+                navigateTo(destinationId = R.id.list_fragment)
             }
             MainContract.TestItemType.SKELETON -> {
-                navigateTo(R.id.skeleton_fragment)
+                navigateTo(destinationId = R.id.skeleton_fragment)
             }
             MainContract.TestItemType.RESIZING_UI -> {
-                navigateTo(R.id.resizing_ui_fragment)
+                navigateTo(destinationId = R.id.resizing_ui_fragment)
             }
             MainContract.TestItemType.BOTTOM_NAV_SAMPLE -> {
                 activityCaller?.call(

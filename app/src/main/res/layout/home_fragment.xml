@@ -7,19 +7,19 @@
     android:layout_height="match_parent"
     tools:viewBindingIgnore="false">
 
-    <FrameLayout
-        android:id="@+id/home_fragment_container"
+    <include
+        android:id="@+id/home_fragment_bottom_navigator_fragment_form"
+        layout="@layout/home_bottom_navigator_fragment_form"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        />
+        app:layout_constraintBottom_toTopOf="@id/home_fragment_bottom_navigator_form"/>
 
     <include
-        android:id="@+id/home_fragment_bottom_navigator"
-        layout="@layout/home_bottom_navigator_form"
+        android:id="@+id/home_fragment_bottom_navigator_form"
+        layout="@layout/home_bottom_nav_control_form"
         android:layout_width="0dp"
         android:layout_height="@dimen/size60"
         app:layout_constraintStart_toStartOf="parent"

@@ -14,6 +14,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
+import com.herry.libs.app.nav.BottomNavHostFragment
 import com.herry.libs.app.nav.NavBundleUtil
 import com.herry.libs.app.nav.NavMovement
 import com.herry.libs.widget.extension.*
@@ -50,7 +51,7 @@ abstract class BaseNavActivity : BaseActivity() {
         navController?.let {
             val navGraph = it.navInflater.inflate(getGraph())
             if (getStartDestination() != 0) {
-                navGraph.startDestination = getStartDestination()
+                navGraph.setStartDestination(getStartDestination())
             }
             it.setGraph(navGraph, getDefaultBundle())
         }
@@ -109,7 +110,9 @@ abstract class BaseNavActivity : BaseActivity() {
 
         // find lasted added fragment for back key processing
         val activeFragment = getActiveFragment()
-        if (activeFragment == null) {
+        val activeNavHostFragment = getActiveNavHostFragment()
+        if (activeFragment == null ||
+            (activeNavHostFragment is BottomNavHostFragment && activeNavHostFragment.isNavScreenStartDestination())) {
             // do navigate up to all child start fragment of each child NavHostFragments
             val fragments = this.navHostFragment?.childFragmentManager?.fragments ?: mutableListOf()
             for (fragment in fragments) {

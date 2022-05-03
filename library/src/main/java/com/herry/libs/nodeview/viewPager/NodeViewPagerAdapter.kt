@@ -58,7 +58,6 @@ abstract class NodeViewPagerAdapter(protected val context: () -> Context, log: B
     override fun getCount(): Int = root.getViewCount()
 
     @SuppressLint("SetTextI18n")
-    @ExperimentalStdlibApi
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         getModel(position)?.let { model ->
             var form: NodeForm<out NodeHolder,*>? = null

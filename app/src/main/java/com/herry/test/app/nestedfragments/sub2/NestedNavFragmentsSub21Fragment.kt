@@ -25,7 +25,7 @@ class NestedNavFragmentsSub21Fragment : BaseNavFragment() {
             _binding = NestedNavFragmentsSub21FragmentBinding.inflate(inflater, container, false)
 
             binding.nestedNavFragmentsSub21FragmentGoSub2.setOnClickListener { view ->
-                navigateTo(R.id.nested_nav_fragments_sub12_fragment)
+                navigateTo(destinationId = R.id.nested_nav_fragments_sub12_fragment)
 //                { bundle ->
 //                    val result = NavBundleUtil.isNavigationResultOk(bundle)
 //                    val fromId = NavBundleUtil.fromNavigationId(bundle)
