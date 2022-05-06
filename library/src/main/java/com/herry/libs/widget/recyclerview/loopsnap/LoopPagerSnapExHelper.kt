@@ -28,15 +28,15 @@ open class LoopPagerSnapExHelper : PagerSnapExHelper() {
         return targetSnapViewPosition
     }
 
-    override fun scrollToSnapPosition(position: Int) {
+    override fun scrollToSnapPosition(position: Int, force: Boolean) {
         val recyclerView: RecyclerView = getRecyclerView() ?: return
         val adapter = recyclerView.adapter ?: run {
-            super.scrollToSnapPosition(position)
+            super.scrollToSnapPosition(position, force)
             return@scrollToSnapPosition
         }
 
         if (adapter !is LoopPagerRecyclerViewAdapter<*, *>) {
-            super.scrollToSnapPosition(position)
+            super.scrollToSnapPosition(position, force)
             return
         }
 

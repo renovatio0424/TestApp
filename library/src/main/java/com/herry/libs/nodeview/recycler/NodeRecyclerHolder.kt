@@ -5,6 +5,6 @@ import com.herry.libs.nodeview.NodeHolder
 
 open class NodeRecyclerHolder(val holder: NodeHolder) : RecyclerView.ViewHolder(holder.view) {
     init {
-        holder.position = { adapterPosition }
+        holder.position = { bindingAdapterPosition }
     }
 }

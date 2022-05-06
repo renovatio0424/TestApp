@@ -11,10 +11,7 @@ open class PagerSnapExHelper : PagerSnapHelper() {
         fun onUnsnapped(position: Int, itemCount: Int)
     }
 
-    private var onSnappedListener: OnSnappedListener? = object : OnSnappedListener {
-        override fun onSnapped(position: Int, itemCount: Int) {}
-        override fun onUnsnapped(position: Int, itemCount: Int) {}
-    }
+    private var onSnappedListener: OnSnappedListener? = null
 
     private var snappedPosition = RecyclerView.NO_POSITION
     private var recyclerView: RecyclerView? = null
@@ -23,33 +20,31 @@ open class PagerSnapExHelper : PagerSnapHelper() {
         onSnappedListener = listener
     }
 
+    private fun setSnappedPosition(newSnappedPosition: Int) {
+        val recyclerView = this.recyclerView ?: return
+        val adapter = recyclerView.adapter ?: return
+
+        if (newSnappedPosition >= 0 && newSnappedPosition < adapter.itemCount) {
+            var changed = false
+            var unsnappedPosition = -1
+            var snappedPosition = this.snappedPosition
+            if (snappedPosition != newSnappedPosition) {
+                unsnappedPosition = snappedPosition
+                snappedPosition = newSnappedPosition
+                changed = true
+            }
+            if (changed) {
+                val itemCount: Int = adapter.itemCount
+                this.snappedPosition = snappedPosition
+                notifySnapped(unsnappedPosition, snappedPosition, itemCount)
+            }
+        }
+    }
+
     override fun findTargetSnapPosition(layoutManager: RecyclerView.LayoutManager, velocityX: Int, velocityY: Int): Int {
         val targetSnapViewPosition = findTargetSnapViewPosition(layoutManager, velocityX, velocityY)
 
-        recyclerView?.let { recyclerView ->
-            recyclerView.adapter?.let { adapter ->
-                if (targetSnapViewPosition >= 0 && targetSnapViewPosition < adapter.itemCount) {
-                    onSnappedListener?.let { onSnappedListener ->
-                        var changed = false
-                        var unsnappedPosition = -1
-                        var snappedPosition = this.snappedPosition
-                        if (snappedPosition != targetSnapViewPosition) {
-                            unsnappedPosition = this.snappedPosition
-                            snappedPosition = targetSnapViewPosition
-                            changed = true
-                        }
-                        if (changed) {
-                            val itemCount: Int = adapter.itemCount
-                            if (0 <= unsnappedPosition) {
-                                onSnappedListener.onUnsnapped(unsnappedPosition, itemCount)
-                            }
-                            this.snappedPosition = snappedPosition
-                            notifySnapped(unsnappedPosition, snappedPosition, itemCount)
-                        }
-                    }
-                }
-            }
-        }
+        setSnappedPosition(targetSnapViewPosition)
 
         return targetSnapViewPosition
     }
@@ -58,20 +53,55 @@ open class PagerSnapExHelper : PagerSnapHelper() {
         return super.findTargetSnapPosition(layoutManager, velocityX, velocityY)
     }
 
+    private val onScrollListener = object: RecyclerView.OnScrollListener() {
+
+        private var isScrolled = false
+        private var currentPosition = RecyclerView.NO_POSITION
+
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            super.onScrollStateChanged(recyclerView, newState)
+            if (newState == RecyclerView.SCROLL_STATE_IDLE && isScrolled) {
+                isScrolled = false
+
+                if (currentPosition != RecyclerView.NO_POSITION) {
+                    setSnappedPosition(currentPosition)
+                }
+            }
+        }
+
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            val layoutManager = recyclerView.layoutManager ?: return
+
+            if (dx != 0 || dy != 0) {
+                isScrolled = true
+
+                val view = findSnapView(layoutManager) ?: return
+                val position = layoutManager.getPosition(view)
+
+                if (currentPosition != position) {
+                    currentPosition = position
+                }
+            }
+        }
+    }
+
     @Throws(IllegalStateException::class)
     override fun attachToRecyclerView(recyclerView: RecyclerView?) {
-        this.recyclerView = recyclerView
+        this.recyclerView = recyclerView?.also { _recyclerView ->
+            _recyclerView.removeOnScrollListener(onScrollListener)
+            _recyclerView.addOnScrollListener(onScrollListener)
+        }
         super.attachToRecyclerView(this.recyclerView)
     }
 
-    open fun scrollToSnapPosition(position: Int) {
+    open fun scrollToSnapPosition(position: Int, force: Boolean = false) {
         val recyclerView = recyclerView ?: return
         val adapter = recyclerView.adapter ?: return
 
         val layoutManager: RecyclerView.LayoutManager? = recyclerView.layoutManager
         if (null != layoutManager && null != onSnappedListener) {
             val snapViewPosition = findTargetSnapViewPosition(layoutManager, recyclerView.computeHorizontalScrollOffset(), recyclerView.computeVerticalScrollOffset())
-            if (snapViewPosition != position) {
+            if (snapViewPosition != position || force) {
                 val itemCount: Int = adapter.itemCount
                 layoutManager.scrollToPosition(position)
 

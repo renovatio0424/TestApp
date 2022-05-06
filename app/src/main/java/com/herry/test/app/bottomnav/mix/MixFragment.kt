@@ -4,10 +4,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
+import com.herry.libs.nodeview.NodeForm
+import com.herry.libs.nodeview.NodeHolder
+import com.herry.libs.nodeview.model.NodeRoot
+import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
+import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.libs.util.ViewUtil
+import com.herry.libs.widget.recyclerview.endless.EndlessRecyclerViewScrollListener
+import com.herry.libs.widget.recyclerview.loopsnap.PagerSnapExHelper
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
+import com.herry.test.app.bottomnav.mix.forms.FeedDetailForm
 
 class MixFragment: BaseNavView<MixContract.View, MixContract.Presenter>(), MixContract.View {
 
@@ -15,9 +25,16 @@ class MixFragment: BaseNavView<MixContract.View, MixContract.Presenter>(), MixCo
 
     override fun onCreatePresenterView(): MixContract.View = this
 
+    override val root: NodeRoot
+        get() = adapter.root
+
+    private val adapter: Adapter = Adapter()
+
     private var container: View? = null
 
-    private var countText: TextView? = null
+    private var snapHelper: PagerSnapExHelper? = null
+
+    private var endlessRecyclerViewScrollListener: EndlessRecyclerViewScrollListener? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (this.container == null) {
@@ -34,10 +51,65 @@ class MixFragment: BaseNavView<MixContract.View, MixContract.Presenter>(), MixCo
     private fun init(view: View?) {
         view ?: return
 
-        countText = view.findViewById(R.id.mix_fragment_counts)
+        view.findViewById<RecyclerView>(R.id.mix_fragment_feeds)?.let { recyclerView ->
+            val layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+            recyclerView.layoutManager = layoutManager
+            recyclerView.setHasFixedSize(true)
+            if (recyclerView.itemAnimator is SimpleItemAnimator) {
+                (recyclerView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+            }
+            recyclerView.adapter = this@MixFragment.adapter
+
+            snapHelper = PagerSnapExHelper().apply {
+                setOnSnappedListener(object: PagerSnapExHelper.OnSnappedListener {
+                    override fun onSnapped(position: Int, itemCount: Int) {
+                        presenter?.setCurrentPosition(position)
+                        presenter?.play(position)
+                    }
+
+                    override fun onUnsnapped(position: Int, itemCount: Int) {
+                        presenter?.stop(position)
+                    }
+                })
+            }
+
+            snapHelper?.attachToRecyclerView(recyclerView)
+
+            endlessRecyclerViewScrollListener = object : EndlessRecyclerViewScrollListener(layoutManager) {
+                override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
+                    presenter?.loadMore()
+                }
+            }.also { listener ->
+                recyclerView.addOnScrollListener(listener)
+            }
+        }
     }
 
-    override fun onUpdateCounts(counts: Int) {
-        countText?.text = counts.toString()
+    override fun onLaunched(count: Int) {
+        if (0 < count) {
+            onScrollTo(0)
+            endlessRecyclerViewScrollListener?.resetState()
+        }
     }
+
+    override fun onScrollTo(position: Int) {
+        snapHelper?.scrollToSnapPosition(position, true)
+    }
+
+    inner class Adapter: NodeRecyclerAdapter(::requireContext) {
+        override fun onBindForms(list: MutableList<NodeForm<out NodeHolder, *>>) {
+            list.add(FeedDetailForm(
+                player = { form, holder ->
+                    presenter?.preparePlayer(NodeRecyclerForm.getBindModel(form, holder))
+                },
+                onClickPrevious = {
+                    snapHelper?.snapToPrevious()
+                },
+                onClickNext = {
+                    snapHelper?.snapToNext()
+                }
+            ))
+        }
+    }
+
 }

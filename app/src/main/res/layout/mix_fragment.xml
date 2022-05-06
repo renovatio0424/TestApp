@@ -5,31 +5,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ff0000"
     tools:ignore="HardcodedText"
     tools:viewBindingIgnore="false">
 
-    <TextView
-        android:id="@+id/mix_fragment_label"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/mix_fragment_feeds"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="MIX"
-        android:textSize="@dimen/size20"
+        android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
-
-    <TextView
-        android:id="@+id/mix_fragment_counts"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/size16"
-        android:gravity="center"
-        android:textSize="@dimen/size16"
-        android:textStyle="bold"
-        tools:text="1"
-        app:layout_constraintTop_toBottomOf="@id/mix_fragment_label"/>
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -16,7 +16,7 @@ import com.herry.libs.nodeview.model.NodeNotify
 import com.herry.libs.nodeview.model.NodePosition
 import com.herry.libs.nodeview.model.NodeRoot
 
-@Suppress("unused")
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 abstract class NodeRecyclerAdapter(
     protected val context: () -> Context, log: Boolean = false
 ) : RecyclerView.Adapter<NodeRecyclerHolder>(),
@@ -25,6 +25,7 @@ abstract class NodeRecyclerAdapter(
     private val viewTypeToForms = mutableMapOf<Int, NodeForm<out NodeHolder, *>>()
 
     override val root = NodeRoot(object : NodeNotify {
+        @SuppressLint("NotifyDataSetChanged")
         override fun nodeSetChanged() {
             notifyDataSetChanged()
         }
@@ -126,14 +127,14 @@ abstract class NodeRecyclerAdapter(
                     }
                 }
                 p0.itemView is TextView -> {
-                    p0.itemView.text = "position : ${p1}\nmodel : ${node.model::class.simpleName}"
+                    (p0.itemView as? TextView)?.text = "position : ${p1}\nmodel : ${node.model::class.simpleName}"
                 }
             }
         }
     }
 
     fun getNodePosition(holder: NodeRecyclerHolder): NodePosition? =
-        getNodePosition(holder.adapterPosition)
+        getNodePosition(holder.bindingAdapterPosition)
 
     fun getNodePosition(position: Int): NodePosition? = root.getNodePosition(position)
 
