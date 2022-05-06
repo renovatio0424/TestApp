@@ -18,6 +18,7 @@ interface MixContract {
         abstract fun preparePlayer(model: FeedDetailForm.Model?): ExoPlayer?
         abstract fun play(position: Int)
         abstract fun stop(position: Int)
+        abstract fun stop(model: FeedDetailForm.Model?)
         abstract fun loadMore()
     }
 }

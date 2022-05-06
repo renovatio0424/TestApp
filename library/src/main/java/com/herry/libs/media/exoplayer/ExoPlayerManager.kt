@@ -10,13 +10,10 @@ import com.google.android.exoplayer2.upstream.DefaultDataSource
 @Suppress("unused")
 class ExoPlayerManager(private val context: () -> Context?, private val isSingleInstance: Boolean = false) {
     private val tag = "ExoPlayerManager"
-    private var currentRequestedPlayingId: String? = null
     private val playerMap = HashMap<String, ExoPlayer>()
 
     private fun internalPrepare(id: String, url: String, fromPlay: Boolean): ExoPlayer? {
         val context = context.invoke() ?: return null
-
-        Log.d(tag, "prepare for $id")
 
         var player = playerMap[id]
         if (player == null) {
@@ -24,18 +21,20 @@ class ExoPlayerManager(private val context: () -> Context?, private val isSingle
             playerMap[id] = player
         }
 
-        Log.d(tag, "prepare player status ${player.playbackState}")
-
         if (player.playbackState == ExoPlayer.STATE_IDLE) {
             player.setMediaSource(
                 ProgressiveMediaSource.Factory(DefaultDataSource.Factory(context))
-                    .createMediaSource(MediaItem.fromUri(url)))
+                    .createMediaSource(MediaItem.fromUri(url))
+            )
 
             if (isSingleInstance) {
                 if (fromPlay) {
+                    Log.d(tag, "[$tag] prepare for $id")
                     player.prepare()
                 }
             } else {
+                Log.d(tag, "[$tag] prepare for $id")
+
                 player.prepare()
             }
         }
@@ -50,8 +49,6 @@ class ExoPlayerManager(private val context: () -> Context?, private val isSingle
     fun getPlayer(id: String): ExoPlayer? = playerMap[id]
 
     fun play(id: String, url: String, repeat: Boolean = false) {
-        Log.d(tag, "play for $id")
-
         var player = playerMap[id]
         if (player == null) {
             player = internalPrepare(id, url, true) ?: return
@@ -60,28 +57,33 @@ class ExoPlayerManager(private val context: () -> Context?, private val isSingle
         } else {
             player.repeatMode = if (repeat) ExoPlayer.REPEAT_MODE_ONE else ExoPlayer.REPEAT_MODE_OFF
             if (isSingleInstance) {
+                Log.d(tag, "[$tag] prepare for $id")
                 player.prepare()
                 player.playWhenReady = true
             } else {
+                Log.d(tag, "[$tag] play for $id")
                 player.play()
             }
         }
     }
 
     fun stop(id: String) {
-        Log.d(tag, "stop for $id")
-
         val player = playerMap[id]
         player?.let { exoPlayer ->
             exoPlayer.stop()
             exoPlayer.release()
 
             playerMap.remove(id)
+
+            Log.d(tag, "[$tag] stopped for $id, player total counts = ${playerMap.size}")
         }
     }
 
     fun stopAll() {
-        currentRequestedPlayingId = null
+        Log.d(tag, "[$tag] stop all (${playerMap.size})")
+        playerMap.forEach {
+            Log.d(tag, "[$tag] stop all stop id = ${it.key}")
+        }
         playerMap.values.forEach { exoPlayer ->
             exoPlayer.stop()
             exoPlayer.release()

@@ -3,18 +3,15 @@ package com.herry.test.app.bottomnav.mix.forms
 import android.content.Context
 import android.view.View
 import android.widget.TextView
-import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.herry.libs.nodeview.NodeForm
 import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
-import com.herry.libs.widget.extension.setOnProtectClickListener
 import com.herry.test.R
 
 class FeedDetailForm(
-    private val player: (form: FeedDetailForm, holder: FeedDetailForm.Holder) -> ExoPlayer?,
-    private val onClickPrevious: () -> Unit,
-    private val onClickNext: () -> Unit
+    private val onAttachedVideoView: (form: FeedDetailForm, holder: FeedDetailForm.Holder) -> Unit,
+    private val onDetachedVideoView: (form: FeedDetailForm, holder: FeedDetailForm.Holder) -> Unit
 ): NodeForm<FeedDetailForm.Holder, FeedDetailForm.Model> (Holder::class, Model::class), NodeRecyclerForm {
     data class Model(
         val id: String,
@@ -24,19 +21,9 @@ class FeedDetailForm(
     inner class Holder(context: Context, view: View): NodeHolder(context, view) {
         val videoView: StyledPlayerView = view.findViewById(R.id.feed_detail_form_video_view)
         val id: TextView = view.findViewById(R.id.feed_detail_form_id)
-        private val previous: View = view.findViewById(R.id.feed_detail_form_previous)
-        private val next: View = view.findViewById(R.id.feed_detail_form_next)
 
         init {
             videoView.useController = false
-
-            previous.setOnProtectClickListener {
-                onClickPrevious.invoke()
-            }
-
-            next.setOnProtectClickListener {
-                onClickNext.invoke()
-            }
         }
     }
 
@@ -53,13 +40,13 @@ class FeedDetailForm(
 
     override fun onViewAttachedToWindow(context: Context, holder: NodeHolder) {
         (holder as? Holder)?.let { formHolder ->
-            formHolder.videoView.player = player(this@FeedDetailForm, holder)
+            onAttachedVideoView(this@FeedDetailForm, formHolder)
         }
     }
 
     override fun onViewDetachedFromWindow(context: Context, holder: NodeHolder) {
         (holder as? Holder)?.let { formHolder ->
-            formHolder.videoView.player = null
+            onDetachedVideoView(this@FeedDetailForm, formHolder)
         }
     }
 }

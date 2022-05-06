@@ -42,7 +42,9 @@ class MixPresenter : MixContract.Presenter() {
     }
 
     override fun onPause(view: MixContract.View) {
-        stopPlayAll()
+        launch {
+            stopPlayAll()
+        }
     }
 
     private fun load(init: Boolean) {
@@ -256,6 +258,11 @@ class MixPresenter : MixContract.Presenter() {
     override fun stop(position: Int) {
         val model = getFeedModelFromFeeds(position) ?: return
 
+        exoPlayerManger.stop(model.id)
+    }
+
+    override fun stop(model: FeedDetailForm.Model?) {
+        model ?: return
         exoPlayerManger.stop(model.id)
     }
 

@@ -30,31 +30,4 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/feed_detail_form_previous"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Previous"
-        android:layout_margin="@dimen/size16"
-        android:padding="@dimen/size08"
-        android:textSize="@dimen/size20"
-        android:textColor="@color/tbc_10"
-        android:background="@color/tbc_100_a50"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
-
-    <TextView
-        android:id="@+id/feed_detail_form_next"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Next"
-        android:layout_margin="@dimen/size16"
-        android:padding="@dimen/size08"
-        android:textSize="@dimen/size20"
-        android:textColor="@color/tbc_10"
-        android:background="@color/tbc_100_a50"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

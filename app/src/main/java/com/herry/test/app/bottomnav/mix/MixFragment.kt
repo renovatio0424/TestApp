@@ -99,14 +99,12 @@ class MixFragment: BaseNavView<MixContract.View, MixContract.Presenter>(), MixCo
     inner class Adapter: NodeRecyclerAdapter(::requireContext) {
         override fun onBindForms(list: MutableList<NodeForm<out NodeHolder, *>>) {
             list.add(FeedDetailForm(
-                player = { form, holder ->
-                    presenter?.preparePlayer(NodeRecyclerForm.getBindModel(form, holder))
+                onAttachedVideoView = { form, holder ->
+                    holder.videoView.player = presenter?.preparePlayer(NodeRecyclerForm.getBindModel(form, holder))
                 },
-                onClickPrevious = {
-                    snapHelper?.snapToPrevious()
-                },
-                onClickNext = {
-                    snapHelper?.snapToNext()
+                onDetachedVideoView = { form, holder ->
+                    holder.videoView.player = null
+                    presenter?.stop(NodeRecyclerForm.getBindModel(form, holder))
                 }
             ))
         }
