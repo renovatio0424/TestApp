@@ -41,7 +41,7 @@ class HomeBottomNavControlItemForm(
     override fun onBindModel(context: Context, holder: Holder, model: Model) {
         holder.icon.setImageResource(model.icon)
         holder.label.text = model.label
-        holder.label.isVisible = model.label != null
+//        holder.label.isVisible = model.label != null
     }
 }
 

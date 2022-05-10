@@ -90,4 +90,22 @@ class ExoPlayerManager(private val context: () -> Context?, private val isSingle
         }
         playerMap.clear()
     }
+
+    fun isPlaying(id: String): Boolean {
+        val player = playerMap[id] ?: return false
+        return player.playbackState == ExoPlayer.STATE_READY && player.isPlaying
+    }
+
+    fun isReadyToPlay(id: String): Boolean {
+        val player = playerMap[id] ?: return false
+        return player.playbackState == ExoPlayer.STATE_READY
+    }
+
+    fun pause(id: String) {
+        playerMap[id]?.pause()
+    }
+
+    fun resume(id: String) {
+        playerMap[id]?.play()
+    }
 }

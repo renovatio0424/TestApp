@@ -17,13 +17,13 @@ import com.herry.libs.widget.recyclerview.endless.EndlessRecyclerViewScrollListe
 import com.herry.libs.widget.recyclerview.loopsnap.PagerSnapExHelper
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
-import com.herry.test.app.bottomnav.mix.forms.FeedDetailForm
+import com.herry.test.app.bottomnav.mix.forms.FeedForm
 
-class MixFragment: BaseNavView<MixContract.View, MixContract.Presenter>(), MixContract.View {
+class NewFragment: BaseNavView<NewContract.View, NewContract.Presenter>(), NewContract.View {
 
-    override fun onCreatePresenter(): MixContract.Presenter = MixPresenter()
+    override fun onCreatePresenter(): NewContract.Presenter = NewPresenter()
 
-    override fun onCreatePresenterView(): MixContract.View = this
+    override fun onCreatePresenterView(): NewContract.View = this
 
     override val root: NodeRoot
         get() = adapter.root
@@ -38,7 +38,7 @@ class MixFragment: BaseNavView<MixContract.View, MixContract.Presenter>(), MixCo
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (this.container == null) {
-            this.container = inflater.inflate(R.layout.mix_fragment, container, false)
+            this.container = inflater.inflate(R.layout.new_fragment, container, false)
             init(this.container)
         } else {
             // fixed: "java.lang.IllegalStateException: The specified child already has a parent.
@@ -51,14 +51,14 @@ class MixFragment: BaseNavView<MixContract.View, MixContract.Presenter>(), MixCo
     private fun init(view: View?) {
         view ?: return
 
-        view.findViewById<RecyclerView>(R.id.mix_fragment_feeds)?.let { recyclerView ->
+        view.findViewById<RecyclerView>(R.id.new_fragment_list)?.let { recyclerView ->
             val layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
             recyclerView.layoutManager = layoutManager
             recyclerView.setHasFixedSize(true)
             if (recyclerView.itemAnimator is SimpleItemAnimator) {
                 (recyclerView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
             }
-            recyclerView.adapter = this@MixFragment.adapter
+            recyclerView.adapter = this@NewFragment.adapter
 
             snapHelper = PagerSnapExHelper().apply {
                 setOnSnappedListener(object: PagerSnapExHelper.OnSnappedListener {
@@ -98,13 +98,16 @@ class MixFragment: BaseNavView<MixContract.View, MixContract.Presenter>(), MixCo
 
     inner class Adapter: NodeRecyclerAdapter(::requireContext) {
         override fun onBindForms(list: MutableList<NodeForm<out NodeHolder, *>>) {
-            list.add(FeedDetailForm(
+            list.add(FeedForm(
                 onAttachedVideoView = { form, holder ->
                     holder.videoView.player = presenter?.preparePlayer(NodeRecyclerForm.getBindModel(form, holder))
                 },
                 onDetachedVideoView = { form, holder ->
                     holder.videoView.player = null
                     presenter?.stop(NodeRecyclerForm.getBindModel(form, holder))
+                },
+                onTogglePlayer = { form, holder ->
+                    presenter?.togglePlay(NodeRecyclerForm.getBindModel(form, holder))
                 }
             ))
         }

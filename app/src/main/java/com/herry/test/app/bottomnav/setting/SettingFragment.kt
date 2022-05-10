@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.herry.libs.app.nav.NavBundleUtil
 import com.herry.libs.util.ViewUtil
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavFragment
@@ -27,5 +28,9 @@ class SettingFragment : BaseNavFragment() {
 
     private fun init(view: View?) {
         view ?: return
+    }
+
+    override fun getNavigateUpResult(): Bundle {
+        return NavBundleUtil.createNavigationBundle(true)
     }
 }

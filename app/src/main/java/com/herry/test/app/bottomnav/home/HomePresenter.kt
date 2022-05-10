@@ -7,11 +7,11 @@ import com.herry.test.app.bottomnav.home.form.HomeBottomNavScreenId
 
 class HomePresenter : HomeContract.Presenter() {
     private var currentScreen: HomeBottomNavScreenId? = null
-    private val tabs = arrayListOf<HomeBottomNavControlItemForm.Model>(
+    private val tabs = arrayListOf(
         // mix
-        HomeBottomNavControlItemForm.Model(id = R.id.bottom_nav_mix_navigation, icon = R.drawable.ic_navigation_feature, "Mix"),
+        HomeBottomNavControlItemForm.Model(id = R.id.bottom_nav_new_navigation, icon = R.drawable.ic_navigation_new, "New"),
         // mix
-        HomeBottomNavControlItemForm.Model(id = R.id.bottom_nav_search_navigation, icon = R.drawable.ic_navigation_discover, "Search"),
+        HomeBottomNavControlItemForm.Model(id = R.id.bottom_nav_feeds_navigation, icon = R.drawable.ic_navigation_feeds, "Feeds"),
         // mix
         HomeBottomNavControlItemForm.Model(id = R.id.bottom_nav_create_navigation, icon = R.drawable.ic_navigation_create, "Create"),
         // mix

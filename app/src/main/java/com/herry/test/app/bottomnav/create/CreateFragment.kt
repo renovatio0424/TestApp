@@ -5,10 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.herry.libs.util.ViewUtil
+import com.herry.libs.widget.extension.navigateTo
 import com.herry.libs.widget.extension.setOnProtectClickListener
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavFragment
-import com.herry.test.app.bottomnav.helper.NavScreenActionHelper
 
 class CreateFragment: BaseNavFragment() {
 
@@ -31,7 +31,7 @@ class CreateFragment: BaseNavFragment() {
 
         view.findViewById<View>(R.id.create_fragment_setting)?.apply {
             setOnProtectClickListener {
-                NavScreenActionHelper.showSetting(this@CreateFragment)
+                navigateTo(destinationId = R.id.setting_fragment)
             }
         }
     }

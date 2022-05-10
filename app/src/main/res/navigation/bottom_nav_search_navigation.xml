@@ -3,16 +3,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/bottom_nav_search_navigation"
-    app:startDestination="@+id/search_list_fragment">
+    android:id="@+id/bottom_nav_feeds_navigation"
+    app:startDestination="@+id/feed_list_fragment">
 
     <fragment
-        android:id="@+id/search_list_fragment"
-        android:name="com.herry.test.app.bottomnav.search.list.SearchListFragment"
-        tools:layout="@layout/search_list_fragment" />
+        android:id="@+id/feed_list_fragment"
+        android:name="com.herry.test.app.bottomnav.search.list.FeedListFragment"
+        tools:layout="@layout/feed_list_fragment" />
 
     <fragment
-        android:id="@+id/search_result_fragment"
-        android:name="com.herry.test.app.bottomnav.search.result.SearchResultFragment"
-        tools:layout="@layout/search_result_fragment" />
+        android:id="@+id/feed_search_fragment"
+        android:name="com.herry.test.app.bottomnav.search.result.FeedSearchFragment"
+        tools:layout="@layout/feed_search_fragment" />
 </navigation>

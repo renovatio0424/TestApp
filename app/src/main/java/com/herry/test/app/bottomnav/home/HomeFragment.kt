@@ -6,13 +6,10 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.herry.libs.app.nav.NavBundleUtil
 import com.herry.libs.helper.ToastHelper
 import com.herry.libs.util.ViewUtil
-import com.herry.libs.widget.extension.navigateTo
 import com.herry.test.R
 import com.herry.test.app.base.nestednav.BaseNestedNavView
-import com.herry.test.app.bottomnav.helper.NavScreenActions
 import com.herry.test.app.bottomnav.home.form.HomeBottomNavControlForm
 import com.herry.test.app.bottomnav.home.form.HomeBottomNavFragmentForm
 
@@ -60,60 +57,12 @@ class HomeFragment: BaseNestedNavView<HomeContract.View, HomeContract.Presenter>
         bottomNavigatorForm.bindFormModel(context, model)
         // update bottom navigated screen
         bottomNavFragmentForm.setNavScreen(model.selected, isStart, startArgs)
-
-//        // update bottom navigator nav graph
-//        val destinationNavigationId = when (model.selected) {
-//            HomeBottomNavControlForm.ItemType.FEATURE -> R.id.bottom_nav_mix_navigation
-//            HomeBottomNavControlForm.ItemType.DISCOVER -> R.id.bottom_nav_search_navigation
-//            HomeBottomNavControlForm.ItemType.CREATE -> R.id.bottom_nav_create_navigation
-//            HomeBottomNavControlForm.ItemType.ME -> R.id.bottom_nav_me_navigation
-//        }
-//
-//        if (isStart) {
-//            val bottomNavigationController = bottomNavFragmentContainer?.findNavController()
-//            val bottomNavigatorGraph = bottomNavigationController?.graph
-//            if (bottomNavigationController != null && bottomNavigatorGraph != null) {
-//                if (bottomNavigatorGraph.startDestinationId != destinationNavigationId) {
-//                    bottomNavigatorGraph.setStartDestination(destinationNavigationId)
-//                    bottomNavigationController.setGraph(bottomNavigatorGraph, startDestinationArgs = startArgs)
-//                }
-//            }
-//            return
-//        }
-////        bottomNavFragmentContainer?.findNavController()?.graph?.setStartDestination(destination)
-//        navigateTo(
-//            navController = bottomNavFragmentContainer?.findNavController(),
-//            destinationId = destination,
-//            navOptions = NavOptions.Builder()
-//                .setPopUpTo(destinationId = destination, inclusive = false, saveState = true)
-//                .build()
-//        )
-
-//        val destinationNavGraph = when (model.selected) {
-//            HomeBottomNavigatorForm.ItemType.FEATURE -> R.navigation.bottom_nav_feature_navigation
-//            HomeBottomNavigatorForm.ItemType.DISCOVER -> R.id.discover_fragment
-//            HomeBottomNavigatorForm.ItemType.CREATE -> R.navigation.bottom_nav_create_navigation
-//            HomeBottomNavigatorForm.ItemType.ME -> R.id.me_fragment
-//        }
-//
-//        val bottomNavigationController = bottomNavFragmentContainer?.findNavController()
-//        bottomNavigationController?.setGraph(destinationNavGraph, startDestinationArgs = startArgs)
-////        if (bottomNavigationController != null && bottomNavigatorGraph != null) {
-////            if (bottomNavigatorGraph.startDestinationId != destination) {
-////                bottomNavigatorGraph.setStartDestination(destination)
-////                bottomNavigationController.setGraph(bottomNavigatorGraph, startDestinationArgs = startArgs)
-////            }
-////        }
     }
 
     private fun onReceivedFromBottomNavFragments(bundle: Bundle) {
-        when (NavScreenActions.generate(NavBundleUtil.getNavigationAction(bundle))) {
-            NavScreenActions.SHOW_SETTINGS -> {
-                navigateTo(destinationId = R.id.setting_fragment)
-            }
-            else -> {}
-        }
+        // nothing
     }
+
     override fun onResume() {
         super.onResume()
 

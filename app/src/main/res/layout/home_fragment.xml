@@ -21,7 +21,7 @@
         android:id="@+id/home_fragment_bottom_navigator_form"
         layout="@layout/home_bottom_nav_control_form"
         android:layout_width="0dp"
-        android:layout_height="@dimen/size60"
+        android:layout_height="@dimen/size48"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>

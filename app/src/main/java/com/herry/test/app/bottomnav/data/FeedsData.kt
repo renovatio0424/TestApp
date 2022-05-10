@@ -1,79 +1,8 @@
-package com.herry.test.app.bottomnav.mix
+package com.herry.test.app.bottomnav.data
 
-import com.google.android.exoplayer2.ExoPlayer
-import com.herry.libs.media.exoplayer.ExoPlayerManager
-import com.herry.libs.nodeview.model.Node
-import com.herry.libs.nodeview.model.NodeHelper
-import com.herry.libs.nodeview.model.NodeModelGroup
-import com.herry.test.app.bottomnav.mix.forms.FeedDetailForm
-import io.reactivex.Observable
-
-
-class MixPresenter : MixContract.Presenter() {
-
-    private val feedNodes: Node<NodeModelGroup> = NodeHelper.createNodeGroup()
-    private var currentPosition: Int = 0
-
-    private val exoPlayerManger: ExoPlayerManager = ExoPlayerManager(
-        context = {
-            view?.getContext()
-        },
-        isSingleInstance = false
-    )
-
-    override fun onAttach(view: MixContract.View) {
-        super.onAttach(view)
-
-        view.root.beginTransition()
-        NodeHelper.addNode(view.root, feedNodes)
-        view.root.endTransition()
-    }
-
-    override fun onLaunch(view: MixContract.View, recreated: Boolean) {
-        launch {
-            load(!recreated)
-        }
-    }
-
-    override fun onResume(view: MixContract.View) {
-        launch {
-            load(false)
-        }
-    }
-
-    override fun onPause(view: MixContract.View) {
-        launch {
-            stopPlayAll()
-        }
-    }
-
-    private fun load(init: Boolean) {
-        if (init) {
-            loadFeeds()
-        } else {
-            reloadFeeds()
-        }
-    }
-
-    private fun loadFeeds(lastId: String = "-1") {
-        subscribeObservable(Observable.create<MutableList<FeedDetailForm.Model>> { emitter ->
-            val list: MutableList<FeedDetailForm.Model> = mutableListOf()
-            val feeds: LinkedHashMap<String, String> = getFeeds(lastId, 10)
-            feeds.keys.forEach { id ->
-                val url = feeds[id]
-                if (url != null) {
-                    list.add(FeedDetailForm.Model(id, url))
-                }
-            }
-            emitter.onNext(list)
-            emitter.onComplete()
-        }, { videos ->
-            display(lastId == "-1", videos)
-        })
-    }
-
+object FeedsData {
     @Suppress("SameParameterValue")
-    private fun getFeeds(lastId: String, pageCounts: Int = 10): LinkedHashMap<String, String> {
+    fun getFeeds(lastId: String, pageCounts: Int = 10): LinkedHashMap<String, String> {
         val videos = videos()
 
         val result = LinkedHashMap<String, String>()
@@ -204,75 +133,6 @@ class MixPresenter : MixContract.Presenter() {
         return videos
     }
 
-    private fun reloadFeeds() {
-        val videos = NodeHelper.getChildrenModels<FeedDetailForm.Model>(feedNodes)
-        if (videos.size <= 0) {
-            loadFeeds("-1")
-        } else {
-            feedNodes.beginTransition()
-            feedNodes.clearChild()
-            feedNodes.endTransition()
-            display(false, videos)
-            view?.onScrollTo(currentPosition)
-        }
-    }
+    val strign = ""
 
-    private fun display(reset: Boolean, list: MutableList<FeedDetailForm.Model>) {
-        this.feedNodes.beginTransition()
-        if (reset) {
-            val nodes = NodeHelper.createNodeGroup()
-            NodeHelper.addModels(nodes, *list.toTypedArray())
-            NodeHelper.upSert(this.feedNodes, nodes)
-        } else {
-            NodeHelper.addModels(this.feedNodes, *list.toTypedArray())
-        }
-        this.feedNodes.endTransition()
-
-        if (reset) {
-            view?.onLaunched(this.feedNodes.getChildCount())
-        }
-    }
-
-    override fun setCurrentPosition(position: Int) {
-        this.currentPosition = position
-    }
-
-    override fun preparePlayer(model: FeedDetailForm.Model?): ExoPlayer? {
-        model ?: return null
-
-        return exoPlayerManger.prepare(model.id, model.url)
-    }
-
-    private fun getFeedModelFromFeeds(position: Int): FeedDetailForm.Model?{
-        val nodePosition = feedNodes.getNodePosition(position) ?: return null
-        val node = feedNodes.getNode(nodePosition) ?: return null
-        return node.model as? FeedDetailForm.Model
-    }
-
-    override fun play(position: Int) {
-        val model = getFeedModelFromFeeds(position) ?: return
-
-        exoPlayerManger.play(model.id, model.url, true)
-    }
-
-    override fun stop(position: Int) {
-        val model = getFeedModelFromFeeds(position) ?: return
-
-        exoPlayerManger.stop(model.id)
-    }
-
-    override fun stop(model: FeedDetailForm.Model?) {
-        model ?: return
-        exoPlayerManger.stop(model.id)
-    }
-
-    private fun stopPlayAll() {
-        exoPlayerManger.stopAll()
-    }
-
-    override fun loadMore() {
-        val feeds = NodeHelper.getChildrenModels<FeedDetailForm.Model>(feedNodes)
-        val lastId = if (feeds.isNotEmpty()) feeds.last().id else return
-        loadFeeds(lastId)
-    }
 }

@@ -9,7 +9,7 @@
     tools:viewBindingIgnore="false">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/mix_fragment_feeds"
+        android:id="@+id/new_fragment_list"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"

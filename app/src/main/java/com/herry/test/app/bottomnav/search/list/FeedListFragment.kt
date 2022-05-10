@@ -10,17 +10,17 @@ import com.herry.libs.widget.extension.setOnProtectClickListener
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
 
-class SearchListFragment: BaseNavView<SearchListContract.View, SearchListContract.Presenter>(), SearchListContract.View {
+class FeedListFragment: BaseNavView<FeedListContract.View, FeedListContract.Presenter>(), FeedListContract.View {
 
-    override fun onCreatePresenter(): SearchListContract.Presenter = SearchListPresenter()
+    override fun onCreatePresenter(): FeedListContract.Presenter = FeedListPresenter()
 
-    override fun onCreatePresenterView(): SearchListContract.View = this
+    override fun onCreatePresenterView(): FeedListContract.View = this
 
     private var container: View? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (this.container == null) {
-            this.container = inflater.inflate(R.layout.search_list_fragment, container, false)
+            this.container = inflater.inflate(R.layout.feed_list_fragment, container, false)
             init(this.container)
         } else {
             // fixed: "java.lang.IllegalStateException: The specified child already has a parent.
@@ -33,8 +33,8 @@ class SearchListFragment: BaseNavView<SearchListContract.View, SearchListContrac
     private fun init(view: View?) {
         view ?: return
 
-        view.findViewById<View>(R.id.search_list_fragment_result)?.setOnProtectClickListener {
-            navigateTo(destinationId = R.id.search_result_fragment)
+        view.findViewById<View>(R.id.feed_list_fragment_result)?.setOnProtectClickListener {
+            navigateTo(destinationId = R.id.feed_search_fragment)
         }
     }
 }

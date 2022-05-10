@@ -7,15 +7,14 @@ import android.view.ViewGroup
 import com.herry.libs.util.ViewUtil
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavFragment
-import com.herry.test.app.base.nav.BaseNavView
 
-class SearchResultFragment: BaseNavFragment() {
+class FeedSearchFragment: BaseNavFragment() {
 
     private var container: View? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (this.container == null) {
-            this.container = inflater.inflate(R.layout.search_result_fragment, container, false)
+            this.container = inflater.inflate(R.layout.feed_search_fragment, container, false)
             init(this.container)
         } else {
             // fixed: "java.lang.IllegalStateException: The specified child already has a parent.

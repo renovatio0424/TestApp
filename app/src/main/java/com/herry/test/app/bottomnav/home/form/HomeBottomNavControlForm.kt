@@ -16,7 +16,7 @@ class HomeBottomNavControlForm(
 
     @Suppress("unused")
     class Model(
-        val selected: HomeBottomNavScreenId = HomeBottomNavScreenId.SEARCH,
+        val selected: HomeBottomNavScreenId = HomeBottomNavScreenId.FEEDS,
         val items: ArrayList<HomeBottomNavControlItemForm.Model> = arrayListOf()
     ) : Serializable
 

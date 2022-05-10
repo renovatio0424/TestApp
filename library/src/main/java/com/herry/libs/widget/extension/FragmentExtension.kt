@@ -16,7 +16,6 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.herry.libs.app.nav.BottomNavHostFragment
 import com.herry.libs.app.nav.NavBundleUtil
-import java.lang.IllegalArgumentException
 
 fun Fragment.getNavCurrentDestinationID(): Int = findNavController().currentDestination?.id ?: 0
 
@@ -227,9 +226,52 @@ fun Fragment.navigateTo(navController: NavController? = null, directions: NavDir
  * @param navOptions special options for this navigation operation
  * @param navigatorExtras extras to pass to the Navigator
  */
-fun Fragment.navigateTo(navController: NavController? = null, @IdRes destinationId: Int, args: Bundle?, navOptions: NavOptions?, navigatorExtras: Navigator.Extras?) {
+fun Fragment.navigateTo(navController: NavController? = null, @IdRes destinationId: Int, args: Bundle?, navOptions: NavOptions?, navigatorExtras: Navigator.Extras?, isCheckParent: Boolean = true) {
     val findNavController = navController ?: findNavController()
-    findNavController.navigate(destinationId, args, navOptions, navigatorExtras)
+    try {
+        findNavController.navigate(destinationId, args, navOptions, navigatorExtras)
+    } catch (ex: IllegalArgumentException) {
+        if (isCheckParent) {
+            try {
+                val navControllers = findAllNavControllers()
+                navControllers.forEach { parentNavController ->
+                    try {
+                        navigateTo(parentNavController, destinationId, args, navOptions, navigatorExtras, false)
+                        return
+                    } catch (ex: Exception) {
+                    }
+                }
+            } catch (ex: Exception) {
+            }
+        } else {
+            throw ex
+        }
+    }
+}
+
+// find all nav controllers from closest
+fun Fragment.findAllNavControllers(): ArrayList<NavController> {
+    val navControllers = arrayListOf<NavController>()
+    var parent = parentFragment
+    while (parent != null) {
+        if (parent is NavHostFragment) {
+            navControllers.add(parent.navController)
+        }
+        parent = parent.parentFragment
+    }
+    return navControllers
+}
+
+// find one nav controller by fragment id
+fun Fragment.findNavControllerById(@IdRes id: Int): NavController {
+    var parent = parentFragment
+    while (parent != null) {
+        if (parent is NavHostFragment && parent.id == id) {
+            return parent.navController
+        }
+        parent = parent.parentFragment
+    }
+    throw RuntimeException("NavController with specified id not found")
 }
 
 fun NavHostFragment.getFragmentByViewID(): Fragment? {
@@ -280,10 +322,10 @@ fun Fragment.isNavigateToEnabled(): Boolean {
 }
 
 class NavAnim {
-    @AnimRes @AnimatorRes val enterAnim = -1
-    @AnimRes @AnimatorRes val exitAnim = -1
-    @AnimRes @AnimatorRes val popEnterAnim = -1
-    @AnimRes @AnimatorRes val popExitAnim = -1
+    @AnimRes @AnimatorRes var enterAnim = -1
+    @AnimRes @AnimatorRes var exitAnim = -1
+    @AnimRes @AnimatorRes var popEnterAnim = -1
+    @AnimRes @AnimatorRes var popExitAnim = -1
 }
 
 fun BottomNavHostFragment.setNavigate(@IdRes destinationId: Int, navAnim: NavAnim? = null) {

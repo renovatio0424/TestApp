@@ -13,11 +13,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:text="SEARCH"
+        android:text="Feeds"
         android:textSize="@dimen/size20"/>
 
     <TextView
-        android:id="@+id/search_list_fragment_result"
+        android:id="@+id/feed_list_fragment_result"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/size36"
         android:layout_marginTop="@dimen/size64"
