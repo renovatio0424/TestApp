@@ -1,7 +1,7 @@
 package com.herry.test.app.checker.password_setting
 
 import com.herry.libs.data_checker.DataCheckerChangeData
-import com.herry.libs.util.preferences.PreferenceUtil
+import com.herry.libs.util.preferences.PreferenceHelper
 import com.herry.test.sharedpref.SharedPrefKeys
 
 /**
@@ -13,7 +13,7 @@ class PasswordSettingPresenter : PasswordSettingContract.Presenter() {
 
     override fun onLaunch(view: PasswordSettingContract.View, recreated: Boolean) {
         if (!recreated) {
-            passwordChecker.setBase(PreferenceUtil.get(SharedPrefKeys.PASSWORD, ""))
+            passwordChecker.setBase(PreferenceHelper.get(SharedPrefKeys.PASSWORD, ""))
         }
         // sets list items
         display()
@@ -32,7 +32,7 @@ class PasswordSettingPresenter : PasswordSettingContract.Presenter() {
     override fun isChangedPassword(): Boolean {
         val result = passwordChecker.isChanged
         if (result) {
-            PreferenceUtil.set(SharedPrefKeys.PASSWORD, passwordChecker.data)
+            PreferenceHelper.set(SharedPrefKeys.PASSWORD, passwordChecker.data)
         }
         return result
     }

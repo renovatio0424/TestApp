@@ -3,7 +3,7 @@ package com.herry.test.app.checker.main
 import com.herry.libs.nodeview.model.Node
 import com.herry.libs.nodeview.model.NodeHelper
 import com.herry.libs.nodeview.model.NodeModelGroup
-import com.herry.libs.util.preferences.PreferenceUtil
+import com.herry.libs.util.preferences.PreferenceHelper
 import com.herry.test.sharedpref.SharedPrefKeys
 
 /**
@@ -40,7 +40,7 @@ class DataCheckerMainPresenter : DataCheckerMainContract.Presenter() {
 
         val nodes: Node<NodeModelGroup> = NodeHelper.createNodeGroup()
         NodeHelper.addModel(nodes, DataCheckerMainContract.PasswordModel(
-            PreferenceUtil.get(SharedPrefKeys.PASSWORD, "")
+            PreferenceHelper.get(SharedPrefKeys.PASSWORD, "")
         ))
         NodeHelper.upSert(this.passwordNodes, nodes)
         this.passwordNodes.endTransition()

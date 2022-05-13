@@ -6,7 +6,7 @@ import android.content.*
 import android.content.res.Configuration
 import android.os.Bundle
 import com.herry.libs.util.AppActivityManager
-import com.herry.libs.util.preferences.PreferenceUtil
+import com.herry.libs.util.preferences.PreferenceHelper
 import java.util.concurrent.atomic.AtomicBoolean
 
 class BaseApplication: Application() {
@@ -65,9 +65,8 @@ class BaseApplication: Application() {
             }
         }, screenOffFilter)
 
-        PreferenceUtil.init(
-            context = { applicationContext },
-            name = applicationContext.packageName.plus(".pref")
+        PreferenceHelper.init(
+            context = { applicationContext }
         )
     }
 
