@@ -1,4 +1,4 @@
-package com.herry.test.app.bottomnav.mix
+package com.herry.test.app.bottomnav.hots
 
 import com.google.android.exoplayer2.ExoPlayer
 import com.herry.libs.media.exoplayer.ExoPlayerManager
@@ -6,7 +6,7 @@ import com.herry.libs.nodeview.model.Node
 import com.herry.libs.nodeview.model.NodeHelper
 import com.herry.libs.nodeview.model.NodeModelGroup
 import com.herry.test.app.bottomnav.data.FeedsData
-import com.herry.test.app.bottomnav.mix.forms.FeedForm
+import com.herry.test.app.bottomnav.hots.forms.FeedForm
 import io.reactivex.Observable
 
 

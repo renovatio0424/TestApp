@@ -1,4 +1,4 @@
-package com.herry.test.app.bottomnav.mix
+package com.herry.test.app.bottomnav.hots
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -17,7 +17,7 @@ import com.herry.libs.widget.recyclerview.endless.EndlessRecyclerViewScrollListe
 import com.herry.libs.widget.recyclerview.loopsnap.PagerSnapExHelper
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
-import com.herry.test.app.bottomnav.mix.forms.FeedForm
+import com.herry.test.app.bottomnav.hots.forms.FeedForm
 
 class NewFragment: BaseNavView<NewContract.View, NewContract.Presenter>(), NewContract.View {
 

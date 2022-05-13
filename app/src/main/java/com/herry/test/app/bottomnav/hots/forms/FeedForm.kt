@@ -1,4 +1,4 @@
-package com.herry.test.app.bottomnav.mix.forms
+package com.herry.test.app.bottomnav.hots.forms
 
 import android.content.Context
 import android.view.View

@@ -1,4 +1,4 @@
-package com.herry.test.app.bottomnav.search.list
+package com.herry.test.app.bottomnav.feeds.list
 
 import com.herry.libs.mvp.MVPView
 import com.herry.test.app.base.nav.BaseNavPresenter

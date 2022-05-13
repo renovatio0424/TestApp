@@ -8,11 +8,11 @@
 
     <fragment
         android:id="@+id/feed_list_fragment"
-        android:name="com.herry.test.app.bottomnav.search.list.FeedListFragment"
+        android:name="com.herry.test.app.bottomnav.feeds.list.FeedListFragment"
         tools:layout="@layout/feed_list_fragment" />
 
     <fragment
         android:id="@+id/feed_search_fragment"
-        android:name="com.herry.test.app.bottomnav.search.result.FeedSearchFragment"
+        android:name="com.herry.test.app.bottomnav.feeds.result.FeedSearchFragment"
         tools:layout="@layout/feed_search_fragment" />
 </navigation>

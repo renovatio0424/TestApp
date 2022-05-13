@@ -1,10 +1,10 @@
-package com.herry.test.app.bottomnav.mix
+package com.herry.test.app.bottomnav.hots
 
 import com.google.android.exoplayer2.ExoPlayer
 import com.herry.libs.mvp.MVPView
 import com.herry.libs.nodeview.INodeRoot
 import com.herry.test.app.base.nav.BaseNavPresenter
-import com.herry.test.app.bottomnav.mix.forms.FeedForm
+import com.herry.test.app.bottomnav.hots.forms.FeedForm
 
 interface NewContract {
     interface View : MVPView<Presenter>, INodeRoot {
