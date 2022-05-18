@@ -10,9 +10,11 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.ResultReceiver
+import android.util.Size
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.ColorRes
+import androidx.annotation.DimenRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.LayoutRes
 import androidx.core.content.ContextCompat
@@ -37,6 +39,17 @@ object ViewUtil {
             }
             window.statusBarColor = Color.TRANSPARENT
         }
+    }
+
+    fun getStatusBarHeight(context: Context?): Int {
+        var result = 0
+        if (null != context) {
+            val resourceId = context.resources.getIdentifier("status_bar_height", "dimen", "android")
+            if (resourceId > 0) {
+                result = context.resources.getDimensionPixelSize(resourceId)
+            }
+        }
+        return result
     }
 
     fun inflate(@LayoutRes layout: Int, root: ViewGroup): View {
@@ -103,24 +116,37 @@ object ViewUtil {
     }
 
     fun getColor(context: Context?, @ColorRes id: Int): Int {
-        return if (null == context || 0 == id) {
+        if (null == context || 0 == id) {
+            return 0
+        }
+
+        return try {
+            ContextCompat.getColor(context, id)
+        } catch (ex: Exception) {
             0
-        } else ContextCompat.getColor(context, id)
+        }
     }
 
     fun getColorStateList(context: Context?, @ColorRes id: Int): ColorStateList? {
-        return if (null == context || 0 == id) {
+        if (null == context || 0 == id) {
+            return null
+        }
+
+        return try {
+            ContextCompat.getColorStateList(context, id)
+        } catch (ex: Exception) {
             null
-        } else ContextCompat.getColorStateList(context, id)
+        }
     }
 
     fun getDrawable(context: Context?, @DrawableRes id: Int): Drawable? {
-        if (null == context) {
+        if (null == context || 0 == id) {
             return null
         }
-        return if (0 != id) {
+
+        return try {
             ContextCompat.getDrawable(context, id)
-        } else {
+        } catch (ex: Exception) {
             null
         }
     }
@@ -129,7 +155,7 @@ object ViewUtil {
         if (null == context || 0 == id) {
             return null
         }
-        val color = ContextCompat.getColor(context, id)
+        val color = getColor(context, id)
         return ColorDrawable(color)
     }
 
@@ -207,5 +233,22 @@ object ViewUtil {
             val parent = view.parent as ViewGroup
             parent.removeView(view)
         }
+    }
+
+    fun getDimension(context: Context?, id: Int): Float {
+        val resources = context?.resources ?: return 0f
+        return resources.getDimension(id)
+    }
+
+    fun getDimensionPixelSize(context: Context?, @DimenRes id: Int): Int {
+        val resources = context?.resources ?: return 0
+        return resources.getDimensionPixelSize(id)
+    }
+
+    fun getScreenSize(context: Context?): Size {
+        val resources = context?.resources ?: return Size(0, 0)
+
+        val displayMetrics = context.resources.displayMetrics ?: return Size(0, 0)
+        return Size(displayMetrics.widthPixels, displayMetrics.heightPixels)
     }
 }

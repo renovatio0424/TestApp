@@ -9,7 +9,7 @@ interface MVPView<P> {
     /**
      * Context
      */
-    fun getContext(): Context?
+    fun getViewContext(): Context?
 
     /**
      * Shows loading view

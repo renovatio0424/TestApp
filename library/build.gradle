@@ -43,6 +43,8 @@ dependencies {
     api 'androidx.appcompat:appcompat:1.4.1'
     api 'androidx.recyclerview:recyclerview:1.2.1'
 
+    api 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+
     // navigation
     api "androidx.navigation:navigation-fragment-ktx:$ktx_navigation_version"
     api "androidx.navigation:navigation-ui-ktx:$ktx_navigation_version"

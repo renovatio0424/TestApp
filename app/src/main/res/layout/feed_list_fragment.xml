@@ -5,29 +5,44 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0000ff"
     tools:ignore="HardcodedText"
     tools:viewBindingIgnore="false">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="Feeds"
-        android:textSize="@dimen/size20"/>
 
     <TextView
         android:id="@+id/feed_list_fragment_result"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/size36"
-        android:layout_marginTop="@dimen/size64"
+        android:layout_marginTop="@dimen/size16"
         android:padding="@dimen/size08"
         android:gravity="center"
         android:text="search"
         android:textSize="@dimen/size12"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/business_select_fragment_category_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/tbc_10"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/feed_list_fragment_result">
+
+        <include
+            android:id="@+id/feed_list_fragment_categories"
+            layout="@layout/tab_layout_scroll_form" />
+    </FrameLayout>
+
+    <include
+        android:id="@+id/feed_list_fragment_feeds"
+        layout="@layout/recycler_form"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/business_select_fragment_category_container"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

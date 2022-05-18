@@ -1,4 +1,4 @@
-package com.herry.libs.widget.recyclerview.loopsnap
+package com.herry.libs.widget.recyclerview.snap
 
 import androidx.annotation.NonNull
 import androidx.recyclerview.widget.PagerSnapHelper

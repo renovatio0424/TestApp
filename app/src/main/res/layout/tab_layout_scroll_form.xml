@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/size42"
+    tools:viewBindingIgnore="true">
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_layout_scroll_form_tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:tabIndicatorColor="@android:color/transparent"
+        app:tabIndicatorHeight="4dp"
+        app:tabBackground="@color/tbc_10"
+        app:tabTextColor="@color/tbc_100"
+        app:tabSelectedTextColor="@color/tbc_100"
+        app:tabTextAppearance="@style/AppTabTextAppearance"
+        app:tabMinWidth="@dimen/size82"
+        app:tabGravity="fill"
+        app:tabMode="scrollable"
+        app:tabPaddingStart="@dimen/size04"
+        app:tabPaddingEnd="@dimen/size04"
+        android:layout_marginStart="@dimen/size16"
+        android:layout_marginEnd="@dimen/size16"/>
+
+    <ImageView
+        android:id="@+id/tab_layout_scroll_form_start"
+        android:layout_width="@dimen/size35"
+        android:layout_height="match_parent"
+        android:contentDescription="@null"
+        android:scaleType="fitXY"
+        android:src="@drawable/tap_arrow_left"
+        android:layout_gravity="start"
+        android:visibility="invisible"
+        />
+
+    <ImageView
+        android:id="@+id/tab_layout_scroll_form__end"
+        android:layout_width="@dimen/size35"
+        android:layout_height="match_parent"
+        android:contentDescription="@null"
+        android:scaleType="fitXY"
+        android:src="@drawable/tap_arrow_right"
+        android:layout_gravity="end"
+        android:visibility="invisible"
+        />
+</FrameLayout>

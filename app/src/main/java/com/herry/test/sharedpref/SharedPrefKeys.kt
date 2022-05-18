@@ -10,7 +10,4 @@ object SharedPrefKeys {
     val PASSWORD = PreferenceKey(prefName = PreferenceNameDefault(),
         key = "PASSWORD", volatile = true)
 
-    val SET_FEED_RECORDS = PreferenceKey(prefName = PreferenceNameDefault(),
-        key = "INIT_FEED_DB", volatile = true, defaultValue = false)
-
 }

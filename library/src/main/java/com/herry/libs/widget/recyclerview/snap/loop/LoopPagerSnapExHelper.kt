@@ -1,6 +1,7 @@
-package com.herry.libs.widget.recyclerview.loopsnap
+package com.herry.libs.widget.recyclerview.snap.loop
 
 import androidx.recyclerview.widget.RecyclerView
+import com.herry.libs.widget.recyclerview.snap.PagerSnapExHelper
 
 open class LoopPagerSnapExHelper : PagerSnapExHelper() {
 

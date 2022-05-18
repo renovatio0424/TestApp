@@ -5,19 +5,27 @@ import com.herry.libs.media.exoplayer.ExoPlayerManager
 import com.herry.libs.nodeview.model.Node
 import com.herry.libs.nodeview.model.NodeHelper
 import com.herry.libs.nodeview.model.NodeModelGroup
-import com.herry.test.app.bottomnav.data.FeedsData
 import com.herry.test.app.bottomnav.hots.forms.FeedForm
+import com.herry.test.repository.feed.db.FeedDB
+import com.herry.test.repository.feed.db.FeedDBRepository
 import io.reactivex.Observable
 
 
 class NewPresenter : NewContract.Presenter() {
+
+    companion object {
+        const val PAGE_SIZE = 10
+    }
+
+    private var feedDatabase: FeedDB? = null
+    private var feedRepository: FeedDBRepository? = null
 
     private val feedNodes: Node<NodeModelGroup> = NodeHelper.createNodeGroup()
     private var currentPosition: Int = 0
 
     private val exoPlayerManger: ExoPlayerManager = ExoPlayerManager(
         context = {
-            view?.getContext()
+            view?.getViewContext()
         },
         isSingleInstance = false
     )
@@ -25,9 +33,21 @@ class NewPresenter : NewContract.Presenter() {
     override fun onAttach(view: NewContract.View) {
         super.onAttach(view)
 
+        val context = view.getViewContext() ?: return
+        feedDatabase = FeedDB.getInstance(context)?.also { db ->
+            feedRepository = FeedDBRepository(db.dao())
+        }
+
         view.root.beginTransition()
         NodeHelper.addNode(view.root, feedNodes)
         view.root.endTransition()
+    }
+
+    override fun onDetach() {
+        feedRepository = null
+        feedDatabase = null
+
+        super.onDetach()
     }
 
     override fun onLaunch(view: NewContract.View, recreated: Boolean) {
@@ -56,27 +76,25 @@ class NewPresenter : NewContract.Presenter() {
         }
     }
 
-    private fun loadFeeds(lastId: String = "-1") {
+    private fun loadFeeds(page: Int = 1) {
         subscribeObservable(Observable.create<MutableList<FeedForm.Model>> { emitter ->
             val list: MutableList<FeedForm.Model> = mutableListOf()
-            val feeds: LinkedHashMap<String, String> = FeedsData.getFeeds(lastId, 10)
-            feeds.keys.forEach { id ->
-                val url = feeds[id]
-                if (url != null) {
-                    list.add(FeedForm.Model(id, url))
-                }
+
+            feedRepository?.getNewFeeds(page, PAGE_SIZE)?.forEach { feed ->
+                list.add(FeedForm.Model(feed))
             }
+
             emitter.onNext(list)
             emitter.onComplete()
         }, { videos ->
-            display(lastId == "-1", videos)
+            display(page == 1, videos)
         })
     }
 
     private fun reloadFeeds() {
         val videos = NodeHelper.getChildrenModels<FeedForm.Model>(feedNodes)
         if (videos.size <= 0) {
-            loadFeeds("-1")
+            loadFeeds(1)
         } else {
             feedNodes.beginTransition()
             feedNodes.clearChild()
@@ -109,7 +127,7 @@ class NewPresenter : NewContract.Presenter() {
     override fun preparePlayer(model: FeedForm.Model?): ExoPlayer? {
         model ?: return null
 
-        return exoPlayerManger.prepare(model.id, model.url)
+        return exoPlayerManger.prepare(model.feed.projectId, model.feed.videoPath)
     }
 
     private fun getFeedModelFromFeeds(position: Int): FeedForm.Model?{
@@ -121,24 +139,24 @@ class NewPresenter : NewContract.Presenter() {
     override fun play(position: Int) {
         val model = getFeedModelFromFeeds(position) ?: return
 
-        exoPlayerManger.play(model.id, model.url, true)
+        exoPlayerManger.play(model.feed.projectId, model.feed.videoPath, true)
     }
 
     override fun stop(position: Int) {
         val model = getFeedModelFromFeeds(position) ?: return
 
-        exoPlayerManger.stop(model.id)
+        exoPlayerManger.stop(model.feed.projectId)
     }
 
     override fun stop(model: FeedForm.Model?) {
         model ?: return
-        exoPlayerManger.stop(model.id)
+        exoPlayerManger.stop(model.feed.projectId)
     }
 
     override fun togglePlay(model: FeedForm.Model?) {
         model ?: return
 
-        val id = model.id
+        val id = model.feed.projectId
         if (exoPlayerManger.isPlaying(id)) {
             // to pause
             exoPlayerManger.pause(id)
@@ -154,7 +172,7 @@ class NewPresenter : NewContract.Presenter() {
 
     override fun loadMore() {
         val feeds = NodeHelper.getChildrenModels<FeedForm.Model>(feedNodes)
-        val lastId = if (feeds.isNotEmpty()) feeds.last().id else return
-        loadFeeds(lastId)
+        val currentPage = feeds.size / PAGE_SIZE
+        loadFeeds(if (currentPage > 0) currentPage + 1 else 1)
     }
 }

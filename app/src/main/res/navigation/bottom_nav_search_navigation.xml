@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/feed_list_fragment"
-        android:name="com.herry.test.app.bottomnav.feeds.list.FeedListFragment"
+        android:name="com.herry.test.app.bottomnav.feeds.list.FeedsListFragment"
         tools:layout="@layout/feed_list_fragment" />
 
     <fragment

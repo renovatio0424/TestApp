@@ -77,6 +77,8 @@ class AppDialogListFragment : BaseNavView<AppDialogListContract.View, AppDialogL
 
     @SuppressLint("SetTextI18n")
     override fun onScreen(type: AppDialogListContract.TestItemType) {
+        val context = this.context ?: return
+
         when (type) {
             AppDialogListContract.TestItemType.TITLE_MESSAGE_BUTTON_1 -> {
                 AlertDialog.Builder(requireActivity()).apply {

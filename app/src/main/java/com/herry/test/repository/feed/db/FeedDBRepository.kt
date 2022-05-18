@@ -3,15 +3,21 @@ package com.herry.test.repository.feed.db
 import android.content.Context
 import android.util.JsonReader
 import androidx.annotation.WorkerThread
-import com.herry.libs.util.preferences.PreferenceHelper
-import com.herry.test.sharedpref.SharedPrefKeys
 import java.io.IOException
 import java.io.InputStreamReader
 
+@Suppress("unused")
 class FeedDBRepository(private val dao: FeedDao) {
 
     @WorkerThread
-    fun getList(): List<Feed> = dao.getList()
+    fun getList(category: Int = 0, page: Int = 1, pageSize: Int = 0): List<Feed> {
+        return dao.getList(category, page - 1, pageSize)
+    }
+
+    @WorkerThread
+    fun getNewFeeds(page: Int = 1, pageSize: Int = 10): List<Feed> {
+        return dao.getNewList(page - 1, pageSize)
+    }
 
     // By default Room runs suspend queries off the main thread, therefore, we don't need to
     // implement anything else to ensure we're not doing long running database work
@@ -20,17 +26,6 @@ class FeedDBRepository(private val dao: FeedDao) {
     @WorkerThread
     suspend fun insert(feed: Feed) {
         dao.insert(feed)
-    }
-
-    @WorkerThread
-    fun setDefaultRecords(context: Context) {
-        if (PreferenceHelper.get(SharedPrefKeys.SET_FEED_RECORDS) == false) {
-            // copy from default db file
-            val list = getFeedsFromPreloaded(context)
-            dao.insertAll(list)
-
-            PreferenceHelper.set(SharedPrefKeys.SET_FEED_RECORDS, true)
-        }
     }
 
     private fun getFeedsFromPreloaded(context: Context): List<Feed> {
@@ -58,7 +53,7 @@ class FeedDBRepository(private val dao: FeedDao) {
         var videoPath: String? = null
         var width: Int? = null
         var height: Int? = null
-        var duration: String? = null
+        var category: Int? = null
 
         reader.beginObject()
         while (reader.hasNext()) {
@@ -78,8 +73,8 @@ class FeedDBRepository(private val dao: FeedDao) {
                 "height" -> {
                     height = reader.nextInt()
                 }
-                "duration" -> {
-                    duration = reader.nextString()
+                "category" -> {
+                    category = reader.nextInt()
                 }
                 else -> reader.skipValue()
             }
@@ -93,7 +88,7 @@ class FeedDBRepository(private val dao: FeedDao) {
                 videoPath = videoPath ?: "",
                 width = width ?: 0,
                 height = height ?: 0,
-                duration = duration ?: ""
+                category = category ?: 1
             )
         } else {
             null

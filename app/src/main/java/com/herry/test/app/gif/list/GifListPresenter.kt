@@ -1,5 +1,6 @@
 package com.herry.test.app.gif.list
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
@@ -46,7 +47,7 @@ class GifListPresenter : GifListContract.Presenter() {
     }
 
     private fun updateGifList(list: MutableList<GifMediaFileInfoData>) {
-        view?.getContext() ?: return
+        view?.getViewContext() ?: return
 
         this.nodes.beginTransition()
 
@@ -57,9 +58,10 @@ class GifListPresenter : GifListContract.Presenter() {
         this.nodes.endTransition()
     }
 
+    @SuppressLint("Range")
     @Suppress("DEPRECATION")
     private fun getGifContentsFromMediaStore(): Observable<MutableList<GifMediaFileInfoData>> {
-        val context: Context? = view?.getContext()
+        val context: Context? = view?.getViewContext()
         context ?: return Observable.empty()
 
         return Observable.fromCallable {

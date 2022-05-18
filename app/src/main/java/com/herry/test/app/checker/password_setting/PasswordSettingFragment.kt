@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.EditText
 import com.herry.libs.app.nav.NavBundleUtil
 import com.herry.libs.util.AppUtil
-import com.herry.libs.util.BundleUtil
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
 import com.herry.test.widget.TitleBarForm

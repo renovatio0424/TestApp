@@ -22,7 +22,7 @@ abstract class NodeView<H : NodeHolder> {
         return bindHolder(context, view)
     }
 
-    fun bindHolder(context: Context, parent: ViewGroup?, @IdRes id: Int): H? {
+    fun bindHolder(context: Context, parent: View?, @IdRes id: Int): H? {
         return bindHolder(context, parent?.findViewById(id))
     }
 

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="@dimen/size32"
+    android:layout_marginStart="@dimen/size06"
+    android:layout_marginEnd="@dimen/size06"
+    android:orientation="horizontal"
+    android:background="?android:attr/selectableItemBackground"
+    app:cardCornerRadius="@dimen/size16"
+    app:cardElevation="0dp"
+    tools:ignore="SpUsage,UseCompoundDrawables">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:paddingStart="@dimen/size12"
+        android:paddingEnd="@dimen/size12"
+        android:background="?android:attr/selectableItemBackground">
+
+        <ImageView
+            android:id="@+id/chip_form_icon"
+            android:layout_width="@dimen/size19"
+            android:layout_height="wrap_content"
+            android:contentDescription="@null"
+            android:adjustViewBounds="true"
+            android:layout_marginEnd="@dimen/size08"
+            />
+
+        <TextView
+            android:id="@+id/chip_form_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/size14"
+            android:textColor="@color/tbc_100"
+            android:textStyle="normal"
+            />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

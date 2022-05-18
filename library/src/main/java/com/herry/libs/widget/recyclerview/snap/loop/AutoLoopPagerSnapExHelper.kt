@@ -1,4 +1,4 @@
-package com.herry.libs.widget.recyclerview.loopsnap
+package com.herry.libs.widget.recyclerview.snap.loop
 
 import android.annotation.SuppressLint
 import android.os.Handler

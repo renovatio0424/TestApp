@@ -22,7 +22,7 @@ class ResizingUIPresenter: ResizingUIContract.Presenter() {
     }
     
     private fun setMenuItems() {
-        view?.getContext() ?: return
+        view?.getViewContext() ?: return
 
         this.nodes.beginTransition()
 

@@ -32,7 +32,7 @@ class PickListPresenter : PickListContract.Presenter() {
     }
 
     private fun loadList() {
-        view?.getContext() ?: return
+        view?.getViewContext() ?: return
 
         this.nodes.beginTransition()
 
@@ -57,7 +57,7 @@ class PickListPresenter : PickListContract.Presenter() {
 
     @Throws(IOException::class)
     override fun getToTakeTempFile(type: PickListContract.PickType): File? {
-        val context = view?.getContext() ?: return null
+        val context = view?.getViewContext() ?: return null
 
         // Create an image file name
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(Date())
@@ -87,7 +87,7 @@ class PickListPresenter : PickListContract.Presenter() {
 
     override fun getUriForFileProvider(file: File?): Uri? {
         file ?: return null
-        val context = view?.getContext() ?: return null
+        val context = view?.getViewContext() ?: return null
 
         return FileProvider.getUriForFile(
             context,

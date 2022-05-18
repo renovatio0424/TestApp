@@ -29,7 +29,7 @@ class IntentListPresenter : IntentListContract.Presenter() {
     }
 
     private fun setTestItems() {
-        view?.getContext() ?: return
+        view?.getViewContext() ?: return
 
         this.nodes.beginTransition()
 

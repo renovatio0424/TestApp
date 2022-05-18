@@ -37,7 +37,7 @@ abstract class NodeForm<H : NodeHolder, M : Any>(val hClass: KClass<H>, val mCla
         bindFormModel(context, this.model)
     }
 
-    internal fun bindModel(context: Context, holder: NodeHolder, model: Any) {
+    fun bindModel(context: Context, holder: NodeHolder, model: Any) {
         val cHolder: H? = hClass.safeCast(holder)
         val cModel: M? = mClass.safeCast(model)
 

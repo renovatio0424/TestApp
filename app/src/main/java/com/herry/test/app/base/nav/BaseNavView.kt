@@ -1,5 +1,6 @@
 package com.herry.test.app.base.nav
 
+import android.content.Context
 import android.os.Bundle
 import com.herry.libs.app.activity_caller.module.ACError
 import com.herry.libs.mvp.MVPPresenter
@@ -11,6 +12,8 @@ import com.herry.libs.mvp.MVPViewCreation
 abstract class BaseNavView<V: MVPView<P>, P: MVPPresenter<V>>: BaseNavFragment(), MVPView<P>, MVPViewCreation<V, P> {
 
     override var presenter: P? = null
+
+    override fun getViewContext(): Context? = context
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

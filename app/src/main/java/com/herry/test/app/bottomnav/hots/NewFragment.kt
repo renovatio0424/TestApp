@@ -14,7 +14,7 @@ import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.libs.util.ViewUtil
 import com.herry.libs.widget.recyclerview.endless.EndlessRecyclerViewScrollListener
-import com.herry.libs.widget.recyclerview.loopsnap.PagerSnapExHelper
+import com.herry.libs.widget.recyclerview.snap.PagerSnapExHelper
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
 import com.herry.test.app.bottomnav.hots.forms.FeedForm
@@ -49,7 +49,7 @@ class NewFragment: BaseNavView<NewContract.View, NewContract.Presenter>(), NewCo
     }
 
     private fun init(view: View?) {
-        view ?: return
+        val context = view?.context ?: return
 
         view.findViewById<RecyclerView>(R.id.new_fragment_list)?.let { recyclerView ->
             val layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
@@ -100,10 +100,10 @@ class NewFragment: BaseNavView<NewContract.View, NewContract.Presenter>(), NewCo
         override fun onBindForms(list: MutableList<NodeForm<out NodeHolder, *>>) {
             list.add(FeedForm(
                 onAttachedVideoView = { form, holder ->
-                    holder.videoView.player = presenter?.preparePlayer(NodeRecyclerForm.getBindModel(form, holder))
+                    holder.videoView?.player = presenter?.preparePlayer(NodeRecyclerForm.getBindModel(form, holder))
                 },
                 onDetachedVideoView = { form, holder ->
-                    holder.videoView.player = null
+                    holder.videoView?.player = null
                     presenter?.stop(NodeRecyclerForm.getBindModel(form, holder))
                 },
                 onTogglePlayer = { form, holder ->

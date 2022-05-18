@@ -29,7 +29,7 @@ class HomePresenter : HomeContract.Presenter() {
     }
 
     private fun displayNavigator(hasNewNotice: Boolean, isStart: Boolean) {
-        view?.getContext() ?: return
+        view?.getViewContext() ?: return
 
         val currentScreen = this.currentScreen ?: HomeBottomNavScreenId.CREATE
 
