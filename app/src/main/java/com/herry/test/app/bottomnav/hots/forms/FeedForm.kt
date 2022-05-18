@@ -41,9 +41,7 @@ class FeedForm(
                 super.onIsPlayingChanged(isPlaying)
                 cover?.let { cover ->
                     if (cover.isVisible && cover.alpha == 1f) {
-                        ViewAnimPlayer(
-
-                        ).apply {
+                        ViewAnimPlayer().apply {
                             add(ViewAnimCreator(cover)
                                     .alpha(1f, 0f)
                                     .duration(1000L))
@@ -78,7 +76,7 @@ class FeedForm(
         if (constraintLayout != null) {
             val constraintSet = ConstraintSet()
             constraintSet.clone(constraintLayout)
-            holder.videoView?.let { preview ->
+            holder.cover?.let { preview ->
                 val width = model.feed.width
                 val height = model.feed.height
                 val projectRatio = model.feed.ratio()

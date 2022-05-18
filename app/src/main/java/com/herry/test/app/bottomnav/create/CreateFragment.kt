@@ -5,8 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.herry.libs.util.ViewUtil
+import com.herry.libs.widget.extension.getViewMargin
 import com.herry.libs.widget.extension.navigateTo
 import com.herry.libs.widget.extension.setOnProtectClickListener
+import com.herry.libs.widget.extension.setViewMargin
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavFragment
 
@@ -29,8 +31,10 @@ class CreateFragment: BaseNavFragment() {
     private fun init(view: View?) {
         view ?: return
 
-        view.findViewById<View>(R.id.create_fragment_setting)?.apply {
-            setOnProtectClickListener {
+        view.findViewById<View>(R.id.create_fragment_setting)?.let { setting ->
+            val margins = setting.getViewMargin()
+            setting.setViewMargin(margins.left, margins.top + ViewUtil.getStatusBarHeight(context), margins.right, margins.bottom)
+            setting.setOnProtectClickListener {
                 navigateTo(destinationId = R.id.setting_fragment)
             }
         }

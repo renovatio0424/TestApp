@@ -4,12 +4,14 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.res.ColorStateList
+import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.ResultReceiver
+import android.util.DisplayMetrics
 import android.util.Size
 import android.view.*
 import android.view.inputmethod.InputMethodManager
@@ -243,6 +245,32 @@ object ViewUtil {
     fun getDimensionPixelSize(context: Context?, @DimenRes id: Int): Int {
         val resources = context?.resources ?: return 0
         return resources.getDimensionPixelSize(id)
+    }
+
+    /**
+     * This method converts dp unit to equivalent pixels, depending on device density.
+     *
+     * @param dp A value in dp (density independent pixels) unit. Which we need to convert into pixels
+     * @return A float value to represent px equivalent to dp depending on device density
+     */
+    fun convertDpToPixel(dp: Float): Float {
+        val metrics = Resources.getSystem().displayMetrics
+        //float px = dp * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+        //Trace.d("Herry", "convertDpToPixel dp:" + dp + " to px:" + px);
+        return dp * (metrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
+    }
+
+    /**
+     * This method converts device specific pixels to density independent pixels.
+     *
+     * @param px A value in px (pixels) unit. Which we need to convert into db
+     * @return A float value to represent dp equivalent to px value
+     */
+    fun convertPixelsToDp(px: Float): Float {
+        val metrics = Resources.getSystem().displayMetrics
+        //float dp = px / ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+        //Trace.d("Herry", "convertPixelsToDp px:" + px + " to dp:" + dp);
+        return px / (metrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
     }
 
     fun getScreenSize(context: Context?): Size {
