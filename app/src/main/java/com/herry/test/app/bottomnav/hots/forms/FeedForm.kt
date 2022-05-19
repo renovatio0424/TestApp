@@ -76,23 +76,20 @@ class FeedForm(
         if (constraintLayout != null) {
             val constraintSet = ConstraintSet()
             constraintSet.clone(constraintLayout)
-            holder.cover?.let { preview ->
+            holder.cover?.let { cover ->
                 val width = model.feed.width
                 val height = model.feed.height
-                val projectRatio = model.feed.ratio()
-                val previewRatio = constraintLayout.width.toFloat() / constraintLayout.height.toFloat()
-                val dimensionRatio = String.format(Locale.ENGLISH, "${if (projectRatio > previewRatio) "H" else "W"},%d:%d", width, height)
-                constraintSet.setDimensionRatio(preview.id, dimensionRatio)
+                val dimensionRatio = String.format(Locale.ENGLISH, "${if (ViewUtil.isPortraitOrientation(context)) "H" else "W"},%d:%d", width, height)
+                constraintSet.setDimensionRatio(cover.id, dimensionRatio)
                 constraintSet.applyTo(constraintLayout)
             }
         }
 
         holder.id?.text = model.feed.projectId
-        val coverImage = holder.cover
-        if (coverImage != null) {
-            coverImage.isVisible = true
-            coverImage.alpha = 1f
-            Glide.with(context).load(model.feed.imagePath).into(coverImage)
+        holder.cover?.let { cover ->
+            cover.isVisible = true
+            cover.alpha = 1f
+            Glide.with(context).load(model.feed.imagePath).into(cover)
         }
     }
 

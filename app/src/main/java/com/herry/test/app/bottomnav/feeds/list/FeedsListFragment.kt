@@ -1,6 +1,7 @@
 package com.herry.test.app.bottomnav.feeds.list
 
 import android.content.Context
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.constraintlayout.widget.ConstraintsChangedListener
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
@@ -45,7 +47,7 @@ class FeedsListFragment: BaseNavView<FeedsListContract.View, FeedsListContract.P
 
     private var recyclerForm = object: RecyclerForm() {
         private fun calculateSpanCounts(context: Context): Int {
-            val defaultMargin = 8 // 8dp
+            val defaultMargin = 16 // 16dp
             val defaultSpanCounts = 2
             val screenSize = ViewUtil.getScreenSize(context)
             val spanCounts = if (screenSize.width <= 0) {
@@ -173,7 +175,9 @@ class FeedsListFragment: BaseNavView<FeedsListContract.View, FeedsListContract.P
             }
 
             holder.cover?.let { cover ->
-                Glide.with(context).load(model.imagePath).into(cover)
+                Glide.with(context).load(model.imagePath)
+                    .placeholder(ColorDrawable(ViewUtil.getColor(context, R.color.tbc_70)))
+                    .into(cover)
             }
         }
     }

@@ -24,8 +24,8 @@ data class Feed(
     intro	10
      */
     @ColumnInfo(name = "category") val category: Int,
-    @ColumnInfo(name = "create_time") val createTime: Long = System.currentTimeMillis(),
-    @ColumnInfo(name = "update_time") var updateTime: Long = System.currentTimeMillis()
-) {
-    fun ratio(): Float = if (height == 0) 0f else width.toFloat() / height
-}
+    @ColumnInfo(name = "published_at") val publishedAt: String,
+    @ColumnInfo(name = "title") val title: String,
+    @ColumnInfo(name = "description") var description: String,
+    @ColumnInfo(name = "creator_id") val creatorId: String
+)

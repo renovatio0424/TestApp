@@ -4,14 +4,14 @@ import androidx.room.*
 
 @Dao
 interface FeedDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(feed: Feed)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(feeds: List<Feed>)
-
-    @Update
-    fun update(feed: Feed)
+//    @Insert(onConflict = OnConflictStrategy.REPLACE)
+//    fun insert(feed: Feed)
+//
+//    @Insert(onConflict = OnConflictStrategy.REPLACE)
+//    fun insertAll(feeds: List<Feed>)
+//
+//    @Update
+//    fun update(feed: Feed)
 
     @Query("DELETE from feed")
     fun deleteAll()
@@ -20,7 +20,7 @@ interface FeedDao {
         "SELECT * " +
                 "FROM feed " +
                 "WHERE CASE WHEN :category > 0 THEN category = :category ELSE category END " +
-                "ORDER BY update_time DESC " +
+                "ORDER BY published_at DESC " +
                 "LIMIT CASE WHEN :loadSize > 0 THEN :loadSize ELSE -1 END " +
                 "OFFSET CASE WHEN :loadSize > 0 THEN :offset * :loadSize ELSE 0 END"
     )
@@ -28,7 +28,7 @@ interface FeedDao {
 
     @Query(
         "SELECT * " +
-                "FROM (SELECT * FROM feed WHERE category ORDER BY update_time DESC LIMIT 30) " +
+                "FROM (SELECT * FROM feed WHERE category ORDER BY published_at DESC LIMIT 30) " +
                 "LIMIT CASE WHEN :loadSize > 0 THEN :loadSize ELSE -1 END " +
                 "OFFSET CASE WHEN :loadSize > 0 THEN :offset * :loadSize ELSE 0 END"
     )

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Rect
@@ -276,7 +277,11 @@ object ViewUtil {
     fun getScreenSize(context: Context?): Size {
         val resources = context?.resources ?: return Size(0, 0)
 
-        val displayMetrics = context.resources.displayMetrics ?: return Size(0, 0)
+        val displayMetrics = resources.displayMetrics ?: return Size(0, 0)
         return Size(displayMetrics.widthPixels, displayMetrics.heightPixels)
     }
+
+    fun isTabletDevice(context: Context?): Boolean = (context?.resources?.configuration?.smallestScreenWidthDp ?: 0) >= 600
+
+    fun isPortraitOrientation(context: Context?): Boolean = context?.resources?.configuration?.orientation == Configuration.ORIENTATION_PORTRAIT
 }

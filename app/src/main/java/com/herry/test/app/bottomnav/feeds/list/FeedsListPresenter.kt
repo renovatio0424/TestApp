@@ -3,7 +3,6 @@ package com.herry.test.app.bottomnav.feeds.list
 import com.herry.libs.nodeview.model.Node
 import com.herry.libs.nodeview.model.NodeHelper
 import com.herry.libs.nodeview.model.NodeModelGroup
-import com.herry.test.app.bottomnav.hots.NewPresenter
 import com.herry.test.repository.feed.db.Feed
 import com.herry.test.repository.feed.db.FeedDB
 import com.herry.test.repository.feed.db.FeedDBRepository
@@ -121,7 +120,7 @@ class FeedsListPresenter(private val category: FeedsListContract.Categories) : F
 
     override fun loadMore() {
         val feeds = NodeHelper.getChildrenModels<Feed>(feedNodes)
-        val currentPage = feeds.size / NewPresenter.PAGE_SIZE
+        val currentPage = feeds.size / PAGE_SIZE
         loadFeeds(if (currentPage > 0) currentPage + 1 else 1)
     }
 }
