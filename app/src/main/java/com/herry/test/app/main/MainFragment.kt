@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.herry.libs.app.activity_caller.module.ACNavigation
 import com.herry.libs.app.activity_caller.module.ACPermission
+import com.herry.libs.log.Trace
 import com.herry.libs.nodeview.NodeForm
 import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.nodeview.model.NodeRoot
@@ -110,7 +111,7 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
                     ACNavigation.IntentCaller(
                         Intent(requireActivity(), NestedNavFragmentsActivity::class.java), onResult = { result ->
                             if (result.resultCode == Activity.RESULT_OK) {
-                                Log.d("Herry", "result = OK")
+                                Trace.d("Herry", "result = OK")
                             }
                         }
                     ))

@@ -4,15 +4,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bottom_nav_feeds_navigation"
-    app:startDestination="@+id/feed_list_fragment">
+    app:startDestination="@+id/feeds_fragment">
 
     <fragment
-        android:id="@+id/feed_list_fragment"
-        android:name="com.herry.test.app.bottomnav.feeds.list.FeedsListFragment"
-        tools:layout="@layout/feed_list_fragment" />
+        android:id="@+id/feeds_fragment"
+        android:name="com.herry.test.app.bottomnav.feeds.list.FeedsFragment"
+        tools:layout="@layout/feeds_fragment" />
 
     <fragment
         android:id="@+id/feed_search_fragment"
-        android:name="com.herry.test.app.bottomnav.feeds.result.FeedSearchFragment"
+        android:name="com.herry.test.app.bottomnav.feeds.result.FeedSearchResultFragment"
         tools:layout="@layout/feed_search_fragment" />
 </navigation>

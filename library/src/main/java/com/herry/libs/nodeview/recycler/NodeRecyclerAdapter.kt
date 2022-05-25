@@ -163,7 +163,7 @@ abstract class NodeRecyclerAdapter(
         if (viewTypeToForms[holder.itemViewType] is NodeRecyclerForm) {
             (viewTypeToForms[holder.itemViewType] as NodeRecyclerForm).onViewRecycled(
                 context(),
-                holder.holder
+                holder
             )
         }
     }
@@ -174,19 +174,19 @@ abstract class NodeRecyclerAdapter(
         if (viewTypeToForms[holder.itemViewType] is NodeRecyclerForm) {
             (viewTypeToForms[holder.itemViewType] as NodeRecyclerForm).onViewAttachedToWindow(
                 context(),
-                holder.holder
+                holder
             )
         }
     }
 
     override fun onViewDetachedFromWindow(holder: NodeRecyclerHolder) {
-        super.onViewDetachedFromWindow(holder)
-
         if (viewTypeToForms[holder.itemViewType] is NodeRecyclerForm) {
             (viewTypeToForms[holder.itemViewType] as NodeRecyclerForm).onViewDetachedFromWindow(
                 context(),
-                holder.holder
+                holder
             )
         }
+
+        super.onViewDetachedFromWindow(holder)
     }
 }

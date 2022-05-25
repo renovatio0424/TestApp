@@ -28,7 +28,7 @@
         app:layout_constraintTop_toBottomOf="@id/alphabet_indexer_scroller_list_fragment_title"
         app:layout_constraintBottom_toBottomOf="parent" />
 
-    <com.herry.libs.widget.recyclerview.scroller.RecyclerViewAlphabetIndexerScrollerView
+    <com.herry.libs.widget.view.recyclerview.scroller.RecyclerViewAlphabetIndexerScrollerView
         android:id="@+id/alphabet_indexer_scroller_list_fragment_rvais"
         android:layout_width="0dp"
         android:layout_height="0dp"

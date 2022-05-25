@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/tbc_100_a50"
+    android:background="@color/tbc_10"
     tools:ignore="ContentDescription, SpUsage, HardcodedText, UseCompoundDrawables"
     tools:viewBindingIgnore="true">
 

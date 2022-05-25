@@ -55,7 +55,7 @@ class MainPresenter : MainContract.Presenter() {
 //                emitter.onComplete()
 //            }.throttleFirst(200, TimeUnit.MILLISECONDS)
 //        , {
-//                Log.d("Herry", "throttle: $it")
+//                Trace.d("Herry", "throttle: $it")
 //            }
 //        )
 //    }

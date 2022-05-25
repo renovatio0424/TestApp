@@ -18,7 +18,7 @@ import com.herry.libs.nodeview.model.NodeRoot
 import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.libs.widget.extension.setOnProtectClickListener
-import com.herry.libs.widget.recyclerview.form.LinearSnapRecyclerViewForm
+import com.herry.libs.widget.view.recyclerview.form.LinearSnapRecyclerViewForm
 import com.herry.test.R
 
 class SingleLineChipsForm(

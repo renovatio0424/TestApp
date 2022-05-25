@@ -1,12 +1,12 @@
 package com.herry.test.app.pick
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator
 import com.herry.libs.app.activity_caller.module.ACPermission
 import com.herry.libs.app.activity_caller.module.ACTake
 import com.herry.libs.helper.ToastHelper
+import com.herry.libs.log.Trace
 import com.herry.libs.media.media_scanner.MediaScanner
 import com.herry.libs.nodeview.NodeForm
 import com.herry.libs.nodeview.NodeHolder
@@ -72,6 +73,7 @@ class PickListFragment: BaseNavView<PickListContract.View, PickListContract.Pres
     }
 
 
+    @SuppressLint("QueryPermissionsNeeded")
     override fun onScreen(type: PickListContract.PickType) {
         when (type) {
             PickListContract.PickType.PICK_PHOTO -> {
@@ -144,7 +146,7 @@ class PickListFragment: BaseNavView<PickListContract.View, PickListContract.Pres
                                                     mediaScanning(tempFile.absolutePath)
                                                 }
 
-                                                Log.d("Herry", "path: ${tempFile.absolutePath}")
+                                                Trace.d("Herry", "path: ${tempFile.absolutePath}")
 
                                                 ToastHelper.showToast(activity, "taked ${tempFile.absolutePath}")
                                             } else {
@@ -161,7 +163,7 @@ class PickListFragment: BaseNavView<PickListContract.View, PickListContract.Pres
                                     val activity = result.callActivity
 
                                     activity.lifecycleScope.launchWhenResumed {
-                                        Log.d("Herry", "path: ${activity.lifecycle.currentState}")
+                                        Trace.d("Herry", "path: ${activity.lifecycle.currentState}")
                                         if (result.success) {
                                             val picked: Uri? = result.uris.firstOrNull()
                                             if (picked == null) {
@@ -169,7 +171,7 @@ class PickListFragment: BaseNavView<PickListContract.View, PickListContract.Pres
                                                     mediaScanning(tempFile.absolutePath)
                                                 }
 
-                                                Log.d("Herry", "path: ${tempFile.absolutePath}")
+                                                Trace.d("Herry", "path: ${tempFile.absolutePath}")
 
                                                 ToastHelper.showToast(activity, "taked ${tempFile.absolutePath}")
                                             } else {

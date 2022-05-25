@@ -17,7 +17,7 @@ import com.herry.libs.nodeview.model.NodeRoot
 import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.libs.widget.extension.setOnProtectClickListener
-import com.herry.libs.widget.recyclerview.scroller.RecyclerViewAlphabetIndexerScrollerView
+import com.herry.libs.widget.view.recyclerview.scroller.RecyclerViewAlphabetIndexerScrollerView
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
 import com.herry.test.widget.TitleBarForm

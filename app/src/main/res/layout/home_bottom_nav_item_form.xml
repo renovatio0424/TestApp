@@ -29,7 +29,7 @@
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
                 android:src="@drawable/ic_navigation_feeds"
-                app:tint="@color/selector_text"/>
+                app:tint="@color/selector_bottom_nav_icon"/>
 
             <TextView
                 android:id="@+id/home_bottom_nav_item_form_label"

@@ -13,8 +13,8 @@ import com.herry.libs.nodeview.model.NodeRoot
 import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.libs.util.ViewUtil
-import com.herry.libs.widget.recyclerview.endless.EndlessRecyclerViewScrollListener
-import com.herry.libs.widget.recyclerview.snap.PagerSnapExHelper
+import com.herry.libs.widget.view.recyclerview.endless.EndlessRecyclerViewScrollListener
+import com.herry.libs.widget.view.recyclerview.snap.PagerSnapExHelper
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
 import com.herry.test.app.bottomnav.hots.forms.FeedForm
@@ -58,6 +58,7 @@ class NewFragment: BaseNavView<NewContract.View, NewContract.Presenter>(), NewCo
             if (recyclerView.itemAnimator is SimpleItemAnimator) {
                 (recyclerView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
             }
+            recyclerView.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING)
             recyclerView.adapter = this@NewFragment.adapter
 
             snapHelper = PagerSnapExHelper().apply {
@@ -99,12 +100,14 @@ class NewFragment: BaseNavView<NewContract.View, NewContract.Presenter>(), NewCo
     inner class Adapter: NodeRecyclerAdapter(::requireContext) {
         override fun onBindForms(list: MutableList<NodeForm<out NodeHolder, *>>) {
             list.add(FeedForm(
-                onAttachedVideoView = { form, holder ->
-                    holder.videoView?.player = presenter?.preparePlayer(NodeRecyclerForm.getBindModel(form, holder))
+                onAttachedVideoView = { videoView, model ->
+//                    Trace.d("Herry", "onAttachedVideoView: ${model?.index}")
+                    videoView?.player = presenter?.preparePlayer(model)
                 },
-                onDetachedVideoView = { form, holder ->
-                    holder.videoView?.player = null
-                    presenter?.stop(NodeRecyclerForm.getBindModel(form, holder))
+                onDetachedVideoView = { videoView, model ->
+//                    Trace.d("Herry", "onDetachedVideoView: ${model?.index}")
+                    videoView?.player = null
+                    presenter?.stop(model)
                 },
                 onTogglePlayer = { form, holder ->
                     presenter?.togglePlay(NodeRecyclerForm.getBindModel(form, holder))

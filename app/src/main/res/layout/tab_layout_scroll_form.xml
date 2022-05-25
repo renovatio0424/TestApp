@@ -11,11 +11,11 @@
         android:id="@+id/tab_layout_scroll_form_tab_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:tabIndicatorColor="@android:color/transparent"
-        app:tabIndicatorHeight="4dp"
+        app:tabIndicatorColor="#FF4EBBB8"
+        app:tabIndicatorHeight="@dimen/size02"
         app:tabBackground="@color/tbc_10"
         app:tabTextColor="@color/tbc_100"
-        app:tabSelectedTextColor="@color/tbc_100"
+        app:tabSelectedTextColor="#FF4EBBB8"
         app:tabTextAppearance="@style/AppTabTextAppearance"
         app:tabMinWidth="@dimen/size82"
         app:tabGravity="fill"
@@ -37,7 +37,7 @@
         />
 
     <ImageView
-        android:id="@+id/tab_layout_scroll_form__end"
+        android:id="@+id/tab_layout_scroll_form_end"
         android:layout_width="@dimen/size35"
         android:layout_height="match_parent"
         android:contentDescription="@null"

@@ -80,8 +80,8 @@ class NewPresenter : NewContract.Presenter() {
         subscribeObservable(Observable.create<MutableList<FeedForm.Model>> { emitter ->
             val list: MutableList<FeedForm.Model> = mutableListOf()
 
-            feedRepository?.getNewFeeds(page, PAGE_SIZE)?.forEach { feed ->
-                list.add(FeedForm.Model(feed))
+            feedRepository?.getNewFeeds(page, PAGE_SIZE)?.forEachIndexed { index, feed ->
+                list.add(FeedForm.Model(index, feed))
             }
 
             emitter.onNext(list)

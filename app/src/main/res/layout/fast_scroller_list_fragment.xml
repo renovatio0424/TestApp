@@ -26,7 +26,7 @@
         app:layout_constraintTop_toBottomOf="@id/fast_scroller_list_fragment_title"
         app:layout_constraintBottom_toBottomOf="parent" />
 
-    <com.herry.libs.widget.recyclerview.scroller.RecyclerViewFastScrollerView
+    <com.herry.libs.widget.view.recyclerview.scroller.RecyclerViewFastScrollerView
         android:id="@+id/fast_scroller_list_fragment_rvfs"
         android:layout_width="0dp"
         android:layout_height="0dp"

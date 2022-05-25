@@ -13,6 +13,7 @@ import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.herry.libs.nodeview.NodeForm
 import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
+import com.herry.libs.nodeview.recycler.NodeRecyclerHolder
 import com.herry.libs.util.ViewUtil
 import com.herry.libs.widget.anim.ViewAnimCreator
 import com.herry.libs.widget.anim.ViewAnimListener
@@ -22,11 +23,12 @@ import com.herry.test.repository.feed.db.Feed
 import java.util.*
 
 class FeedForm(
-    private val onAttachedVideoView: (form: FeedForm, holder: FeedForm.Holder) -> Unit,
-    private val onDetachedVideoView: (form: FeedForm, holder: FeedForm.Holder) -> Unit,
+    private val onAttachedVideoView: (videoView: StyledPlayerView?, model: Model?) -> Unit,
+    private val onDetachedVideoView: (videoView: StyledPlayerView?, model: Model?) -> Unit,
     private val onTogglePlayer: (form: FeedForm, holder: FeedForm.Holder) -> Unit
 ): NodeForm<FeedForm.Holder, FeedForm.Model> (Holder::class, Model::class), NodeRecyclerForm {
     data class Model(
+        val index: Int,
         val feed: Feed
     )
 
@@ -93,21 +95,26 @@ class FeedForm(
         }
     }
 
-    override fun onViewRecycled(context: Context, holder: NodeHolder) {
+    override fun onViewRecycled(context: Context, nodeRecyclerHolder: NodeRecyclerHolder) {
     }
 
-    override fun onViewAttachedToWindow(context: Context, holder: NodeHolder) {
-        (holder as? Holder)?.let { formHolder ->
-            onAttachedVideoView(this@FeedForm, formHolder)
-            formHolder.videoView?.player?.removeListener(formHolder.videoViewPlayerListener)
-            formHolder.videoView?.player?.addListener(formHolder.videoViewPlayerListener)
-        }
+    override fun onViewAttachedToWindow(context: Context, nodeRecyclerHolder: NodeRecyclerHolder) {
+        val holder = nodeRecyclerHolder.holder as? Holder ?: return
+        val model = NodeRecyclerForm.getBindModel(this@FeedForm, nodeRecyclerHolder)
+        val videoView = holder.videoView
+
+        onAttachedVideoView(videoView, model)
+
+        videoView?.player?.removeListener(holder.videoViewPlayerListener)
+        videoView?.player?.addListener(holder.videoViewPlayerListener)
     }
 
-    override fun onViewDetachedFromWindow(context: Context, holder: NodeHolder) {
-        (holder as? Holder)?.let { formHolder ->
-            formHolder.videoView?.player?.removeListener(formHolder.videoViewPlayerListener)
-            onDetachedVideoView(this@FeedForm, formHolder)
-        }
+    override fun onViewDetachedFromWindow(context: Context, nodeRecyclerHolder: NodeRecyclerHolder) {
+        val holder = nodeRecyclerHolder.holder as? Holder ?: return
+        val model = NodeRecyclerForm.getBindModel(this@FeedForm, nodeRecyclerHolder)
+        val videoView = holder.videoView
+
+        holder.videoView?.player?.removeListener(holder.videoViewPlayerListener)
+        onDetachedVideoView(videoView, model)
     }
 }
