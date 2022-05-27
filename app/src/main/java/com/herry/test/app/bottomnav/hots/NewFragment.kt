@@ -69,7 +69,7 @@ class NewFragment: BaseNavView<NewContract.View, NewContract.Presenter>(), NewCo
                     }
 
                     override fun onUnsnapped(position: Int, itemCount: Int) {
-                        presenter?.stop(position)
+//                        presenter?.stop(position)
                     }
                 })
             }
@@ -100,13 +100,10 @@ class NewFragment: BaseNavView<NewContract.View, NewContract.Presenter>(), NewCo
     inner class Adapter: NodeRecyclerAdapter(::requireContext) {
         override fun onBindForms(list: MutableList<NodeForm<out NodeHolder, *>>) {
             list.add(FeedForm(
-                onAttachedVideoView = { videoView, model ->
-//                    Trace.d("Herry", "onAttachedVideoView: ${model?.index}")
-                    videoView?.player = presenter?.preparePlayer(model)
+                onAttachedVideoView = { model ->
+                    presenter?.preparePlayer(model)
                 },
-                onDetachedVideoView = { videoView, model ->
-//                    Trace.d("Herry", "onDetachedVideoView: ${model?.index}")
-                    videoView?.player = null
+                onDetachedVideoView = { model ->
                     presenter?.stop(model)
                 },
                 onTogglePlayer = { form, holder ->

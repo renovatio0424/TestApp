@@ -5,6 +5,7 @@ import android.app.Application
 import android.content.*
 import android.content.res.Configuration
 import android.os.Bundle
+import com.herry.libs.log.Trace
 import com.herry.libs.util.AppActivityManager
 import com.herry.libs.util.preferences.PreferenceHelper
 import java.util.concurrent.atomic.AtomicBoolean
@@ -25,6 +26,8 @@ class BaseApplication: Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        Trace.setDebug(true)
 
         // register to be informed of activities starting up
         registerActivityLifecycleCallbacks(

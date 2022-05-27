@@ -15,4 +15,10 @@
         android:id="@+id/setting_fragment"
         android:name="com.herry.test.app.bottomnav.setting.SettingFragment"
         tools:layout="@layout/setting_fragment" />
+
+    <fragment
+        android:id="@+id/feed_detail_fragment"
+        android:name="com.herry.test.app.bottomnav.feeds.detail.FeedDetailFragment"
+        tools:layout="@layout/feed_detail_fragment" />
+
 </navigation>

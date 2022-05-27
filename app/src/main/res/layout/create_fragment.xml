@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="#00ff00"
     tools:ignore="HardcodedText"
-    tools:viewBindingIgnore="false">
+    tools:viewBindingIgnore="true">
 
     <TextView
         android:id="@+id/create_fragment_label"

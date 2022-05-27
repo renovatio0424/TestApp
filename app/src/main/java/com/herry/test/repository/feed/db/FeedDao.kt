@@ -1,6 +1,7 @@
 package com.herry.test.repository.feed.db
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Query
 
 @Dao
 interface FeedDao {
@@ -15,6 +16,14 @@ interface FeedDao {
 
     @Query("DELETE from feed")
     fun deleteAll()
+
+    @Query(
+        "SELECT * " +
+                "FROM feed " +
+                "WHERE project_id IN (:projectIds) " +
+                "ORDER BY published_at DESC"
+    )
+    fun getList(projectIds: List<String>): List<Feed>
 
     @Query(
         "SELECT * " +

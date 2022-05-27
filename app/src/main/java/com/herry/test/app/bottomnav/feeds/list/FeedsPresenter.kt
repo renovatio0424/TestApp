@@ -3,6 +3,9 @@ package com.herry.test.app.bottomnav.feeds.list
 import com.herry.libs.nodeview.model.Node
 import com.herry.libs.nodeview.model.NodeHelper
 import com.herry.libs.nodeview.model.NodeModelGroup
+import com.herry.test.app.bottomnav.data.FeedCategory
+import com.herry.test.app.bottomnav.feeds.detail.FeedDetailCallData
+import com.herry.test.app.bottomnav.feeds.detail.FeedDetailListMode
 import com.herry.test.repository.feed.db.Feed
 import com.herry.test.repository.feed.db.FeedDB
 import com.herry.test.repository.feed.db.FeedDBRepository
@@ -49,14 +52,14 @@ class FeedsPresenter : FeedsContract.Presenter() {
         }
     }
 
-    private fun loadFeedCategories(): Observable<MutableList<FeedsContract.FeedCategory>> {
+    private fun loadFeedCategories(): Observable<MutableList<FeedCategory>> {
         return Observable.create { emitter ->
-            emitter.onNext(FeedsContract.FeedCategory.values().toMutableList())
+            emitter.onNext(FeedCategory.values().toMutableList())
             emitter.onComplete()
         }
     }
 
-    private fun loadFeeds(categories: MutableList<FeedsContract.FeedCategory>): Observable<MutableList<FeedCategoryFeedsPresenter>> {
+    private fun loadFeeds(categories: MutableList<FeedCategory>): Observable<MutableList<FeedCategoryFeedsPresenter>> {
         return Observable.create { emitter ->
             val list: MutableList<FeedCategoryFeedsPresenter> = mutableListOf()
             categories.forEach { category ->
@@ -121,5 +124,30 @@ class FeedsPresenter : FeedsContract.Presenter() {
             this.currentCategoryPosition = updateCurrentCategoryPosition(categoryFeedsPresenters.size, position)
         } catch (ex: IndexOutOfBoundsException) {
         }
+    }
+
+    override fun getFeedDetailCallData(selectedFeed: Feed): FeedDetailCallData? {
+        view?.getViewContext() ?: return null
+
+        val currentFeedCategoryFeedsPresenter = try {
+            this.categoryFeedsNodes.getChildNode(currentCategoryPosition)?.model as? FeedCategoryFeedsPresenter
+        } catch (ex: IndexOutOfBoundsException) {
+            null
+        }
+
+        currentFeedCategoryFeedsPresenter ?: return null
+
+        val projects: MutableList<String> = mutableListOf()
+        currentFeedCategoryFeedsPresenter.getFeeds().forEach { feed ->
+            projects.add(feed.projectId)
+        }
+
+        val category: FeedCategory = currentFeedCategoryFeedsPresenter.category
+        return FeedDetailCallData(
+            projects = projects,
+            mode = FeedDetailListMode.FEEDS,
+            feedsCategory = category,
+            selectedFeed = selectedFeed
+        )
     }
 }

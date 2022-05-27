@@ -10,14 +10,23 @@ import com.bumptech.glide.Glide
 import com.herry.libs.nodeview.NodeForm
 import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.util.ViewUtil
+import com.herry.libs.widget.extension.setOnProtectClickListener
 import com.herry.test.R
 import com.herry.test.repository.feed.db.Feed
 import java.util.*
 
-class FeedCategoryFeedsItemForm: NodeForm<FeedCategoryFeedsItemForm.Holder, Feed>(Holder::class, Feed::class) {
+class FeedCategoryFeedsItemForm(
+    private val onClickItem: ((form: FeedCategoryFeedsItemForm, holder: Holder) -> Unit)?
+): NodeForm<FeedCategoryFeedsItemForm.Holder, Feed>(Holder::class, Feed::class) {
     inner class Holder(context: Context, view: View): NodeHolder(context, view) {
         val container: View? = view.findViewById(R.id.feed_list_item_form_container)
         val cover: ImageView? = view.findViewById(R.id.feed_list_item_form_cover)
+
+        init {
+            container?.setOnProtectClickListener {
+                onClickItem?.invoke(this@FeedCategoryFeedsItemForm, this)
+            }
+        }
     }
 
     override fun onLayout(): Int = R.layout.feed_list_item_form

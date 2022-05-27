@@ -147,11 +147,31 @@ fun View.setViewMargin(left: Int, top: Int, right: Int, bottom: Int) {
     }
 }
 
-fun View.setViewMargin(margin: Int) {
-    this.setViewMargin(margin, margin, margin, margin)
+fun View.setViewMargin(margins: Rect) {
+    setViewMargin(margins.left, margins.top, margins.right, margins.bottom)
 }
 
-fun View.getViewMargin(): Rect {
+fun View.setViewMargin(margin: Int) {
+    setViewMargin(margin, margin, margin, margin)
+}
+
+fun View.setViewMarginTop(margin: Int) {
+    setViewMargin(Rect(getViewMargins().apply { this.top = margin }))
+}
+
+fun View.setViewMarginBottom(margin: Int) {
+    setViewMargin(Rect(getViewMargins().apply { this.bottom = margin }))
+}
+
+fun View.setViewMarginStart(margin: Int) {
+    setViewMargin(Rect(getViewMargins().apply { this.left = margin }))
+}
+
+fun View.setViewMarginEnd(margin: Int) {
+    setViewMargin(Rect(getViewMargins().apply { this.right = margin }))
+}
+
+fun View.getViewMargins(): Rect {
     val margins = Rect()
     if (this.layoutParams is ViewGroup.MarginLayoutParams) {
         val params = this.layoutParams as ViewGroup.MarginLayoutParams
@@ -163,9 +183,40 @@ fun View.getViewMargin(): Rect {
     return margins
 }
 
-fun View.setViewPadding(padding: Int) {
-    this.setPadding(padding, padding, padding, padding)
+fun View.setViewPadding(left: Int, top: Int, right: Int, bottom: Int) {
+    this.setPadding(left, top, right, bottom)
 }
+
+fun View.setViewPadding(paddings: Rect) {
+    setViewPadding(paddings.left, paddings.top, paddings.right, paddings.bottom)
+}
+
+fun View.setViewPadding(padding: Int) {
+    setViewPadding(padding, padding, padding, padding)
+}
+
+fun View.setViewPaddingTop(padding: Int) {
+    setViewPadding(Rect(getViewPaddings().apply { this.top = padding }))
+}
+
+fun View.setViewPaddingBottom(padding: Int) {
+    setViewPadding(Rect(getViewPaddings().apply { this.bottom = padding }))
+}
+
+fun View.setViewPaddingStart(padding: Int) {
+    setViewPadding(Rect(getViewPaddings().apply { this.left = padding }))
+}
+
+fun View.setViewPaddingEnd(padding: Int) {
+    setViewPadding(getViewPaddings().apply { this.right = padding })
+}
+
+fun View.getViewPaddings(): Rect = Rect(
+    /*left = */this.paddingStart,
+    /*top = */this.paddingTop,
+    /*right = */this.paddingEnd,
+    /*bottom = */this.paddingBottom
+)
 
 fun View.setLayoutGravity(gravity: Int) {
     if (layoutParams is LinearLayout.LayoutParams) {

@@ -187,6 +187,10 @@ fun Fragment.navigateTo(navController: NavController? = null, @IdRes destination
     navigateTo(navController, destinationId, args, navOptions, null)
 }
 
+fun Fragment.navigateTo(navController: NavController? = null, @IdRes destinationId: Int, args: Bundle? = null, navOptions: NavOptions? = null, navigatorExtras: Navigator.Extras? = null) {
+    navigateTo(navController, destinationId, args, navOptions, navigatorExtras, true)
+}
+
 /**
  * Navigate via the given [NavDirections]
  *

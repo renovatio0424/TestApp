@@ -29,7 +29,7 @@ open class SingleActivity: BaseActivity() {
 //            }
 
             if (it.getBooleanExtra(FRAGMENT_TRANSPARENT_STATUS_BAR, false)) {
-                ViewUtil.makeFullScreenWithTransparentStatusBar(this)
+                ViewUtil.makeFullScreen(this)
             }
         }
 

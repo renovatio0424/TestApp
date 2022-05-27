@@ -1,4 +1,4 @@
-package com.herry.test.app.bottomnav.hots
+package com.herry.test.app.bottomnav.feeds.detail
 
 import com.google.android.exoplayer2.ExoPlayer
 import com.herry.libs.media.exoplayer.ExoPlayerManager
@@ -10,8 +10,9 @@ import com.herry.test.repository.feed.db.FeedDB
 import com.herry.test.repository.feed.db.FeedDBRepository
 import io.reactivex.Observable
 
-
-class NewPresenter : NewContract.Presenter() {
+class FeedDetailPresenter(
+    private val callData: FeedDetailCallData
+) : FeedDetailContract.Presenter() {
 
     companion object {
         const val PAGE_SIZE = 10
@@ -30,7 +31,7 @@ class NewPresenter : NewContract.Presenter() {
         isSingleInstance = false
     )
 
-    override fun onAttach(view: NewContract.View) {
+    override fun onAttach(view: FeedDetailContract.View) {
         super.onAttach(view)
 
         val context = view.getViewContext() ?: return
@@ -50,19 +51,19 @@ class NewPresenter : NewContract.Presenter() {
         super.onDetach()
     }
 
-    override fun onLaunch(view: NewContract.View, recreated: Boolean) {
+    override fun onLaunch(view: FeedDetailContract.View, recreated: Boolean) {
         launch {
             load(!recreated)
         }
     }
 
-    override fun onResume(view: NewContract.View) {
+    override fun onResume(view: FeedDetailContract.View) {
         launch {
             load(false)
         }
     }
 
-    override fun onPause(view: NewContract.View) {
+    override fun onPause(view: FeedDetailContract.View) {
         launch {
             stopPlayAll()
         }
@@ -77,17 +78,38 @@ class NewPresenter : NewContract.Presenter() {
     }
 
     private fun loadFeeds(page: Int = 1) {
-        subscribeObservable(Observable.create<MutableList<FeedForm.Model>> { emitter ->
+        subscribeObservable(Observable.create<Pair<MutableList<FeedForm.Model>, Int>> { emitter ->
             val list: MutableList<FeedForm.Model> = mutableListOf()
-
-            feedRepository?.getNewFeeds(page, PAGE_SIZE)?.forEachIndexed { index, feed ->
-                list.add(FeedForm.Model(index, feed))
+            var selectedPosition = 0
+            feedRepository?.let {  repository ->
+                if (callData.projects.isNotEmpty()) {
+                    repository.getList(callData.projects)
+                } else {
+                    when (callData.mode) {
+                        FeedDetailListMode.NEWS -> {
+                            repository.getNewFeeds(page, PAGE_SIZE)
+                        }
+                        FeedDetailListMode.FEEDS -> {
+                            repository.getList(page, PAGE_SIZE)
+                        }
+                        else -> {
+                            mutableListOf()
+                        }
+                    }
+                }.forEachIndexed { index, feed ->
+                    list.add(FeedForm.Model(index, feed))
+                    if (feed.projectId == callData.selectedFeed.projectId) {
+                        selectedPosition = index
+                    }
+                }
             }
 
-            emitter.onNext(list)
+            emitter.onNext(Pair(list, selectedPosition))
             emitter.onComplete()
         }, { videos ->
-            display(page == 1, videos)
+            currentPosition = videos.second
+            display(page == 1, videos.first)
+            view?.onScrollTo(currentPosition)
         })
     }
 
@@ -126,6 +148,7 @@ class NewPresenter : NewContract.Presenter() {
 
     override fun preparePlayer(model: FeedForm.Model?): ExoPlayer? {
         model ?: return null
+
         return exoPlayerManger.prepare(model.feed.projectId, model.feed.videoPath)
     }
 
@@ -137,11 +160,13 @@ class NewPresenter : NewContract.Presenter() {
 
     override fun play(position: Int) {
         val model = getFeedModelFromFeeds(position) ?: return
+
         exoPlayerManger.play(model.feed.projectId, model.feed.videoPath, true)
     }
 
     override fun stop(position: Int) {
         val model = getFeedModelFromFeeds(position) ?: return
+
         exoPlayerManger.stop(model.feed.projectId)
     }
 

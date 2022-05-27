@@ -4,6 +4,7 @@ import com.herry.libs.nodeview.model.NodeHelper
 import com.herry.libs.widget.view.recyclerview.tabrecycler.TabRecyclerContract
 import com.herry.libs.widget.view.recyclerview.tabrecycler.TabRecyclerLoadingType
 import com.herry.libs.widget.view.recyclerview.tabrecycler.TabRecyclerPresenter
+import com.herry.test.app.bottomnav.data.FeedCategory
 import com.herry.test.repository.feed.db.Feed
 import com.herry.test.repository.feed.db.FeedDB
 import com.herry.test.repository.feed.db.FeedDBRepository
@@ -11,7 +12,7 @@ import com.herry.test.rx.LastOneObservable
 import com.herry.test.rx.RxUtil
 import io.reactivex.Observable
 
-class FeedCategoryFeedsPresenter(val category: FeedsContract.FeedCategory) : TabRecyclerPresenter() {
+class FeedCategoryFeedsPresenter(val category: FeedCategory) : TabRecyclerPresenter() {
 
     companion object {
         const val PAGE_SIZE = 30
@@ -132,4 +133,6 @@ class FeedCategoryFeedsPresenter(val category: FeedsContract.FeedCategory) : Tab
             this.nodes.endTransition()
         }
     }
+
+    fun getFeeds(): MutableList<Feed> = NodeHelper.getChildrenModels<Feed>(nodes)
 }

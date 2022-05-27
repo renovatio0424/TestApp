@@ -10,38 +10,32 @@ import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
-import android.os.Build
 import android.os.ResultReceiver
 import android.util.DisplayMetrics
 import android.util.Size
 import android.view.*
 import android.view.inputmethod.InputMethodManager
-import androidx.annotation.ColorRes
-import androidx.annotation.DimenRes
-import androidx.annotation.DrawableRes
-import androidx.annotation.LayoutRes
+import androidx.annotation.*
 import androidx.core.content.ContextCompat
 import com.herry.libs.helper.ApiHelper
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 object ViewUtil {
-    fun makeFullScreenWithTransparentStatusBar(activity: Activity?) {
-        activity ?: return
-        activity.window ?: return
-
-        val window = activity.window
-        if (ApiHelper.hasLollipop()) {
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            val decorView = window.decorView
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                decorView.systemUiVisibility =
-                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+    fun makeFullScreen(activity: Activity?, @ColorInt statusBarColor: Int = Color.TRANSPARENT) {
+        activity?.window?.let { window ->
+            if (ApiHelper.hasOSv11()) {
+                window.setDecorFitsSystemWindows(false)
             } else {
-                decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+                window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
             }
-            window.statusBarColor = Color.TRANSPARENT
+            window.statusBarColor = statusBarColor
         }
+    }
+
+    fun setStatusBarColor(activity: Activity?, @ColorInt color: Int) {
+        activity?.window?.statusBarColor = color
     }
 
     fun getStatusBarHeight(context: Context?): Int {

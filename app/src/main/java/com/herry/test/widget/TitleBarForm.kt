@@ -2,14 +2,18 @@ package com.herry.test.widget
 
 import android.app.Activity
 import android.content.Context
+import android.content.res.TypedArray
+import android.util.TypedValue
 import android.view.View
 import android.widget.TextView
+import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.herry.libs.nodeview.NodeForm
 import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.widget.extension.setOnProtectClickListener
 import com.herry.test.R
+
 
 /**
  * Created by herry.park on 2020/06/18.
@@ -35,6 +39,14 @@ class TitleBarForm(
     override fun onBindModel(context: Context, holder: Holder, model: Model) {
         holder.container?.let { toolBar ->
             toolBar.title = model.title
+            toolBar.setBackgroundColor(model.backgroundColor ?: kotlin.run {
+                val typedValue = TypedValue()
+                val a: TypedArray = context.obtainStyledAttributes(typedValue.data, intArrayOf(android.R.attr.colorPrimary))
+                val color = a.getColor(0, 0)
+
+                a.recycle()
+                color
+            })
             (activity as AppCompatActivity?)?.let { activity ->
                 activity.setSupportActionBar(toolBar)
                 activity.supportActionBar?.setDisplayHomeAsUpEnabled(model.backEnable)
@@ -55,6 +67,7 @@ class TitleBarForm(
     data class Model (
         val title: String = "",
         val backEnable: Boolean = false,
-        val action: String = ""
+        val action: String = "",
+        @ColorInt val backgroundColor: Int? = null
     )
 }

@@ -3,6 +3,7 @@ package com.herry.test.repository.feed.db
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.io.Serializable
 
 @Entity(tableName = "feed")
 data class Feed(
@@ -28,4 +29,4 @@ data class Feed(
     @ColumnInfo(name = "title") val title: String,
     @ColumnInfo(name = "description") var description: String,
     @ColumnInfo(name = "creator_id") val creatorId: String
-)
+): Serializable

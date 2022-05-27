@@ -11,9 +11,6 @@ class BottomNavActivity : BaseNavActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-//        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-//        window.statusBarColor = ContextCompat.getColor(this, android.R.color.transparent)
-
-        ViewUtil.makeFullScreenWithTransparentStatusBar(this)
+        ViewUtil.makeFullScreen(this/*, ViewUtil.getColor(this, R.color.tbc_10_a10)*/)
     }
 }

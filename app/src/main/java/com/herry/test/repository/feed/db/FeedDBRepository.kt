@@ -14,6 +14,15 @@ class FeedDBRepository(private val dao: FeedDao) {
     }
 
     @WorkerThread
+    fun getList(projectIds: List<String>): List<Feed> {
+        if (projectIds.isEmpty()) {
+            return listOf()
+        }
+
+        return dao.getList(projectIds)
+    }
+
+    @WorkerThread
     fun getNewFeeds(page: Int = 1, pageSize: Int = 10): List<Feed> {
         return dao.getNewList(page - 1, pageSize)
     }

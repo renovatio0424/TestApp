@@ -1,11 +1,11 @@
 package com.herry.libs.media.exoplayer
 
 import android.content.Context
-import android.util.Log
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DefaultDataSource
+import com.herry.libs.log.Trace
 
 @Suppress("unused")
 class ExoPlayerManager(private val context: () -> Context?, private val isSingleInstance: Boolean = false) {
@@ -29,15 +29,16 @@ class ExoPlayerManager(private val context: () -> Context?, private val isSingle
 
             if (isSingleInstance) {
                 if (fromPlay) {
-                    Log.d(tag, "[$tag] prepare for $id")
+                    Trace.d(tag, "[$tag] prepare for $id")
                     player.prepare()
                 }
             } else {
-                Log.d(tag, "[$tag] prepare for $id")
-
+                Trace.d(tag, "[$tag] prepare for $id")
                 player.prepare()
             }
         }
+
+        Trace.d(tag, "[$tag] using media code counts: (${playerMap.size})")
 
         return player
     }
@@ -57,11 +58,13 @@ class ExoPlayerManager(private val context: () -> Context?, private val isSingle
         } else {
             player.repeatMode = if (repeat) ExoPlayer.REPEAT_MODE_ONE else ExoPlayer.REPEAT_MODE_OFF
             if (isSingleInstance) {
-                Log.d(tag, "[$tag] prepare for $id")
+                Trace.d(tag, "[$tag] prepare for $id")
                 player.prepare()
                 player.playWhenReady = true
+
+                Trace.d(tag, "[$tag] using media code counts: (${playerMap.size})")
             } else {
-                Log.d(tag, "[$tag] play for $id")
+                Trace.d(tag, "[$tag] play for $id")
                 player.play()
             }
         }
@@ -75,15 +78,14 @@ class ExoPlayerManager(private val context: () -> Context?, private val isSingle
 
             playerMap.remove(id)
 
-            Log.d(tag, "[$tag] stopped for $id, player total counts = ${playerMap.size}")
+            Trace.d(tag, "[$tag] stopped for $id, player total counts = ${playerMap.size}")
         }
+
+        Trace.d(tag, "[$tag] using media code counts: (${playerMap.size})")
     }
 
     fun stopAll() {
-        Log.d(tag, "[$tag] stop all (${playerMap.size})")
-        playerMap.forEach {
-            Log.d(tag, "[$tag] stop all stop id = ${it.key}")
-        }
+        Trace.d(tag, "[$tag] stop all (${playerMap.size})")
         playerMap.values.forEach { exoPlayer ->
             exoPlayer.stop()
             exoPlayer.release()

@@ -14,10 +14,12 @@ import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.util.ViewUtil
 import com.herry.libs.widget.extension.navigateTo
 import com.herry.libs.widget.extension.setOnProtectClickListener
+import com.herry.libs.widget.extension.setViewPaddingTop
 import com.herry.libs.widget.view.recyclerview.snap.PagerSnapExHelper
 import com.herry.libs.widget.view.recyclerview.snap.PagerSnapWithTabLayoutHelper
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
+import com.herry.test.app.bottomnav.feeds.detail.FeedDetailFragment
 import com.herry.test.widget.TabLayoutForm
 
 
@@ -51,7 +53,7 @@ class FeedsFragment: BaseNavView<FeedsContract.View, FeedsContract.Presenter>(),
     private fun init(view: View?) {
         val context = view?.context ?: return
 
-        view.findViewById<View>(R.id.feeds_fragment_search_container)?.setPadding(0, ViewUtil.getStatusBarHeight(context), 0, 0)
+        view.findViewById<View>(R.id.feeds_fragment_search_container)?.setViewPaddingTop(ViewUtil.getStatusBarHeight(context))
         view.findViewById<View>(R.id.feeds_fragment_search)?.let { resultView ->
             resultView.setOnProtectClickListener {
                 navigateTo(destinationId = R.id.feed_search_fragment)
@@ -109,6 +111,11 @@ class FeedsFragment: BaseNavView<FeedsContract.View, FeedsContract.Presenter>(),
                 onErrorCB = {
                 },
                 onRefresh = {
+                },
+                onClickFeed = { coverView, feed ->
+                    presenter?.getFeedDetailCallData(feed)?.let { callData ->
+                        navigateTo(destinationId = R.id.feed_detail_fragment, args = FeedDetailFragment.createArguments(callData), navigatorExtras = FeedDetailFragment.createNavigatorExtra(coverView, feed))
+                    }
                 }
             ))
         }

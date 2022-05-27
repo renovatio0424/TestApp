@@ -8,6 +8,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
+import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.herry.libs.nodeview.NodeForm
@@ -23,8 +24,8 @@ import com.herry.test.repository.feed.db.Feed
 import java.util.*
 
 class FeedForm(
-    private val onAttachedVideoView: (videoView: StyledPlayerView?, model: Model?) -> Unit,
-    private val onDetachedVideoView: (videoView: StyledPlayerView?, model: Model?) -> Unit,
+    private val onAttachedVideoView: (model: Model?) -> ExoPlayer?,
+    private val onDetachedVideoView: (model: Model?) -> Unit,
     private val onTogglePlayer: (form: FeedForm, holder: FeedForm.Holder) -> Unit
 ): NodeForm<FeedForm.Holder, FeedForm.Model> (Holder::class, Model::class), NodeRecyclerForm {
     data class Model(
@@ -40,6 +41,8 @@ class FeedForm(
 
         val videoViewPlayerListener = object : Player.Listener {
             override fun onIsPlayingChanged(isPlaying: Boolean) {
+//                val model = NodeRecyclerForm.getBindModel(this@FeedForm, this@Holder)
+//                Trace.d("Herry", "feed ${model?.index} isPlaying changed = $isPlaying")
                 super.onIsPlayingChanged(isPlaying)
                 cover?.let { cover ->
                     if (cover.isVisible && cover.alpha == 1f) {
@@ -55,6 +58,8 @@ class FeedForm(
                         }.also {
                             it.start()
                         }
+                    } else {
+                        cover.isVisible = false
                     }
                 }
                 playStatus?.isVisible = !isPlaying
@@ -74,6 +79,7 @@ class FeedForm(
     override fun onCreateHolder(context: Context, view: View): Holder = Holder(context, view)
 
     override fun onBindModel(context: Context, holder: Holder, model: Model) {
+//        Trace.d("Herry", "onBindModel for ${model.index}")
         val constraintLayout = holder.view as? ConstraintLayout
         if (constraintLayout != null) {
             val constraintSet = ConstraintSet()
@@ -89,13 +95,21 @@ class FeedForm(
 
         holder.id?.text = model.feed.projectId
         holder.cover?.let { cover ->
-            cover.isVisible = true
+            cover.isVisible = !isAvailablePlaying(holder.videoView)
             cover.alpha = 1f
             Glide.with(context).load(model.feed.imagePath).into(cover)
         }
     }
 
+    private fun isAvailablePlaying(videoView: StyledPlayerView?): Boolean {
+        val exoPlayerPlaybackState = videoView?.player?.playbackState
+        return (exoPlayerPlaybackState == ExoPlayer.STATE_READY && videoView.player?.isPlaying == true
+                || exoPlayerPlaybackState == ExoPlayer.STATE_READY)
+    }
+
     override fun onViewRecycled(context: Context, nodeRecyclerHolder: NodeRecyclerHolder) {
+//        val model = NodeRecyclerForm.getBindModel(this@FeedForm, nodeRecyclerHolder)
+//        Trace.d("Herry", "onViewRecycled for ${model?.index}")
     }
 
     override fun onViewAttachedToWindow(context: Context, nodeRecyclerHolder: NodeRecyclerHolder) {
@@ -103,10 +117,13 @@ class FeedForm(
         val model = NodeRecyclerForm.getBindModel(this@FeedForm, nodeRecyclerHolder)
         val videoView = holder.videoView
 
-        onAttachedVideoView(videoView, model)
+//        Trace.d("Herry", "onViewAttachedToWindow for ${model?.index}")
 
         videoView?.player?.removeListener(holder.videoViewPlayerListener)
+        videoView?.player = onAttachedVideoView(model)
         videoView?.player?.addListener(holder.videoViewPlayerListener)
+
+        holder.cover?.isVisible = !isAvailablePlaying(videoView)
     }
 
     override fun onViewDetachedFromWindow(context: Context, nodeRecyclerHolder: NodeRecyclerHolder) {
@@ -114,7 +131,10 @@ class FeedForm(
         val model = NodeRecyclerForm.getBindModel(this@FeedForm, nodeRecyclerHolder)
         val videoView = holder.videoView
 
-        holder.videoView?.player?.removeListener(holder.videoViewPlayerListener)
-        onDetachedVideoView(videoView, model)
+//        Trace.d("Herry", "onViewDetachedFromWindow for ${model?.index}")
+        videoView?.player?.removeListener(holder.videoViewPlayerListener)
+        videoView?.player = null
+
+        onDetachedVideoView(model)
     }
 }

@@ -3,11 +3,13 @@ package com.herry.test.app.bottomnav.feeds.list
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.herry.libs.nodeview.NodeForm
 import com.herry.libs.nodeview.NodeHolder
+import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.libs.util.ViewUtil
 import com.herry.libs.widget.extension.setViewPadding
 import com.herry.libs.widget.view.recyclerview.tabrecycler.TabRecyclerContract
@@ -15,10 +17,12 @@ import com.herry.libs.widget.view.recyclerview.tabrecycler.TabRecyclerView
 import com.herry.libs.widget.view.swiperefreshlayout.SwipeRefreshLayoutEx
 import com.herry.test.R
 import com.herry.test.app.bottomnav.feeds.form.FeedCategoryFeedsItemForm
+import com.herry.test.repository.feed.db.Feed
 
 class FeedCategoryFeedsForm(
     private val onErrorCB: (throwable: Throwable) -> Unit,
-    private val onRefresh: () -> Unit
+    private val onRefresh: () -> Unit,
+    private val onClickFeed: (coverView: ImageView?, feed: Feed) -> Unit
 ): TabRecyclerView(), TabRecyclerView.OnTabRecyclerViewListener {
 
     override val listener = this
@@ -68,7 +72,10 @@ class FeedCategoryFeedsForm(
     }
 
     override fun onBindHolder(list: MutableList<NodeForm<out NodeHolder, *>>) {
-        list.add(FeedCategoryFeedsItemForm())
+        list.add(FeedCategoryFeedsItemForm(onClickItem = { form, holder ->
+            val feed = NodeRecyclerForm.getBindModel(form, holder) ?: return@FeedCategoryFeedsItemForm
+            onClickFeed.invoke(holder.cover, feed)
+        }))
     }
 
     override fun onScrollStateChanged(holder: Holder, recyclerView: RecyclerView, newState: Int) {

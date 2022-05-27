@@ -5,24 +5,34 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/tbc_100"
+    tools:ignore="HardcodedText"
     tools:viewBindingIgnore="true">
 
-    <include
-        android:id="@+id/home_fragment_bottom_navigator_fragment_form"
-        layout="@layout/home_bottom_navigator_fragment_form"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/feed_detail_fragment_list"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/home_fragment_bottom_navigator_form"/>
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <include
-        android:id="@+id/home_fragment_bottom_navigator_form"
-        layout="@layout/home_bottom_nav_control_form"
+        android:id="@+id/feed_detail_fragment_title"
+        layout="@layout/title_bar_view"
         android:layout_width="0dp"
-        android:layout_height="@dimen/size48"
+        android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/feed_detail_fragment_cover"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
