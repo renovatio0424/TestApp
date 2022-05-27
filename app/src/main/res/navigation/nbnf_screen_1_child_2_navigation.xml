@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nbnf_screen_1_child_2_navigation"
+    app:startDestination="@+id/nbnf_screen_1_child_2_fragment">
+
+    <fragment
+        android:id="@+id/nbnf_screen_1_child_2_fragment"
+        android:name="com.herry.test.app.nbnf.screen1.NBNFScreen1Child2Fragment"
+        tools:layout="@layout/nbnf_screen_1_child_2_fragment" />
+
+    <fragment
+        android:id="@+id/nbnf_screen_1_child_2_sub_1_fragment"
+        android:name="com.herry.test.app.nbnf.screen1.NBNFScreen1Child2Sub1Fragment"
+        tools:layout="@layout/nbnf_screen_1_child_2_sub_1_fragment" />
+
+</navigation>

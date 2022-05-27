@@ -24,10 +24,11 @@ interface MainContract {
         LAYOUT_SAMPLE,
         PICK,
         NESTED_FRAGMENTS,
+        NESTED_BOTTOM_NAV_FRAGMENTS,
         APP_DIALOG,
         LIST,
         SKELETON,
         RESIZING_UI,
-        BOTTOM_NAV_SAMPLE
+        SAMPLE_APP
     }
 }

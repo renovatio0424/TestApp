@@ -7,7 +7,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,7 +26,8 @@ import com.herry.libs.widget.extension.navigateTo
 import com.herry.libs.widget.extension.setOnProtectClickListener
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
-import com.herry.test.app.bottomnav.BottomNavActivity
+import com.herry.test.app.nbnf.NBNFActivity
+import com.herry.test.app.sample.SampleActivity
 import com.herry.test.app.nestedfragments.NestedNavFragmentsActivity
 import com.herry.test.widget.TitleBarForm
 
@@ -116,6 +116,9 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
                         }
                     ))
             }
+            MainContract.TestItemType.NESTED_BOTTOM_NAV_FRAGMENTS -> {
+                activityCaller?.call(ACNavigation.IntentCaller(Intent(requireActivity(), NBNFActivity::class.java)))
+            }
             MainContract.TestItemType.APP_DIALOG -> {
                 navigateTo(destinationId = R.id.app_dialog_list_fragment)
             }
@@ -128,11 +131,8 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
             MainContract.TestItemType.RESIZING_UI -> {
                 navigateTo(destinationId = R.id.resizing_ui_fragment)
             }
-            MainContract.TestItemType.BOTTOM_NAV_SAMPLE -> {
-                activityCaller?.call(
-                    ACNavigation.IntentCaller(
-                        Intent(requireActivity(), BottomNavActivity::class.java)
-                    ))
+            MainContract.TestItemType.SAMPLE_APP -> {
+                activityCaller?.call(ACNavigation.IntentCaller(Intent(requireActivity(), SampleActivity::class.java)))
             }
         }
     }
@@ -161,11 +161,12 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
                 MainContract.TestItemType.LAYOUT_SAMPLE -> "Layout Sample"
                 MainContract.TestItemType.PICK -> "Pick"
                 MainContract.TestItemType.NESTED_FRAGMENTS -> "Nested Fragments"
+                MainContract.TestItemType.NESTED_BOTTOM_NAV_FRAGMENTS -> "Nested Bottom Navigator Fragments"
                 MainContract.TestItemType.APP_DIALOG -> "App Dialog"
                 MainContract.TestItemType.LIST -> "List"
                 MainContract.TestItemType.SKELETON -> "Skeleton"
                 MainContract.TestItemType.RESIZING_UI -> "Resizing UI"
-                MainContract.TestItemType.BOTTOM_NAV_SAMPLE -> "Bottom Navigation Sample"
+                MainContract.TestItemType.SAMPLE_APP -> "Sample Application"
             }
         }
     }

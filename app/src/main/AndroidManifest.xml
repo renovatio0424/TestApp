@@ -45,7 +45,10 @@
         </activity>
 
         <activity
-            android:name=".app.bottomnav.BottomNavActivity"/>
+            android:name=".app.sample.SampleActivity"/>
+
+        <activity
+            android:name=".app.nbnf.NBNFActivity"/>
 
         <provider
             android:name="androidx.core.content.FileProvider"

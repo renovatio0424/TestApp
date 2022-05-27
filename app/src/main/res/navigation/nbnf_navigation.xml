@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nbnf_navigation"
+    app:startDestination="@+id/nbnf_screen_1_fragment">
+
+    <fragment
+        android:id="@+id/nbnf_screen_1_fragment"
+        android:name="com.herry.test.app.nbnf.screen1.NBNFScreen1Fragment"
+        tools:layout="@layout/nbnf_screen_1_fragment" />
+
+    <fragment
+        android:id="@+id/nbnf_screen_2_fragment"
+        android:name="com.herry.test.app.nbnf.screen2.NBNFScreen2Fragment"
+        tools:layout="@layout/nbnf_screen_2_fragment" />
+</navigation>
