@@ -242,6 +242,12 @@ class FeedDetailFragment: BaseNavView<FeedDetailContract.View, FeedDetailContrac
                 },
                 onTogglePlayer = { form, holder ->
                     presenter?.togglePlay(NodeRecyclerForm.getBindModel(form, holder))
+                },
+                onTogglePlayerVolume = { form, holder ->
+                    presenter?.let { presenter ->
+                        presenter.toggleVolume(NodeRecyclerForm.getBindModel(form, holder))
+                        true
+                    } ?: false
                 }
             ))
         }

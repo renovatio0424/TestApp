@@ -163,6 +163,14 @@ class NewPresenter : NewContract.Presenter() {
         }
     }
 
+    override fun toggleVolume(model: FeedForm.Model?) {
+        if (!exoPlayerManger.isMute()) {
+            exoPlayerManger.mute()
+        } else {
+            exoPlayerManger.unMute()
+        }
+    }
+
     private fun stopPlayAll() {
         exoPlayerManger.stopAll()
     }

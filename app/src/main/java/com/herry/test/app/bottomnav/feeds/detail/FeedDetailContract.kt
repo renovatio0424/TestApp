@@ -19,6 +19,7 @@ interface FeedDetailContract {
         abstract fun stop(position: Int)
         abstract fun stop(model: FeedForm.Model?)
         abstract fun togglePlay(model: FeedForm.Model?)
+        abstract fun toggleVolume(model: FeedForm.Model?)
         abstract fun loadMore()
     }
 }

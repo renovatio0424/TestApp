@@ -11,6 +11,7 @@ import com.herry.libs.log.Trace
 class ExoPlayerManager(private val context: () -> Context?, private val isSingleInstance: Boolean = false) {
     private val tag = "ExoPlayerManager"
     private val playerMap = HashMap<String, ExoPlayer>()
+    private var isMute = false
 
     private fun internalPrepare(id: String, url: String, fromPlay: Boolean): ExoPlayer? {
         val context = context.invoke() ?: return null
@@ -68,6 +69,8 @@ class ExoPlayerManager(private val context: () -> Context?, private val isSingle
                 player.play()
             }
         }
+
+        setVolume(player, isMute)
     }
 
     fun stop(id: String) {
@@ -108,6 +111,31 @@ class ExoPlayerManager(private val context: () -> Context?, private val isSingle
     }
 
     fun resume(id: String) {
-        playerMap[id]?.play()
+
+        playerMap[id]?.let { player ->
+            setVolume(player, isMute)
+            player.play()
+        }
+    }
+
+    fun isMute(): Boolean = this.isMute
+
+    private fun setVolume(player: ExoPlayer, mute: Boolean) {
+        player.volume = if (mute) 0f else 1f
+    }
+
+    fun mute() {
+        playerMap.values.forEach { exoPlayer ->
+            setVolume(exoPlayer, true)
+        }
+        this.isMute = true
+    }
+
+    fun unMute() {
+        playerMap.values.forEach { exoPlayer ->
+            setVolume(exoPlayer, false)
+        }
+        this.isMute = false
+
     }
 }

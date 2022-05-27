@@ -26,7 +26,8 @@ import java.util.*
 class FeedForm(
     private val onAttachedVideoView: (model: Model?) -> ExoPlayer?,
     private val onDetachedVideoView: (model: Model?) -> Unit,
-    private val onTogglePlayer: (form: FeedForm, holder: FeedForm.Holder) -> Unit
+    private val onTogglePlayer: ((form: FeedForm, holder: Holder) -> Unit)? = null,
+    private val onTogglePlayerVolume: ((form: FeedForm, holder: Holder) -> Boolean)? = null
 ): NodeForm<FeedForm.Holder, FeedForm.Model> (Holder::class, Model::class), NodeRecyclerForm {
     data class Model(
         val index: Int,
@@ -36,8 +37,10 @@ class FeedForm(
     inner class Holder(context: Context, view: View): NodeHolder(context, view) {
         val videoView: StyledPlayerView? = view.findViewById(R.id.feed_form_video_view)
         val id: TextView? = view.findViewById(R.id.feed_form_id)
-        val playStatus: View? = view.findViewById(R.id.feed_form_play_status)
+//        val playStatus: View? = view.findViewById(R.id.feed_form_play_status)
         val cover: ImageView? = view.findViewById(R.id.feed_form_cover)
+        private val volumeStatusContainer: View? = view.findViewById(R.id.feed_form_volume_status_container)
+        private val volumeStatus: ImageView? = view.findViewById(R.id.feed_form_volume_status)
 
         val videoViewPlayerListener = object : Player.Listener {
             override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -62,15 +65,45 @@ class FeedForm(
                         cover.isVisible = false
                     }
                 }
-                playStatus?.isVisible = !isPlaying
+//                playStatus?.isVisible = !isPlaying
             }
         }
 
         init {
             view.setOnClickListener {
-                onTogglePlayer(this@FeedForm, this)
+                if (onTogglePlayerVolume?.invoke(this@FeedForm, this) == true) {
+                    showVolumeStatus()
+                }
+//                onTogglePlayer(this@FeedForm, this)
             }
             videoView?.useController = false
+        }
+
+        private fun isMute(): Boolean = videoView?.player?.volume == 0f
+
+        private val volumeStatusAimPlayer = ViewAnimPlayer().apply {
+            volumeStatusContainer?.let { container ->
+                add(ViewAnimCreator(container)
+                    .alpha(1f, 0f)
+                    .duration(1000L))
+                onStopListener = object : ViewAnimListener.OnStop {
+                    override fun onStop() {
+                        container.isVisible = false
+                    }
+                }
+            }
+        }
+
+        private fun showVolumeStatus() {
+            volumeStatus?.setImageResource(if (!isMute()) R.drawable.ic_volume else R.drawable.ic_volume_mute)
+            volumeStatusContainer?.let { container ->
+                volumeStatusAimPlayer.cancel()
+
+                container.isVisible = true
+                container.alpha = 1f
+
+                volumeStatusAimPlayer.start(1000L)
+            }
         }
     }
 
