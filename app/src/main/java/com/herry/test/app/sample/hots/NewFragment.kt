@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
+import com.herry.libs.helper.ToastHelper
 import com.herry.libs.nodeview.NodeForm
 import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.nodeview.model.NodeRoot
@@ -16,10 +17,14 @@ import com.herry.libs.util.ViewUtil
 import com.herry.libs.widget.view.recyclerview.endless.EndlessRecyclerViewScrollListener
 import com.herry.libs.widget.view.recyclerview.snap.PagerSnapExHelper
 import com.herry.test.R
+import com.herry.test.app.base.ScreenWindowStyle
+import com.herry.test.app.base.StatusBarStyle
 import com.herry.test.app.base.nav.BaseNavView
 import com.herry.test.app.sample.hots.forms.FeedForm
 
 class NewFragment: BaseNavView<NewContract.View, NewContract.Presenter>(), NewContract.View {
+
+    override fun onScreenWindowStyle(): ScreenWindowStyle = ScreenWindowStyle(true, StatusBarStyle.DARK)
 
     override fun onCreatePresenter(): NewContract.Presenter = NewPresenter()
 
@@ -114,6 +119,9 @@ class NewFragment: BaseNavView<NewContract.View, NewContract.Presenter>(), NewCo
                         presenter.toggleVolume(NodeRecyclerForm.getBindModel(form, holder))
                         true
                     } ?: false
+                },
+                onClickTag = { text ->
+                    ToastHelper.showToast(activity, text)
                 }
             ))
         }

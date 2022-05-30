@@ -23,11 +23,13 @@ import com.herry.test.R
 import com.herry.test.repository.feed.db.Feed
 import java.util.*
 
+@Suppress("unused")
 class FeedForm(
     private val onAttachedVideoView: (model: Model?) -> ExoPlayer?,
     private val onDetachedVideoView: (model: Model?) -> Unit,
     private val onTogglePlayer: ((form: FeedForm, holder: Holder) -> Unit)? = null,
-    private val onTogglePlayerVolume: ((form: FeedForm, holder: Holder) -> Boolean)? = null
+    private val onTogglePlayerVolume: ((form: FeedForm, holder: Holder) -> Boolean)? = null,
+    private val onClickTag: (text: String) -> Unit
 ): NodeForm<FeedForm.Holder, FeedForm.Model> (Holder::class, Model::class), NodeRecyclerForm {
     data class Model(
         val index: Int,
@@ -36,11 +38,13 @@ class FeedForm(
 
     inner class Holder(context: Context, view: View): NodeHolder(context, view) {
         val videoView: StyledPlayerView? = view.findViewById(R.id.feed_form_video_view)
-        val id: TextView? = view.findViewById(R.id.feed_form_id)
 //        val playStatus: View? = view.findViewById(R.id.feed_form_play_status)
         val cover: ImageView? = view.findViewById(R.id.feed_form_cover)
         private val volumeStatusContainer: View? = view.findViewById(R.id.feed_form_volume_status_container)
         private val volumeStatus: ImageView? = view.findViewById(R.id.feed_form_volume_status)
+        private val descriptionContainer: View? = view.findViewById(R.id.feed_form_description_container)
+        val title: TextView? = view.findViewById(R.id.feed_form_title)
+        val tags: TextView? = view.findViewById(R.id.feed_form_tags)
 
         val videoViewPlayerListener = object : Player.Listener {
             override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -70,6 +74,8 @@ class FeedForm(
         }
 
         init {
+            ViewUtil.setProtectTouchLowLayer(descriptionContainer, true)
+
             view.setOnClickListener {
                 if (onTogglePlayerVolume?.invoke(this@FeedForm, this) == true) {
                     showVolumeStatus()
@@ -126,11 +132,19 @@ class FeedForm(
             }
         }
 
-        holder.id?.text = model.feed.projectId
         holder.cover?.let { cover ->
             cover.isVisible = !isAvailablePlaying(holder.videoView)
             cover.alpha = 1f
             Glide.with(context).load(model.feed.imagePath).into(cover)
+        }
+
+        holder.title?.text = model.feed.title
+        holder.tags?.let { tags ->
+//            ViewUtil.setLinkText(tags, model.feed.tags, ViewUtil.LinkTextData(model.feed.getTags(), { _, text ->
+//                onClickTag.invoke(text)
+//            }))
+            ViewUtil.setReadMoreText(tags, model.feed.tags, ViewUtil.ReadMoreTextData(2, context.getString(R.string.text_more), ViewUtil.getColor(context, R.color.tbc_70)))
+            tags.visibility = if (model.feed.tags.isNotEmpty()) View.VISIBLE else View.GONE
         }
     }
 

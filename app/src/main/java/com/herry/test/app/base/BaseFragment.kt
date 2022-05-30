@@ -1,9 +1,11 @@
 package com.herry.test.app.base
 
 import android.content.Context
+import android.content.res.TypedArray
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -14,9 +16,11 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import com.herry.libs.app.activity_caller.AC
 import com.herry.libs.helper.TransitionHelper
+import com.herry.libs.util.ViewUtil
 import com.herry.libs.widget.view.LoadingCountView
 
 open class BaseFragment : DialogFragment() {
+
     internal open var activityCaller: AC? = null
 
     internal val fragmentTag: String = createTag()
@@ -24,6 +28,8 @@ open class BaseFragment : DialogFragment() {
     companion object {
         private const val TAG = "ARG_TAG"
     }
+
+    protected open fun onScreenWindowStyle(): ScreenWindowStyle? = null
 
     private fun createTag(): String = "${this::class.java.simpleName}#${System.currentTimeMillis()}"
 
@@ -62,6 +68,27 @@ open class BaseFragment : DialogFragment() {
     override fun onDetach() {
         activityCaller = null
         super.onDetach()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        (onScreenWindowStyle() ?: ScreenWindowStyle(isFullScreen = ViewUtil.isSystemFullScreen(context))).let { windowStyle ->
+            ViewUtil.makeFullScreen(activity, windowStyle.isFullScreen)
+            when (windowStyle.statusBarStyle) {
+                StatusBarStyle.LIGHT -> ViewUtil.setStatusBarTransparent(activity, mode = ViewUtil.StatusBarMode.LIGHT)
+                StatusBarStyle.DARK -> ViewUtil.setStatusBarTransparent(activity, mode = ViewUtil.StatusBarMode.DARK)
+                null -> {
+                    val typedValue = TypedValue()
+                    val attrs: TypedArray? = context?.obtainStyledAttributes(typedValue.data, intArrayOf(android.R.attr.statusBarColor))
+                    if (attrs != null) {
+                        val color = attrs.getColor(0, 0)
+                        ViewUtil.setStatusBarColor(activity, color)
+                        attrs.recycle()
+                    }
+                }
+            }
+        }
     }
 
     open fun onBackPressed(): Boolean = false

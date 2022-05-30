@@ -18,12 +18,16 @@ import com.herry.libs.widget.extension.setViewPaddingTop
 import com.herry.libs.widget.view.recyclerview.snap.PagerSnapExHelper
 import com.herry.libs.widget.view.recyclerview.snap.PagerSnapWithTabLayoutHelper
 import com.herry.test.R
+import com.herry.test.app.base.ScreenWindowStyle
+import com.herry.test.app.base.StatusBarStyle
 import com.herry.test.app.base.nav.BaseNavView
 import com.herry.test.app.sample.feeds.detail.FeedDetailFragment
 import com.herry.test.widget.TabLayoutForm
 
 
 class FeedsFragment: BaseNavView<FeedsContract.View, FeedsContract.Presenter>(), FeedsContract.View {
+
+    override fun onScreenWindowStyle(): ScreenWindowStyle = ScreenWindowStyle(true, StatusBarStyle.LIGHT)
 
     override fun onCreatePresenter(): FeedsContract.Presenter = FeedsPresenter()
 

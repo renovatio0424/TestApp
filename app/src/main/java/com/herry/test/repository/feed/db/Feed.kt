@@ -27,6 +27,10 @@ data class Feed(
     @ColumnInfo(name = "category") val category: Int,
     @ColumnInfo(name = "published_at") val publishedAt: String,
     @ColumnInfo(name = "title") val title: String,
-    @ColumnInfo(name = "description") var description: String,
+    @ColumnInfo(name = "tags") var tags: String,
     @ColumnInfo(name = "creator_id") val creatorId: String
-): Serializable
+): Serializable {
+    fun getTags(): MutableList<String> {
+        return this.tags.split(" ").toMutableList()
+    }
+}

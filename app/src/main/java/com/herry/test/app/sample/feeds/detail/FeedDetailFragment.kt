@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.bumptech.glide.Glide
+import com.herry.libs.helper.ToastHelper
 import com.herry.libs.nodeview.NodeForm
 import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.nodeview.model.NodeRoot
@@ -32,6 +33,8 @@ import com.herry.libs.widget.extension.setViewMarginTop
 import com.herry.libs.widget.view.recyclerview.endless.EndlessRecyclerViewScrollListener
 import com.herry.libs.widget.view.recyclerview.snap.PagerSnapExHelper
 import com.herry.test.R
+import com.herry.test.app.base.ScreenWindowStyle
+import com.herry.test.app.base.StatusBarStyle
 import com.herry.test.app.base.nav.BaseNavView
 import com.herry.test.app.sample.hots.forms.FeedForm
 import com.herry.test.repository.feed.db.Feed
@@ -69,6 +72,8 @@ class FeedDetailFragment: BaseNavView<FeedDetailContract.View, FeedDetailContrac
         }
     }
 
+    override fun onScreenWindowStyle(): ScreenWindowStyle = ScreenWindowStyle(true, StatusBarStyle.DARK)
+
     override fun onCreatePresenter(): FeedDetailContract.Presenter? {
         val callData = getCallData(arguments) ?: return null
         this.callData = callData
@@ -96,7 +101,7 @@ class FeedDetailFragment: BaseNavView<FeedDetailContract.View, FeedDetailContrac
         super.onCreate(savedInstanceState)
 
         sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.move)
-        sharedElementReturnTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.fade)
+        sharedElementReturnTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.slide_bottom)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -147,7 +152,7 @@ class FeedDetailFragment: BaseNavView<FeedDetailContract.View, FeedDetailContrac
                     }
 
                     override fun onUnsnapped(position: Int, itemCount: Int) {
-                        presenter?.stop(position)
+//                        presenter?.stop(position)
                     }
                 })
             }
@@ -248,6 +253,9 @@ class FeedDetailFragment: BaseNavView<FeedDetailContract.View, FeedDetailContrac
                         presenter.toggleVolume(NodeRecyclerForm.getBindModel(form, holder))
                         true
                     } ?: false
+                },
+                onClickTag = { text ->
+                    ToastHelper.showToast(activity, text)
                 }
             ))
         }

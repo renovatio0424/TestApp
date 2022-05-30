@@ -6,36 +6,59 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.content.res.Resources
+import android.content.res.TypedArray
 import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.ResultReceiver
+import android.text.*
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
 import android.util.DisplayMetrics
 import android.util.Size
+import android.util.TypedValue
 import android.view.*
 import android.view.inputmethod.InputMethodManager
+import android.widget.TextView
 import androidx.annotation.*
 import androidx.core.content.ContextCompat
-import com.herry.libs.helper.ApiHelper
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 object ViewUtil {
-    fun makeFullScreen(activity: Activity?, @ColorInt statusBarColor: Int = Color.TRANSPARENT) {
+    enum class StatusBarMode {
+        LIGHT,
+        DARK
+    }
+
+    fun makeFullScreen(activity: Activity?, isFull: Boolean = true) {
         activity?.window?.let { window ->
-            if (ApiHelper.hasOSv11()) {
-                window.setDecorFitsSystemWindows(false)
-            } else {
-                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-                window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-            }
-            window.statusBarColor = statusBarColor
+//            if (ApiHelper.hasOSv11()) {
+//                window.setDecorFitsSystemWindows(!isFull)
+//            } else {
+//            }
+            window.decorView.systemUiVisibility = if (isFull) View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN else View.SYSTEM_UI_FLAG_VISIBLE
         }
     }
 
     fun setStatusBarColor(activity: Activity?, @ColorInt color: Int) {
-        activity?.window?.statusBarColor = color
+        activity?.window?.let { window ->
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            window.statusBarColor = color
+        }
+    }
+
+    fun setStatusBarTransparent(activity: Activity?, mode: StatusBarMode = StatusBarMode.DARK) {
+        activity?.window?.let { window ->
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            window.decorView.systemUiVisibility = when (mode) {
+                StatusBarMode.LIGHT -> window.decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                StatusBarMode.DARK -> window.decorView.systemUiVisibility and (View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR).inv()
+            }
+            window.statusBarColor = Color.TRANSPARENT
+        }
     }
 
     fun getStatusBarHeight(context: Context?): Int {
@@ -47,6 +70,21 @@ object ViewUtil {
             }
         }
         return result
+    }
+
+    fun setNavigationBarColor(activity: Activity?, @ColorInt color: Int) {
+        activity?.window?.navigationBarColor = color
+    }
+
+    fun isSystemFullScreen(context: Context?): Boolean {
+        var isFullScreen = false
+        val typedValue = TypedValue()
+        val attrs: TypedArray? = context?.obtainStyledAttributes(typedValue.data, intArrayOf(android.R.attr.windowFullscreen))
+        if (attrs != null) {
+            isFullScreen = attrs.getBoolean(0, false)
+            attrs.recycle()
+        }
+        return isFullScreen
     }
 
     fun inflate(@LayoutRes layout: Int, root: ViewGroup): View {
@@ -278,4 +316,185 @@ object ViewUtil {
     fun isTabletDevice(context: Context?): Boolean = (context?.resources?.configuration?.smallestScreenWidthDp ?: 0) >= 600
 
     fun isPortraitOrientation(context: Context?): Boolean = context?.resources?.configuration?.orientation == Configuration.ORIENTATION_PORTRAIT
+
+    data class ReadMoreTextData(
+        val moreLine: Int,
+        val moreText: String,
+        @ColorInt val  moreTextColor: Int
+    )
+
+    fun setReadMoreText(view: TextView?, src: String, readMoreData: ReadMoreTextData) {
+        view ?: return
+
+        val moreText = readMoreData.moreText
+        val moreLine = readMoreData.moreLine
+
+        val expendText = "..."
+        val expandedText = expendText + if (!TextUtils.isEmpty(moreText)) moreText else ""
+        if (view.tag != null && view.tag == src) { //Tag로 전값 의 text를 비교하여똑같으면 실행하지 않음.
+            return
+        }
+        view.tag = src //Tag에 text 저장
+        view.text = src
+        view.post {
+            val textViewLines = view.lineCount
+            //  compare text lines and more line
+            if (textViewLines > moreLine) {
+                var displayText = ""
+                if (moreLine <= 0) {
+                    // display only more text
+                    displayText = expandedText
+                } else {
+                    // split original text to more line and adds more text to end
+                    val lineEndIndex = view.layout.getLineEnd(moreLine - 1) - 1
+                    for (index in lineEndIndex downTo 0) {
+                        try {
+                            val subSequence = src.subSequence(0, index)
+                            val temp = StringBuilder(subSequence).append(expandedText)
+                            view.text = temp.toString()
+                            if (moreLine >= view.lineCount) {
+                                displayText = temp.toString()
+                                break
+                            }
+                        } catch (ignore: Exception) {
+                        }
+                    }
+                    view.text = src
+                }
+                val clickText = if (!TextUtils.isEmpty(moreText)) moreText else expendText
+                val displaySpannableString = SpannableString(displayText)
+                displaySpannableString.setSpan(object : ClickableSpan() {
+                    override fun onClick(v: View) {
+                        // if click more text, set text to original text
+                        view.text = src
+                    }
+
+                    override fun updateDrawState(ds: TextPaint) {
+                        // sets more text color
+                        ds.color = readMoreData.moreTextColor
+                    }
+                }, displaySpannableString.length - clickText.length - 1, displaySpannableString.length, 0)
+                view.text = displaySpannableString
+                view.movementMethod = LinkMovementMethod.getInstance()
+            }
+            // else
+            // sets text without more text
+        }
+    }
+
+//    private fun createReadMoreSpannableString(view: TextView?, src: SpannableString, readMoreData: ReadMoreTextData, onResult: (text: SpannableString) -> Unit) {
+//        view ?: return
+//
+//        val moreText = readMoreData.moreText
+//        val moreLine = readMoreData.moreLine
+//
+//        val expendText = "... "
+//        val expandedText = expendText + if (!TextUtils.isEmpty(moreText)) moreText else ""
+//        if (view.tag != null && view.tag == src) { //Tag로 전값 의 text를 비교하여똑같으면 실행하지 않음.
+//            return
+//        }
+//        view.tag = src.toString() //Tag에 text 저장
+//        view.text = src
+//        view.post {
+//            val textViewLines = view.lineCount
+//            //  compare text lines and more line
+//            if (textViewLines > moreLine) {
+//                var displayText = ""
+//                if (moreLine <= 0) {
+//                    // display only more text
+//                    displayText = expandedText
+//                } else {
+//                    // split original text to more line and adds more text to end
+//                    val lineEndIndex = view.layout.getLineEnd(moreLine - 1) - 1
+//                    for (index in lineEndIndex downTo 0) {
+//                        try {
+//                            val subSequence = src.subSequence(0, index)
+//                            val temp = StringBuilder(subSequence).append(expandedText)
+//                            view.text = temp.toString()
+//                            if (moreLine >= view.lineCount) {
+//                                displayText = temp.toString()
+//                                break
+//                            }
+//                        } catch (ignore: Exception) {
+//                        }
+//                    }
+//                    view.text = src
+//                }
+//                val clickText = if (!TextUtils.isEmpty(moreText)) moreText else expendText
+//                val displaySpannableString = SpannableString(displayText)
+//                displaySpannableString.setSpan(object : ClickableSpan() {
+//                    override fun onClick(v: View) {
+//                        // if click more text, set text to original text
+//                        view.text = src
+//                    }
+//
+//                    override fun updateDrawState(ds: TextPaint) {
+//                        // sets more text color
+//                        ds.color = readMoreData.moreTextColor
+//                    }
+//                }, displaySpannableString.length - clickText.length - 1, displaySpannableString.length, 0)
+//                onResult.invoke(displaySpannableString)
+//            }
+//            // else
+//            // sets text without more text
+//        }
+//    }
+
+    data class LinkTextData(
+        val links: MutableList<String>,
+        val onClicked: ((view: View, text: String) -> Unit)? = null,
+        val readMore: ReadMoreTextData? = null
+    )
+
+    fun setLinkText(view: TextView?, src: String? = null, linkData: LinkTextData) {
+        view ?: return
+        val text = src ?: (view.text ?: "")
+
+        if (text.isEmpty()) {
+            return
+        }
+
+        val links = linkData.links
+        if (links.isEmpty()) {
+            view.text = text
+            return
+        }
+        val spannableString = SpannableString(text)
+        var startIndexOfLink = -1
+        for (link in links) {
+            if (link.isEmpty() || !text.contains(link)) {
+                continue
+            }
+
+            val clickableSpan = object : ClickableSpan() {
+                override fun updateDrawState(textPaint: TextPaint) {
+                    // use this to change the link color
+                    textPaint.color = textPaint.linkColor
+                    // toggle below value to enable/disable
+                    // the underline shown below the clickable text
+                    textPaint.isUnderlineText = true
+                }
+
+                override fun onClick(view: View) {
+                    val clickView = view as? TextView ?: return
+                    val selectionText = clickView.text as? Spannable ?: return
+                    Selection.setSelection(selectionText, 0)
+                    view.invalidate()
+                    linkData.onClicked?.invoke(view, link)
+                }
+            }
+            startIndexOfLink = text.toString().indexOf(link, startIndexOfLink + 1)
+            spannableString.setSpan(
+                clickableSpan, startIndexOfLink, startIndexOfLink + link.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+
+        if (linkData.onClicked != null) {
+            view.movementMethod = LinkMovementMethod.getInstance()
+        }
+
+        // sets read more data
+        view.setText(spannableString, TextView.BufferType.SPANNABLE)
+    }
 }

@@ -6,9 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import com.herry.libs.util.ViewUtil
 import com.herry.test.R
+import com.herry.test.app.base.ScreenWindowStyle
 import com.herry.test.app.base.nav.BaseNavFragment
 
 class MeFragment: BaseNavFragment() {
+
+    override fun onScreenWindowStyle(): ScreenWindowStyle = ScreenWindowStyle(isFullScreen = true)
 
     private var container: View? = null
 
