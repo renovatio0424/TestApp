@@ -3,12 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/sample_new_navigation"
-    app:startDestination="@+id/new_fragment">
+    android:id="@+id/sample_news_navigation"
+    app:startDestination="@+id/news_fragment">
 
     <fragment
-        android:id="@+id/new_fragment"
-        android:name="com.herry.test.app.sample.hots.NewFragment"
-        tools:layout="@layout/new_fragment" />
+        android:id="@+id/news_fragment"
+        android:name="com.herry.test.app.sample.news.NewsFragment"
+        tools:layout="@layout/news_fragment" />
 
 </navigation>

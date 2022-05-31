@@ -1,26 +1,34 @@
-package com.herry.test.app.sample.hots
+package com.herry.test.app.sample.news
 
 import com.google.android.exoplayer2.ExoPlayer
 import com.herry.libs.media.exoplayer.ExoPlayerManager
 import com.herry.libs.nodeview.model.Node
 import com.herry.libs.nodeview.model.NodeHelper
 import com.herry.libs.nodeview.model.NodeModelGroup
-import com.herry.test.app.sample.hots.forms.FeedForm
+import com.herry.test.app.sample.forms.FeedForm
 import com.herry.test.repository.feed.db.FeedDB
 import com.herry.test.repository.feed.db.FeedDBRepository
+import com.herry.test.rx.LastOneObservable
+import com.herry.test.rx.RxUtil
 import io.reactivex.Observable
 
 
-class NewPresenter : NewContract.Presenter() {
+class NewsPresenter : NewsContract.Presenter() {
 
     companion object {
         const val PAGE_SIZE = 10
     }
 
+    private val lastOneObservable = LastOneObservable<Pair<Boolean, MutableList<FeedForm.Model>>>(
+        {
+            display(it.first, it.second)
+        }
+    )
+
     private var feedDatabase: FeedDB? = null
     private var feedRepository: FeedDBRepository? = null
 
-    private val feedNodes: Node<NodeModelGroup> = NodeHelper.createNodeGroup()
+    private val nodes: Node<NodeModelGroup> = NodeHelper.createNodeGroup()
     private var currentPosition: Int = 0
 
     private val exoPlayerManger: ExoPlayerManager = ExoPlayerManager(
@@ -30,7 +38,7 @@ class NewPresenter : NewContract.Presenter() {
         isSingleInstance = false
     )
 
-    override fun onAttach(view: NewContract.View) {
+    override fun onAttach(view: NewsContract.View) {
         super.onAttach(view)
 
         val context = view.getViewContext() ?: return
@@ -39,84 +47,101 @@ class NewPresenter : NewContract.Presenter() {
         }
 
         view.root.beginTransition()
-        NodeHelper.addNode(view.root, feedNodes)
+        NodeHelper.addNode(view.root, nodes)
         view.root.endTransition()
     }
 
     override fun onDetach() {
+        lastOneObservable.dispose()
+
         feedRepository = null
         feedDatabase = null
 
         super.onDetach()
     }
 
-    override fun onLaunch(view: NewContract.View, recreated: Boolean) {
+    override fun onLaunch(view: NewsContract.View, recreated: Boolean) {
         launch {
-            load(!recreated)
+            load()
         }
     }
 
-    override fun onResume(view: NewContract.View) {
+    override fun onResume(view: NewsContract.View) {
         launch {
-            load(false)
+            load()
         }
     }
 
-    override fun onPause(view: NewContract.View) {
+    override fun onPause(view: NewsContract.View) {
         launch {
             stopPlayAll()
         }
     }
 
-    private fun load(init: Boolean) {
-        if (init) {
-            loadFeeds()
-        } else {
-            reloadFeeds()
-        }
-    }
-
-    private fun loadFeeds(page: Int = 1) {
-        subscribeObservable(Observable.create<MutableList<FeedForm.Model>> { emitter ->
-            val list: MutableList<FeedForm.Model> = mutableListOf()
-
-            feedRepository?.getNewFeeds(page, PAGE_SIZE)?.forEachIndexed { index, feed ->
-                list.add(FeedForm.Model(index, feed))
-            }
-
-            emitter.onNext(list)
-            emitter.onComplete()
-        }, { videos ->
-            display(page == 1, videos)
-        })
-    }
-
-    private fun reloadFeeds() {
-        val videos = NodeHelper.getChildrenModels<FeedForm.Model>(feedNodes)
+    private fun load() {
+        val videos = getFeeds()
         if (videos.size <= 0) {
-            loadFeeds(1)
+            this.load(true)
         } else {
-            feedNodes.beginTransition()
-            feedNodes.clearChild()
-            feedNodes.endTransition()
+            nodes.beginTransition()
+            nodes.clearChild()
+            nodes.endTransition()
             display(false, videos)
             view?.onScrollTo(currentPosition)
         }
     }
 
+    private fun load(reset: Boolean) {
+        var lastProjectId = ""
+        if (!reset) {
+            val feeds = getFeeds()
+            lastProjectId = if (feeds.isNotEmpty()) feeds.last().feed.projectId else ""
+        } else {
+            lastOneObservable.dispose()
+        }
+
+        if (lastOneObservable.isDisposed()) {
+            if (reset) {
+                // show load view
+            }
+            lastOneObservable.subscribe(
+                RxUtil.setPresenterObservable(
+                    observable = Observable.create<MutableList<FeedForm.Model>> { emitter ->
+                        val list: MutableList<FeedForm.Model> = mutableListOf()
+                        feedRepository?.getNewFeeds(lastProjectId, PAGE_SIZE)?.forEachIndexed { index, feed ->
+                            list.add(FeedForm.Model(index, feed))
+                        }
+
+                        emitter.onNext(list)
+                        emitter.onComplete()
+                    }, //.delay((if (init) 500 else 0).toLong(), TimeUnit.MILLISECONDS),
+                    view = this::view,
+                    loadView = false
+                )
+                    .map {
+                        if (reset) {
+                            // hide load view
+                        }
+                        Pair(reset, it)
+                    }
+            )
+        }
+    }
+
     private fun display(reset: Boolean, list: MutableList<FeedForm.Model>) {
-        this.feedNodes.beginTransition()
-        if (reset) {
+        this.nodes.beginTransition()
+        if(reset) {
             val nodes = NodeHelper.createNodeGroup()
             NodeHelper.addModels(nodes, *list.toTypedArray())
-            NodeHelper.upSert(this.feedNodes, nodes)
+            NodeHelper.upSert(this.nodes, nodes)
         } else {
-            NodeHelper.addModels(this.feedNodes, *list.toTypedArray())
+            NodeHelper.addModels(this.nodes, *list.toTypedArray())
         }
-        this.feedNodes.endTransition()
+        this.nodes.endTransition()
 
         if (reset) {
-            view?.onLaunched(this.feedNodes.getChildCount())
+            view?.onLaunched(this.nodes.getChildCount())
+            view?.onScrollTo(currentPosition)
         }
     }
 
@@ -126,22 +151,25 @@ class NewPresenter : NewContract.Presenter() {
 
     override fun preparePlayer(model: FeedForm.Model?): ExoPlayer? {
         model ?: return null
+
         return exoPlayerManger.prepare(model.feed.projectId, model.feed.videoPath)
     }
 
     private fun getFeedModelFromFeeds(position: Int): FeedForm.Model?{
-        val nodePosition = feedNodes.getNodePosition(position) ?: return null
-        val node = feedNodes.getNode(nodePosition) ?: return null
+        val nodePosition = nodes.getNodePosition(position) ?: return null
+        val node = nodes.getNode(nodePosition) ?: return null
         return node.model as? FeedForm.Model
     }
 
     override fun play(position: Int) {
         val model = getFeedModelFromFeeds(position) ?: return
+
         exoPlayerManger.play(model.feed.projectId, model.feed.videoPath, true)
     }
 
     override fun stop(position: Int) {
         val model = getFeedModelFromFeeds(position) ?: return
+
         exoPlayerManger.stop(model.feed.projectId)
     }
 
@@ -176,8 +204,8 @@ class NewPresenter : NewContract.Presenter() {
     }
 
     override fun loadMore() {
-        val feeds = NodeHelper.getChildrenModels<FeedForm.Model>(feedNodes)
-        val currentPage = feeds.size / PAGE_SIZE
-        loadFeeds(if (currentPage > 0) currentPage + 1 else 1)
+        this.load(false)
     }
+
+    private fun getFeeds(): MutableList<FeedForm.Model> = NodeHelper.getChildrenModels(nodes)
 }

@@ -21,4 +21,9 @@
         android:name="com.herry.test.app.sample.feeds.detail.FeedDetailFragment"
         tools:layout="@layout/feed_detail_fragment" />
 
+    <fragment
+        android:id="@+id/tags_fragment"
+        android:name="com.herry.test.app.sample.tags.TagsFragment"
+        tools:layout="@layout/tags_fragment" />
+
 </navigation>

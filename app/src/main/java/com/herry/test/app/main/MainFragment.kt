@@ -59,7 +59,7 @@ class MainFragment : BaseNavView<MainContract.View, MainContract.Presenter>(), M
     private fun init(view: View?) {
         view ?: return
 
-        TitleBarForm(activity = requireActivity()).apply {
+        TitleBarForm(activity = { requireActivity() }).apply {
             bindFormHolder(view.context, view.findViewById(R.id.main_fragment_title))
             bindFormModel(view.context, TitleBarForm.Model(title = "Test List"))
         }

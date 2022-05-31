@@ -1,4 +1,4 @@
-package com.herry.test.app.sample.hots.forms
+package com.herry.test.app.sample.forms
 
 import android.content.Context
 import android.view.View
@@ -140,10 +140,15 @@ class FeedForm(
 
         holder.title?.text = model.feed.title
         holder.tags?.let { tags ->
-//            ViewUtil.setLinkText(tags, model.feed.tags, ViewUtil.LinkTextData(model.feed.getTags(), { _, text ->
-//                onClickTag.invoke(text)
-//            }))
-            ViewUtil.setReadMoreText(tags, model.feed.tags, ViewUtil.ReadMoreTextData(2, context.getString(R.string.text_more), ViewUtil.getColor(context, R.color.tbc_70)))
+            ViewUtil.setLinkText(tags, model.feed.tags, ViewUtil.LinkTextData(
+                links = model.feed.getTags(),
+                linkTextColor = ViewUtil.getColor(context, R.color.tbc_20),
+                isUnderlineText = false,
+                onClicked = { _, text ->
+                    onClickTag.invoke(text)
+                }
+            ))
+//            ViewUtil.setReadMoreText(tags, model.feed.tags, ViewUtil.ReadMoreTextData(2, context.getString(R.string.text_more), ViewUtil.getColor(context, R.color.tbc_70)))
             tags.visibility = if (model.feed.tags.isNotEmpty()) View.VISIBLE else View.GONE
         }
     }

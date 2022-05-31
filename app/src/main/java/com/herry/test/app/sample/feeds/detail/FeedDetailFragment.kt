@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.bumptech.glide.Glide
-import com.herry.libs.helper.ToastHelper
 import com.herry.libs.nodeview.NodeForm
 import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.nodeview.model.NodeRoot
@@ -29,6 +28,7 @@ import com.herry.libs.util.ViewUtil
 import com.herry.libs.widget.anim.ViewAnimCreator
 import com.herry.libs.widget.anim.ViewAnimListener
 import com.herry.libs.widget.anim.ViewAnimPlayer
+import com.herry.libs.widget.extension.navigateTo
 import com.herry.libs.widget.extension.setViewMarginTop
 import com.herry.libs.widget.view.recyclerview.endless.EndlessRecyclerViewScrollListener
 import com.herry.libs.widget.view.recyclerview.snap.PagerSnapExHelper
@@ -36,7 +36,8 @@ import com.herry.test.R
 import com.herry.test.app.base.ScreenWindowStyle
 import com.herry.test.app.base.StatusBarStyle
 import com.herry.test.app.base.nav.BaseNavView
-import com.herry.test.app.sample.hots.forms.FeedForm
+import com.herry.test.app.sample.forms.FeedForm
+import com.herry.test.app.sample.tags.TagsFragment
 import com.herry.test.repository.feed.db.Feed
 import com.herry.test.widget.TitleBarForm
 import java.util.*
@@ -125,7 +126,7 @@ class FeedDetailFragment: BaseNavView<FeedDetailContract.View, FeedDetailContrac
         }
 
         TitleBarForm(
-            activity = requireActivity(),
+            activity = { requireActivity() },
             onClickBack = { AppUtil.pressBackKey(requireActivity(), view) }
         ).apply {
                 bindFormHolder(view.context, view.findViewById<View?>(R.id.feed_detail_fragment_title)?.apply {
@@ -255,7 +256,7 @@ class FeedDetailFragment: BaseNavView<FeedDetailContract.View, FeedDetailContrac
                     } ?: false
                 },
                 onClickTag = { text ->
-                    ToastHelper.showToast(activity, text)
+                    navigateTo(destinationId = R.id.tags_fragment, args = TagsFragment.createArguments(text))
                 }
             ))
         }

@@ -10,7 +10,7 @@
     tools:viewBindingIgnore="true">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/new_fragment_list"
+        android:id="@+id/news_fragment_list"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -19,7 +19,7 @@
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <View
-        android:id="@+id/new_fragment_top_overlay"
+        android:id="@+id/news_fragment_top_overlay"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@drawable/gradient_linear_270_tbc_100_a20_to_tbc_0"

@@ -9,7 +9,7 @@ class HomePresenter : HomeContract.Presenter() {
     private var currentScreen: HomeBottomNavScreenId? = null
     private val tabs = arrayListOf(
         // mix
-        HomeBottomNavControlItemForm.Model(id = R.id.sample_new_navigation, icon = R.drawable.ic_navigation_new, "New"),
+        HomeBottomNavControlItemForm.Model(id = R.id.sample_news_navigation, icon = R.drawable.ic_navigation_new, "New"),
         // mix
         HomeBottomNavControlItemForm.Model(id = R.id.sample_feeds_navigation, icon = R.drawable.ic_navigation_feeds, "Feeds"),
         // mix

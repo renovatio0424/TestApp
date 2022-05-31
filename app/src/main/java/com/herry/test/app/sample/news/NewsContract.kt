@@ -1,12 +1,12 @@
-package com.herry.test.app.sample.hots
+package com.herry.test.app.sample.news
 
 import com.google.android.exoplayer2.ExoPlayer
 import com.herry.libs.mvp.MVPView
 import com.herry.libs.nodeview.INodeRoot
 import com.herry.test.app.base.nav.BaseNavPresenter
-import com.herry.test.app.sample.hots.forms.FeedForm
+import com.herry.test.app.sample.forms.FeedForm
 
-interface NewContract {
+interface NewsContract {
     interface View : MVPView<Presenter>, INodeRoot {
         fun onLaunched(count: Int)
         fun onScrollTo(position: Int)

@@ -46,7 +46,7 @@ class IndexerListFragment : BaseNavView<IndexerListContract.View, IndexerListCon
         view ?: return
 
         TitleBarForm(
-            activity = requireActivity()
+            activity = { requireActivity() }
         ).apply {
             bindFormHolder(view.context, view.findViewById(R.id.alphabet_indexer_scroller_list_fragment_title))
             bindFormModel(view.context, TitleBarForm.Model(title = "Indexer List"))

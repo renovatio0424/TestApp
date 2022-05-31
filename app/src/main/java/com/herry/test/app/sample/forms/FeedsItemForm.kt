@@ -1,4 +1,4 @@
-package com.herry.test.app.sample.feeds.form
+package com.herry.test.app.sample.forms
 
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
@@ -15,16 +15,16 @@ import com.herry.test.R
 import com.herry.test.repository.feed.db.Feed
 import java.util.*
 
-class FeedCategoryFeedsItemForm(
-    private val onClickItem: ((form: FeedCategoryFeedsItemForm, holder: Holder) -> Unit)?
-): NodeForm<FeedCategoryFeedsItemForm.Holder, Feed>(Holder::class, Feed::class) {
+class FeedsItemForm(
+    private val onClickItem: ((form: FeedsItemForm, holder: Holder) -> Unit)?
+): NodeForm<FeedsItemForm.Holder, Feed>(Holder::class, Feed::class) {
     inner class Holder(context: Context, view: View): NodeHolder(context, view) {
         val container: View? = view.findViewById(R.id.feed_list_item_form_container)
         val cover: ImageView? = view.findViewById(R.id.feed_list_item_form_cover)
 
         init {
             container?.setOnProtectClickListener {
-                onClickItem?.invoke(this@FeedCategoryFeedsItemForm, this)
+                onClickItem?.invoke(this@FeedsItemForm, this)
             }
         }
     }

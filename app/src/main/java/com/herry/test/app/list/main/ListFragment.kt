@@ -44,7 +44,7 @@ class ListFragment : BaseNavView<ListContract.View, ListContract.Presenter>(), L
         view ?: return
 
         TitleBarForm(
-            activity = requireActivity()
+            activity = { requireActivity() }
         ).apply {
             bindFormHolder(view.context, view.findViewById(R.id.list_fragment_title))
             bindFormModel(view.context, TitleBarForm.Model(title = "List"))

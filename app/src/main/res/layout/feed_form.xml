@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:padding="@dimen/size16"
         android:orientation="vertical"
-        android:background="@color/tbc_100_a10"
+        android:background="@color/tbc_100_a30"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">

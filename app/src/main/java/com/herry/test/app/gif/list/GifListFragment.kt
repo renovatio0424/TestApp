@@ -49,7 +49,7 @@ class GifListFragment : BaseNavView<GifListContract.View, GifListContract.Presen
         view ?: return
 
         TitleBarForm(
-            activity = requireActivity()
+            activity = { requireActivity() }
         ).apply {
             bindFormHolder(view.context, view.findViewById(R.id.gif_list_fragment_title))
             bindFormModel(view.context, TitleBarForm.Model(title = "Gif List"))

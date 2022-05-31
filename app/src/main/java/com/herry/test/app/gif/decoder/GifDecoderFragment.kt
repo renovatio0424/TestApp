@@ -59,7 +59,7 @@ class GifDecoderFragment : BaseNavView<GifDecoderContract.View, GifDecoderContra
         view ?: return
 
         TitleBarForm(
-            activity = requireActivity(),
+            activity = { requireActivity() },
             onClickBack = { AppUtil.pressBackKey(requireActivity(), view) }
         ).apply {
             bindFormHolder(view.context, view.findViewById(R.id.gif_decoder_fragment_title))

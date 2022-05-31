@@ -4,7 +4,7 @@ import com.google.android.exoplayer2.ExoPlayer
 import com.herry.libs.mvp.MVPView
 import com.herry.libs.nodeview.INodeRoot
 import com.herry.test.app.base.nav.BaseNavPresenter
-import com.herry.test.app.sample.hots.forms.FeedForm
+import com.herry.test.app.sample.forms.FeedForm
 
 interface FeedDetailContract {
     interface View : MVPView<Presenter>, INodeRoot {
@@ -22,4 +22,10 @@ interface FeedDetailContract {
         abstract fun toggleVolume(model: FeedForm.Model?)
         abstract fun loadMore()
     }
+
+    data class LoadedData(
+        val init: Boolean,
+        val selectedPosition: Int,
+        val list: MutableList<FeedForm.Model>
+    )
 }

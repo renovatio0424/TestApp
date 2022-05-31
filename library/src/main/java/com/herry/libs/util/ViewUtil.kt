@@ -442,6 +442,8 @@ object ViewUtil {
 
     data class LinkTextData(
         val links: MutableList<String>,
+        @ColorInt val  linkTextColor: Int? = null,
+        val isUnderlineText: Boolean = true,
         val onClicked: ((view: View, text: String) -> Unit)? = null,
         val readMore: ReadMoreTextData? = null
     )
@@ -469,10 +471,10 @@ object ViewUtil {
             val clickableSpan = object : ClickableSpan() {
                 override fun updateDrawState(textPaint: TextPaint) {
                     // use this to change the link color
-                    textPaint.color = textPaint.linkColor
+                    textPaint.color = linkData.linkTextColor ?: textPaint.linkColor
                     // toggle below value to enable/disable
                     // the underline shown below the clickable text
-                    textPaint.isUnderlineText = true
+                    textPaint.isUnderlineText = linkData.isUnderlineText
                 }
 
                 override fun onClick(view: View) {

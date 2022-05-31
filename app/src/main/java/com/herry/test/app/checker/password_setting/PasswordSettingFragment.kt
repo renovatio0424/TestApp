@@ -39,7 +39,7 @@ class PasswordSettingFragment : BaseNavView<PasswordSettingContract.View, Passwo
         view ?: return
 
         TitleBarForm(
-            activity = requireActivity(),
+            activity = { requireActivity() },
             onClickBack = { AppUtil.pressBackKey(requireActivity(), view) }
         ).apply {
             bindFormHolder(view.context, view.findViewById(R.id.password_setting_fragment_title))

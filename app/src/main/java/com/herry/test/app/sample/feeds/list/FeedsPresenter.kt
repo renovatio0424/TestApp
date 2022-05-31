@@ -4,8 +4,8 @@ import com.herry.libs.nodeview.model.Node
 import com.herry.libs.nodeview.model.NodeHelper
 import com.herry.libs.nodeview.model.NodeModelGroup
 import com.herry.test.app.sample.data.FeedCategory
+import com.herry.test.app.sample.feeds.detail.CategoryFeedsDetailCallData
 import com.herry.test.app.sample.feeds.detail.FeedDetailCallData
-import com.herry.test.app.sample.feeds.detail.FeedDetailListMode
 import com.herry.test.repository.feed.db.Feed
 import com.herry.test.repository.feed.db.FeedDB
 import com.herry.test.repository.feed.db.FeedDBRepository
@@ -137,17 +137,11 @@ class FeedsPresenter : FeedsContract.Presenter() {
 
         currentFeedCategoryFeedsPresenter ?: return null
 
-        val projects: MutableList<String> = mutableListOf()
-        currentFeedCategoryFeedsPresenter.getFeeds().forEach { feed ->
-            projects.add(feed.projectId)
-        }
-
         val category: FeedCategory = currentFeedCategoryFeedsPresenter.category
-        return FeedDetailCallData(
-            projects = projects,
-            mode = FeedDetailListMode.FEEDS,
-            feedsCategory = category,
-            selectedFeed = selectedFeed
+        return CategoryFeedsDetailCallData(
+            loadedProjectCounts = currentFeedCategoryFeedsPresenter.getFeeds().size,
+            selectedFeed = selectedFeed,
+            feedsCategory = category
         )
     }
 }

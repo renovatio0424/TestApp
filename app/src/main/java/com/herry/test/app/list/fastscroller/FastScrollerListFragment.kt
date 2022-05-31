@@ -43,7 +43,7 @@ class FastScrollerListFragment: BaseNavView<FastScrollerListContract.View, FastS
         view ?: return
 
         TitleBarForm(
-            activity = requireActivity()
+            activity = { requireActivity() }
         ).apply {
             bindFormHolder(view.context, view.findViewById(R.id.fast_scroller_list_fragment_title))
             bindFormModel(view.context, TitleBarForm.Model(title = "Fast Scroller List"))

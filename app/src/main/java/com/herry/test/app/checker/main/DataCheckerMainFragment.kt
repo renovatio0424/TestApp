@@ -51,7 +51,7 @@ class DataCheckerMainFragment : BaseNavView<DataCheckerMainContract.View, DataCh
         view ?: return
 
         TitleBarForm(
-            activity = requireActivity(),
+            activity = { requireActivity() },
             onClickBack = { AppUtil.pressBackKey(requireActivity(), view) }
         ).apply {
             bindFormHolder(view.context, view.findViewById(R.id.data_checker_main_fragment_title))

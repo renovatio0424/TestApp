@@ -14,10 +14,6 @@ import io.reactivex.Observable
 
 class FeedCategoryFeedsPresenter(val category: FeedCategory) : TabRecyclerPresenter() {
 
-    companion object {
-        const val PAGE_SIZE = 30
-    }
-
     private val lastOneObservable = LastOneObservable<Pair<Boolean, MutableList<Feed>>>(
         {
             display(it.first, it.second)
@@ -62,15 +58,13 @@ class FeedCategoryFeedsPresenter(val category: FeedCategory) : TabRecyclerPresen
     }
 
     override fun loadMore() {
-        val feeds = NodeHelper.getChildrenModels<Feed>(nodes)
-        val currentPage = feeds.size / PAGE_SIZE
-        loadFeeds(false, if (currentPage > 0) currentPage + 1 else 1)
+        loadFeeds(false)
     }
 
     override fun refresh(loading: TabRecyclerLoadingType) {
     }
 
-    override fun scrollToPosition(position: Int) {
+    override fun setCurrentPosition(position: Int) {
         this.currentPosition = position
 //        Trace.d("Herry", "scrollToPosition  $category to : $currentPosition")
     }
@@ -81,8 +75,12 @@ class FeedCategoryFeedsPresenter(val category: FeedCategory) : TabRecyclerPresen
     override fun relaunched(recreated: Boolean) {
     }
 
-    private fun loadFeeds(init: Boolean, page: Int = 1) {
-        if (init) {
+    private fun loadFeeds(init: Boolean) {
+        var lastProjectId = ""
+        if (!init) {
+            val feeds = getFeeds()
+            lastProjectId = if (feeds.isNotEmpty()) feeds.last().projectId else ""
+        } else {
             lastOneObservable.dispose()
         }
 
@@ -95,7 +93,7 @@ class FeedCategoryFeedsPresenter(val category: FeedCategory) : TabRecyclerPresen
                     observable = Observable.create<MutableList<Feed>> { emitter ->
                         val list: MutableList<Feed> = mutableListOf()
 
-                        feedRepository?.getList(category = category.id, page = page, pageSize = PAGE_SIZE)?.let { feeds ->
+                        feedRepository?.getList(category = category.id, lastProjectId = lastProjectId)?.let { feeds ->
                             list.addAll(feeds)
                         }
 
@@ -116,23 +114,25 @@ class FeedCategoryFeedsPresenter(val category: FeedCategory) : TabRecyclerPresen
     }
 
     private fun display(init: Boolean, list: MutableList<Feed>) {
+        var showEmpty = false
+        // sets results
+        this.nodes.beginTransition()
         if (init) {
-            // sets results
-            this.nodes.beginTransition()
-
             val nodes = NodeHelper.createNodeGroup()
             NodeHelper.addModels(nodes, *list.toTypedArray())
             NodeHelper.upSert(this.nodes, nodes)
 
-            this.nodes.endTransition()
-
-            view?.onEmptyView(list.isEmpty())
+            showEmpty = list.isEmpty()
         } else if(list.isNotEmpty()){
-            this.nodes.beginTransition()
             NodeHelper.addModels(nodes, *list.toTypedArray())
-            this.nodes.endTransition()
+        }
+        this.nodes.endTransition()
+
+        if (init) {
+            view?.onEmptyView(showEmpty)
+            view?.onScrollToPosition(currentPosition)
         }
     }
 
-    fun getFeeds(): MutableList<Feed> = NodeHelper.getChildrenModels<Feed>(nodes)
+    fun getFeeds(): MutableList<Feed> = NodeHelper.getChildrenModels(nodes)
 }

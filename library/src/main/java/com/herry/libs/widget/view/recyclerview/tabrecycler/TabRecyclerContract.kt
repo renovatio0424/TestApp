@@ -27,6 +27,6 @@ interface TabRecyclerContract {
         abstract fun refresh(loading: TabRecyclerLoadingType)
 
         abstract fun setCurrentPresent()
-        abstract fun scrollToPosition(position: Int)
+        abstract fun setCurrentPosition(position: Int)
     }
 }

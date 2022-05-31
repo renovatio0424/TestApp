@@ -52,7 +52,7 @@ class SchemeFragment : BaseNavView<SchemeContract.View, SchemeContract.Presenter
         view ?: return
 
         TitleBarForm(
-            activity = requireActivity(),
+            activity = { requireActivity() },
             onClickBack = { AppUtil.pressBackKey(requireActivity(), view) }
         ).apply {
             bindFormHolder(view.context, view.findViewById(R.id.scheme_fragment_title))

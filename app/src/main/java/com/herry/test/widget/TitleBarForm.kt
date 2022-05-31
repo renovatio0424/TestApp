@@ -19,7 +19,7 @@ import com.herry.test.R
  * Created by herry.park on 2020/06/18.
  **/
 class TitleBarForm(
-    private val activity: Activity,
+    private val activity: () -> Activity,
     private val onClickBack : (() -> Unit)? = null,
     private val onClickAction: (() -> Unit)? = null,
 ) : NodeForm<TitleBarForm.Holder, TitleBarForm.Model>(Holder::class, Model::class) {
@@ -47,7 +47,7 @@ class TitleBarForm(
                 a.recycle()
                 color
             })
-            (activity as AppCompatActivity?)?.let { activity ->
+            (activity.invoke() as AppCompatActivity?)?.let { activity ->
                 activity.setSupportActionBar(toolBar)
                 activity.supportActionBar?.setDisplayHomeAsUpEnabled(model.backEnable)
                 toolBar.setNavigationOnClickListener { onClickBack?.let { it() } }

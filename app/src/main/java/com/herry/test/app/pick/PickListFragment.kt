@@ -56,7 +56,7 @@ class PickListFragment: BaseNavView<PickListContract.View, PickListContract.Pres
         view ?: return
 
         TitleBarForm(
-            activity = requireActivity()
+            activity = { requireActivity() }
         ).apply {
             bindFormHolder(view.context, view.findViewById(R.id.pick_list_fragment_title))
             bindFormModel(view.context, TitleBarForm.Model(title = "Test List"))

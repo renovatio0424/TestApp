@@ -16,7 +16,7 @@ import com.herry.libs.widget.view.recyclerview.tabrecycler.TabRecyclerContract
 import com.herry.libs.widget.view.recyclerview.tabrecycler.TabRecyclerView
 import com.herry.libs.widget.view.swiperefreshlayout.SwipeRefreshLayoutEx
 import com.herry.test.R
-import com.herry.test.app.sample.feeds.form.FeedCategoryFeedsItemForm
+import com.herry.test.app.sample.forms.FeedsItemForm
 import com.herry.test.repository.feed.db.Feed
 
 class FeedCategoryFeedsForm(
@@ -72,8 +72,8 @@ class FeedCategoryFeedsForm(
     }
 
     override fun onBindHolder(list: MutableList<NodeForm<out NodeHolder, *>>) {
-        list.add(FeedCategoryFeedsItemForm(onClickItem = { form, holder ->
-            val feed = NodeRecyclerForm.getBindModel(form, holder) ?: return@FeedCategoryFeedsItemForm
+        list.add(FeedsItemForm(onClickItem = { form, holder ->
+            val feed = NodeRecyclerForm.getBindModel(form, holder) ?: return@FeedsItemForm
             onClickFeed.invoke(holder.cover, feed)
         }))
     }
@@ -91,7 +91,7 @@ class FeedCategoryFeedsForm(
         if (firstVisiblePosition.isNotEmpty()) {
             val firstItemPosition = positionArray[0]
             if (firstItemPosition >= 0) {
-                presenter.scrollToPosition(position = firstItemPosition)
+                presenter.setCurrentPosition(position = firstItemPosition)
             }
         }
     }

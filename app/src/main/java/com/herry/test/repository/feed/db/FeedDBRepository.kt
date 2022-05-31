@@ -9,8 +9,8 @@ class FeedDBRepository(private val dao: FeedDao) {
     // implement anything else to ensure we're not doing long running database work
     // off the main thread.
     @WorkerThread
-    fun getList(category: Int = 0, page: Int = 1, pageSize: Int = 0): List<Feed> {
-        return dao.getList(category, page - 1, pageSize)
+    fun getList(category: Int = 0, lastProjectId: String = "", pageSize: Int = 30): List<Feed> {
+        return dao.getList(category, lastProjectId, pageSize)
     }
 
     @WorkerThread
@@ -23,7 +23,16 @@ class FeedDBRepository(private val dao: FeedDao) {
     }
 
     @WorkerThread
-    fun getNewFeeds(page: Int = 1, pageSize: Int = 10): List<Feed> {
-        return dao.getNewList(page - 1, pageSize)
+    fun getNewFeeds(lastProjectId: String = "", pageSize: Int = 10): List<Feed> {
+        return dao.getNewFeeds(lastProjectId, pageSize)
+    }
+
+    @WorkerThread
+    fun getTagFeeds(tag: String, lastProjectId: String = "", pageSize: Int = 10): List<Feed> {
+        if (tag.isBlank()) {
+            return listOf()
+        }
+
+        return dao.getTagFeeds("%$tag%", lastProjectId, pageSize)
     }
 }

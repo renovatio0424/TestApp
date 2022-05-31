@@ -5,9 +5,11 @@ import com.herry.libs.media.exoplayer.ExoPlayerManager
 import com.herry.libs.nodeview.model.Node
 import com.herry.libs.nodeview.model.NodeHelper
 import com.herry.libs.nodeview.model.NodeModelGroup
-import com.herry.test.app.sample.hots.forms.FeedForm
+import com.herry.test.app.sample.forms.FeedForm
 import com.herry.test.repository.feed.db.FeedDB
 import com.herry.test.repository.feed.db.FeedDBRepository
+import com.herry.test.rx.LastOneObservable
+import com.herry.test.rx.RxUtil
 import io.reactivex.Observable
 
 class FeedDetailPresenter(
@@ -18,10 +20,19 @@ class FeedDetailPresenter(
         const val PAGE_SIZE = 10
     }
 
+    private val lastOneObservable = LastOneObservable<FeedDetailContract.LoadedData>(
+        {
+            if (it.list.isNotEmpty()) {
+                currentPosition = it.selectedPosition
+            }
+            display(it.init, it.list)
+        }
+    )
+
     private var feedDatabase: FeedDB? = null
     private var feedRepository: FeedDBRepository? = null
 
-    private val feedNodes: Node<NodeModelGroup> = NodeHelper.createNodeGroup()
+    private val nodes: Node<NodeModelGroup> = NodeHelper.createNodeGroup()
     private var currentPosition: Int = 0
 
     private val exoPlayerManger: ExoPlayerManager = ExoPlayerManager(
@@ -40,11 +51,13 @@ class FeedDetailPresenter(
         }
 
         view.root.beginTransition()
-        NodeHelper.addNode(view.root, feedNodes)
+        NodeHelper.addNode(view.root, nodes)
         view.root.endTransition()
     }
 
     override fun onDetach() {
+        lastOneObservable.dispose()
+
         feedRepository = null
         feedDatabase = null
 
@@ -53,13 +66,13 @@ class FeedDetailPresenter(
 
     override fun onLaunch(view: FeedDetailContract.View, recreated: Boolean) {
         launch {
-            load(!recreated)
+            load()
         }
     }
 
     override fun onResume(view: FeedDetailContract.View) {
         launch {
-            load(false)
+            load()
         }
     }
 
@@ -69,76 +82,92 @@ class FeedDetailPresenter(
         }
     }
 
-    private fun load(init: Boolean) {
-        if (init) {
-            loadFeeds()
-        } else {
-            reloadFeeds()
-        }
-    }
-
-    private fun loadFeeds(page: Int = 1) {
-        subscribeObservable(Observable.create<Pair<MutableList<FeedForm.Model>, Int>> { emitter ->
-            val list: MutableList<FeedForm.Model> = mutableListOf()
-            var selectedPosition = 0
-            feedRepository?.let {  repository ->
-                if (callData.projects.isNotEmpty()) {
-                    repository.getList(callData.projects)
-                } else {
-                    when (callData.mode) {
-                        FeedDetailListMode.NEWS -> {
-                            repository.getNewFeeds(page, PAGE_SIZE)
-                        }
-                        FeedDetailListMode.FEEDS -> {
-                            repository.getList(page, PAGE_SIZE)
-                        }
-                        else -> {
-                            mutableListOf()
-                        }
-                    }
-                }.forEachIndexed { index, feed ->
-                    list.add(FeedForm.Model(index, feed))
-                    if (feed.projectId == callData.selectedFeed.projectId) {
-                        selectedPosition = index
-                    }
-                }
-            }
-
-            emitter.onNext(Pair(list, selectedPosition))
-            emitter.onComplete()
-        }, { videos ->
-            currentPosition = videos.second
-            display(page == 1, videos.first)
-            view?.onScrollTo(currentPosition)
-        })
-    }
-
-    private fun reloadFeeds() {
-        val videos = NodeHelper.getChildrenModels<FeedForm.Model>(feedNodes)
+    private fun load() {
+        val videos = getFeeds()
         if (videos.size <= 0) {
-            loadFeeds(1)
+            this.load(true)
         } else {
-            feedNodes.beginTransition()
-            feedNodes.clearChild()
-            feedNodes.endTransition()
+            nodes.beginTransition()
+            nodes.clearChild()
+            nodes.endTransition()
             display(false, videos)
             view?.onScrollTo(currentPosition)
         }
     }
 
+    private fun load(reset: Boolean) {
+        var lastProjectId = ""
+        if (!reset) {
+            val feeds = getFeeds()
+            lastProjectId = if (feeds.isNotEmpty()) feeds.last().feed.projectId else ""
+        } else {
+            lastOneObservable.dispose()
+        }
+
+        if (lastOneObservable.isDisposed()) {
+            if (reset) {
+                // show load view
+            }
+            lastOneObservable.subscribe(
+                RxUtil.setPresenterObservable(
+                    observable = Observable.create<FeedDetailContract.LoadedData> { emitter ->
+                        val list: MutableList<FeedForm.Model> = mutableListOf()
+                        val selectedProjectId = callData.selectedFeed.projectId
+                        var selectedPosition = 0
+                        feedRepository?.let {  repository ->
+                            val loadPageSize = if (reset && callData.loadedProjectCounts > 0) callData.loadedProjectCounts else PAGE_SIZE
+                            (when (callData) {
+                                is TagFeedsDetailCallData -> {
+                                    repository.getTagFeeds(callData.tag, lastProjectId, loadPageSize)
+                                }
+                                is CategoryFeedsDetailCallData -> {
+                                    repository.getList(callData.feedsCategory.id, lastProjectId, loadPageSize)
+                                }
+                                else -> {
+                                    mutableListOf()
+                                }
+                            }).forEachIndexed { index, feed ->
+                                list.add(FeedForm.Model(index, feed))
+                                if (reset) {
+                                    if (feed.projectId == selectedProjectId) {
+                                        selectedPosition = index
+                                    }
+                                } else {
+                                    this@FeedDetailPresenter.currentPosition
+                                }
+                            }
+                        }
+
+                        emitter.onNext(FeedDetailContract.LoadedData(reset, selectedPosition, list))
+                        emitter.onComplete()
+                    }, //.delay((if (init) 500 else 0).toLong(), TimeUnit.MILLISECONDS),
+                    view = this::view,
+                    loadView = false
+                )
+                    .map {
+                        if (reset) {
+                            // hide load view
+                        }
+                        it
+                    }
+            )
+        }
+    }
+
     private fun display(reset: Boolean, list: MutableList<FeedForm.Model>) {
-        this.feedNodes.beginTransition()
-        if (reset) {
+        this.nodes.beginTransition()
+        if(reset) {
             val nodes = NodeHelper.createNodeGroup()
             NodeHelper.addModels(nodes, *list.toTypedArray())
-            NodeHelper.upSert(this.feedNodes, nodes)
+            NodeHelper.upSert(this.nodes, nodes)
         } else {
-            NodeHelper.addModels(this.feedNodes, *list.toTypedArray())
+            NodeHelper.addModels(this.nodes, *list.toTypedArray())
         }
-        this.feedNodes.endTransition()
+        this.nodes.endTransition()
 
         if (reset) {
-            view?.onLaunched(this.feedNodes.getChildCount())
+            view?.onLaunched(this.nodes.getChildCount())
+            view?.onScrollTo(currentPosition)
         }
     }
 
@@ -153,8 +182,8 @@ class FeedDetailPresenter(
     }
 
     private fun getFeedModelFromFeeds(position: Int): FeedForm.Model?{
-        val nodePosition = feedNodes.getNodePosition(position) ?: return null
-        val node = feedNodes.getNode(nodePosition) ?: return null
+        val nodePosition = nodes.getNodePosition(position) ?: return null
+        val node = nodes.getNode(nodePosition) ?: return null
         return node.model as? FeedForm.Model
     }
 
@@ -201,8 +230,8 @@ class FeedDetailPresenter(
     }
 
     override fun loadMore() {
-        val feeds = NodeHelper.getChildrenModels<FeedForm.Model>(feedNodes)
-        val currentPage = feeds.size / PAGE_SIZE
-        loadFeeds(if (currentPage > 0) currentPage + 1 else 1)
+        this.load(false)
     }
+
+    private fun getFeeds(): MutableList<FeedForm.Model> = NodeHelper.getChildrenModels(nodes)
 }

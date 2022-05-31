@@ -54,7 +54,7 @@ class ShareMediaListFragment : BaseNavView<ShareMediaListContract.View, ShareMed
         view ?: return
 
         TitleBarForm(
-            activity = requireActivity()
+            activity = { requireActivity() }
         ).apply {
             bindFormHolder(view.context, view.findViewById(R.id.share_media_list_fragment_title))
             bindFormModel(view.context, TitleBarForm.Model(title = "Share Media List"))
