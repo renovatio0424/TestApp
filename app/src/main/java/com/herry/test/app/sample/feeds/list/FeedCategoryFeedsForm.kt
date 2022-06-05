@@ -17,7 +17,7 @@ import com.herry.libs.widget.view.recyclerview.tabrecycler.TabRecyclerView
 import com.herry.libs.widget.view.swiperefreshlayout.SwipeRefreshLayoutEx
 import com.herry.test.R
 import com.herry.test.app.sample.forms.FeedsItemForm
-import com.herry.test.repository.feed.db.Feed
+import com.herry.test.app.sample.repository.database.feed.Feed
 
 class FeedCategoryFeedsForm(
     private val onErrorCB: (throwable: Throwable) -> Unit,

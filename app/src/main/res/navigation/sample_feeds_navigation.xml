@@ -11,8 +11,4 @@
         android:name="com.herry.test.app.sample.feeds.list.FeedsFragment"
         tools:layout="@layout/feeds_fragment" />
 
-    <fragment
-        android:id="@+id/feed_search_fragment"
-        android:name="com.herry.test.app.sample.feeds.result.FeedSearchResultFragment"
-        tools:layout="@layout/feed_search_fragment" />
 </navigation>

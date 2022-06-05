@@ -20,7 +20,7 @@ import com.herry.libs.widget.anim.ViewAnimCreator
 import com.herry.libs.widget.anim.ViewAnimListener
 import com.herry.libs.widget.anim.ViewAnimPlayer
 import com.herry.test.R
-import com.herry.test.repository.feed.db.Feed
+import com.herry.test.app.sample.repository.database.feed.Feed
 import java.util.*
 
 @Suppress("unused")

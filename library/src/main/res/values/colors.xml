@@ -37,4 +37,16 @@
     <color name="tbc_10_a10">#1AFFFFFF</color>
     <color name="tbc_0">#00000000</color>
 
+    <!--  title bar colors -->
+    <color name="hcs_titlebar_bg">#FF262D53</color>
+    <color name="hcs_titlebar_bg_invert">#CC262D53</color>
+    <color name="hcs_titlebar_shadow_line">#FF38458A</color>
+    <color name="hcs_titlebar_title_text">#FFFFFFFF</color>
+    <color name="hcs_titlebar_title_text_invert">#FFFFFFFF</color>
+    <color name="hcs_titlebar_action_text_default">#FFFFFFFF</color>
+    <color name="hcs_titlebar_action_text_select">#FF38458A</color>
+    <color name="hcs_titlebar_action_menu_text">#FF000000</color>
+    <color name="hcs_titlebar_sub_menu_list_item_bg_select">#334EACEC</color>
+    <color name="hcs_titlebar_sub_menu_list_item_bg_normal">#FFFFFFFF</color>
+    <color name="hcs_titlebar_sub_menu_list_item_bg_disable">#FFF9F9F9</color>
 </resources>

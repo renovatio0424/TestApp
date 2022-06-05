@@ -22,7 +22,7 @@ class PasswordSettingPresenter : PasswordSettingContract.Presenter() {
     private fun display() {
         view?.getViewContext() ?: return
 
-        view?.onDisplayPassword(passwordChecker.data ?: "")
+        view?.onDisplayPassword(passwordChecker.getData() ?: "")
     }
 
     override fun setPassword(password: String?) {
@@ -30,9 +30,9 @@ class PasswordSettingPresenter : PasswordSettingContract.Presenter() {
     }
 
     override fun isChangedPassword(): Boolean {
-        val result = passwordChecker.isChanged
+        val result = passwordChecker.isChanged()
         if (result) {
-            PreferenceHelper.set(SharedPrefKeys.PASSWORD, passwordChecker.data)
+            PreferenceHelper.set(SharedPrefKeys.PASSWORD, passwordChecker.getData())
         }
         return result
     }

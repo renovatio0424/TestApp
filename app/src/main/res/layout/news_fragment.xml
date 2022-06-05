@@ -22,7 +22,7 @@
         android:id="@+id/news_fragment_top_overlay"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@drawable/gradient_linear_270_tbc_100_a20_to_tbc_0"
+        android:background="@drawable/gradient_linear_270_tbc_100_a30_to_tbc_0"
         app:layout_constraintHeight_percent="0.25"
         app:layout_constraintTop_toTopOf="parent"/>
 

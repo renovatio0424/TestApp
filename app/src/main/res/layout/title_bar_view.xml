@@ -7,22 +7,10 @@
     android:layout_height="wrap_content"
     tools:viewBindingIgnore="true">
 
-    <androidx.appcompat.widget.Toolbar
+    <com.herry.libs.widget.view.titlebar.TitleBar
         android:id="@+id/title_bar_view_container"
+        style="@style/TitleBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="?attr/actionBarSize"
-        android:background="?colorPrimary"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+        android:layout_height="wrap_content" />
 
-    <TextView
-        android:id="@+id/title_bar_view_action"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|center_vertical"
-        android:layout_marginEnd="@dimen/size16"
-        android:text=""
-        android:textSize="@dimen/size12"
-        android:textColor="@color/tbc_100" />
 </FrameLayout>

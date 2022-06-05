@@ -1,11 +1,15 @@
 package com.herry.libs.data_checker
 
 class DataCheckerMandatoryDelegate(private val checker: DataCheckerMandatory?) : DataCheckerMandatory {
-    override var isMandatory = false
-        private set
-    override var isChanged = false
-        private set
+
+    private var isMandatory = false
+    private var isChanged = false
+
     private val listener: MutableList<DataCheckerMandatory.OnDataCheckerChangedListener> = mutableListOf()
+
+    override fun isChanged(): Boolean = isChanged
+
+    override fun isMandatory(): Boolean = isMandatory
 
     override fun addOnCheckerListener(listener: DataCheckerMandatory.OnDataCheckerChangedListener) {
         this.listener.add(listener)

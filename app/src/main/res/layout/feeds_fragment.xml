@@ -29,26 +29,37 @@
                 android:layout_height="wrap_content"
                 app:layout_scrollFlags="scroll|enterAlways|exitUntilCollapsed|snap">
 
-                <LinearLayout
+                <FrameLayout
                     android:id="@+id/feeds_fragment_search_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/tbc_50"
-                    android:orientation="vertical">
+                    android:paddingStart="@dimen/size16"
+                    android:paddingEnd="@dimen/size16"
+                    android:paddingTop="@dimen/size08"
+                    android:paddingBottom="@dimen/size08"
+                    android:background="@color/tbc_10">
 
                     <TextView
-                        android:id="@+id/feeds_fragment_search"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/size36"
-                        android:padding="@dimen/size08"
-                        android:gravity="center"
-                        android:text="search"
-                        android:textSize="@dimen/size12"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:gravity="start|center_vertical"
+                        android:paddingStart="@dimen/size36"
+                        android:paddingEnd="@dimen/size20"
+                        android:textColor="@color/tbc_60"
+                        android:textSize="@dimen/size16"
+                        android:textStyle="normal"
+                        android:singleLine="true"
+                        android:text="Search"
+                        android:background="@drawable/shape_ra27_bg_tbc35"/>
 
-                </LinearLayout>
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="@dimen/size20"
+                        android:layout_height="@dimen/size20"
+                        android:layout_marginStart="@dimen/size08"
+                        android:layout_gravity="start|center_vertical"
+                        android:src="@drawable/ic_search" />
+
+                </FrameLayout>
             </com.google.android.material.appbar.CollapsingToolbarLayout>
 
             <FrameLayout

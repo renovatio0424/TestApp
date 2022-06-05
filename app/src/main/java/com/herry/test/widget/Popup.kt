@@ -6,7 +6,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
-import com.herry.libs.widget.view.AppDialog
+import com.herry.libs.widget.view.dialog.AppDialog
 import com.herry.test.R
 
 @Suppress("unused")

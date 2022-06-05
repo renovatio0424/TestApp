@@ -4,7 +4,7 @@ import com.herry.libs.mvp.MVPView
 import com.herry.libs.nodeview.INodeRoot
 import com.herry.test.app.base.nav.BaseNavPresenter
 import com.herry.test.app.sample.feeds.detail.FeedDetailCallData
-import com.herry.test.repository.feed.db.Feed
+import com.herry.test.app.sample.repository.database.feed.Feed
 
 interface TagsContract {
     interface View : MVPView<Presenter>, INodeRoot {

@@ -115,16 +115,16 @@ class DataCheckerSet(checker: DataChecker<*>?) {
     val checkers: List<DataChecker<*>>
         get() = ArrayList(hashMap.keys)
 
-    fun isChanged(): Boolean = changeChecker.isChanged
+    fun isChanged(): Boolean = changeChecker.isChanged()
 
-    fun isMandatory(): Boolean = mandatoryChecker.isMandatory
+    fun isMandatory(): Boolean = mandatoryChecker.isMandatory()
 
     private fun createCheckerValue(checker: DataCheckerChange): CheckerValue {
-        return CheckerValue(true, checker.isChanged)
+        return CheckerValue(true, checker.isChanged())
     }
 
     private fun createCheckerValue(checker: DataCheckerMandatory): CheckerValue {
-        return CheckerValue(checker.isMandatory, checker.isChanged)
+        return CheckerValue(checker.isMandatory(), checker.isChanged())
     }
 
     private fun applyCheckerValue(checker: DataChecker<*>?, value: CheckerValue?) {
@@ -158,7 +158,7 @@ class DataCheckerSet(checker: DataChecker<*>?) {
         this.mandatoryCount = mandatoryCount
 
         if (oldChange != newChange) {
-            changeChecker.isChanged = newChange
+            changeChecker.setChanged(newChange)
             mandatoryChecker.setMandatory(newMandatory, newChange)
         } else {
             if (oldMandatory != newMandatory) {
@@ -167,9 +167,9 @@ class DataCheckerSet(checker: DataChecker<*>?) {
         }
     }
 
-    private inner class CheckerValue internal constructor(
-            var isMandatory: Boolean,
-            var isChanged: Boolean
+    private inner class CheckerValue(
+        var isMandatory: Boolean,
+        var isChanged: Boolean
     ) {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true

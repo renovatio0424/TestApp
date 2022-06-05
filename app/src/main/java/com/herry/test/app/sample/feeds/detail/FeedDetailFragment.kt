@@ -38,7 +38,7 @@ import com.herry.test.app.base.StatusBarStyle
 import com.herry.test.app.base.nav.BaseNavView
 import com.herry.test.app.sample.forms.FeedForm
 import com.herry.test.app.sample.tags.TagsFragment
-import com.herry.test.repository.feed.db.Feed
+import com.herry.test.app.sample.repository.database.feed.Feed
 import com.herry.test.widget.TitleBarForm
 import java.util.*
 
@@ -130,7 +130,7 @@ class FeedDetailFragment: BaseNavView<FeedDetailContract.View, FeedDetailContrac
             onClickBack = { AppUtil.pressBackKey(requireActivity(), view) }
         ).apply {
                 bindFormHolder(view.context, view.findViewById<View?>(R.id.feed_detail_fragment_title)?.apply {
-                    this.setViewMarginTop(ViewUtil.getStatusBarHeight(context))
+                    this.setViewMarginTop(if (ViewUtil.isPortraitOrientation(context)) ViewUtil.getStatusBarHeight(context) else 0)
                 })
                 bindFormModel(view.context, TitleBarForm.Model(backEnable = true, backgroundColor = Color.TRANSPARENT))
         }

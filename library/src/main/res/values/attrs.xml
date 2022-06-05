@@ -279,4 +279,184 @@
         <attr name="sf_auto_start" format="boolean" />
         <attr name="sf_effect_duration" format="integer" />
     </declare-styleable>
+
+    <declare-styleable name="EditTextEx">
+        <attr name="etex_focusHintDisable" format="boolean" />
+        <attr name="etex_mandatoryCount" format="integer" />
+        <attr name="etex_editable" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="TitleBar">
+        <!-- Sets a drawable as the content of this ImageView. -->
+        <attr name="customLayout" format="reference"/>
+        <attr name="firstActionDrawableSrc" format="reference|color" />
+        <attr name="secondActionDrawableSrc" format="reference|color" />
+        <attr name="thirdActionDrawableSrc" format="reference|color" />
+        <attr name="fourthActionDrawableSrc" format="reference|color" />
+        <attr name="subActionTextSize" format="dimension" />
+        <attr name="subActionViewPaddingEnd" format="dimension" />
+        <attr name="subActionViewMinWidth" format="dimension" />
+        <attr name="subActionViewTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+        </attr>
+
+        <attr name="secondActionText" format="string" localization="suggested" />
+        <attr name="secondActionViewTextColor" format="reference|color" />
+        <attr name="thirdActionText" format="string" localization="suggested" />
+        <attr name="thirdActionViewTextColor" format="reference|color" />
+        <attr name="fourthActionText" format="string" localization="suggested" />
+        <attr name="fourthActionViewTextColor" format="reference|color" />
+
+        <attr name="menuActionDrawableSrc" format="reference|color" />
+        <attr name="menuActionText" format="string" localization="suggested" />
+        <attr name="menuActionViewTextColor" format="reference|color" />
+        <attr name="menuActionTextSize" format="dimension" />
+        <attr name="menuActionViewPaddingEnd" format="dimension" />
+        <attr name="menuActionViewTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+        </attr>
+        <attr name="menuActionViewMarginTop" format="dimension" />
+        <attr name="menuActionViewMarginEnd" format="dimension" />
+        <attr name="menuWindowBackground" format="reference|color" />
+        <attr name="menuWindowItemLayout" format="reference" />
+        <attr name="menuWindowWidth" format="dimension" >
+            <enum name="fill_parent" value="-1" />
+            <enum name="match_parent" value="-1" />
+            <enum name="wrap_content" value="-2" />
+        </attr>
+        <attr name="menuWindowAnimation" format="reference"/>
+
+        <!-- Text to display. -->
+        <attr name="mainTitleText" format="string" localization="suggested" />
+
+        <!-- Text color. -->
+        <!-- Color of text (usually same as colorForeground). -->
+        <attr name="mainTitleTextColor" format="reference|color" />
+
+        <!-- Size of text. Recommended dimension type for text is "sp" for scaled-pixels (example: 15sp).
+                 Supported values include the following:<p/>
+            <ul>
+                <li><b>px</b> Pixels</li>
+                <li><b>sp</b> Scaled pixels (scaled to relative pixel size on screen). See {@link android.util.DisplayMetrics} for more information.</li>
+                <li><b>pt</b> Points</li>
+                <li><b>dip</b> Device independent pixels. See {@link android.util.DisplayMetrics} for more information.</li>
+            </ul>
+                -->
+        <attr name="mainTitleTextSize" format="dimension" />
+
+        <!-- Default title text typeface style -->
+        <attr name="mainTitleTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+        </attr>
+
+        <!-- title image -->
+        <attr name="mainTitleDrawableSrc" format="reference|color" />
+        <attr name="mainTitleDrawableSrcWidth" format="dimension">
+            <!-- The view should be as big as its parent (minus padding).
+                 This constant is deprecated starting from API Level 8 and
+                 is replaced by {@code match_parent}. -->
+            <enum name="fill_parent" value="-1" />
+            <!-- The view should be as big as its parent (minus padding).
+                 Introduced in API Level 8. -->
+            <enum name="match_parent" value="-1" />
+            <!-- The view should be only big enough to enclose its content (plus padding). -->
+            <enum name="wrap_content" value="-2" />
+        </attr>
+        <attr name="mainTitleDrawableSrcHeight" format="dimension">
+            <!-- The view should be as big as its parent (minus padding).
+                 This constant is deprecated starting from API Level 8 and
+                 is replaced by {@code match_parent}. -->
+            <enum name="fill_parent" value="-1" />
+            <!-- The view should be as big as its parent (minus padding).
+                 Introduced in API Level 8. -->
+            <enum name="match_parent" value="-1" />
+            <!-- The view should be only big enough to enclose its content (plus padding). -->
+            <enum name="wrap_content" value="-2" />
+        </attr>
+
+        <!-- Shadow line -->
+        <attr name="showShadow">
+            <flag name="hide" value="0" />
+            <flag name="show" value="1" />
+        </attr>
+
+        <!-- Shadow background -->
+        <attr name="shadowBackground" format="reference|color"  />
+        <!-- Shadow height -->
+        <attr name="shadowHeight" format="dimension" />
+
+        <attr name="titleBarBackground" format="reference|color" />
+
+        <!-- Text to display. -->
+        <attr name="mainTitleTextGravity">
+            <!-- Push object to the top of its container, not changing its size. -->
+            <flag name="top" value="0x01" />
+            <!-- Push object to the bottom of its container, not changing its size. -->
+            <flag name="bottom" value="0x02" />
+            <!-- Push object to the left of its container, not changing its size. -->
+            <flag name="start" value="0x04" />
+            <!-- Push object to the right of its container, not changing its size. -->
+            <flag name="end" value="0x08" />
+            <!-- Place object in the vertical center of its container, not changing its size. -->
+            <flag name="center_vertical" value="0x10" />
+            <!-- Place object in the horizontal center of its container, not changing its size. -->
+            <flag name="center_horizontal" value="0x20" />
+            <!-- Place the object in the center of its container in both the vertical and horizontal axis, not changing its size. -->
+            <flag name="center" value="0x30" />
+        </attr>
+        <attr name="mainTitleTextPaddingStart" format="dimension" />
+        <attr name="mainTitleTextPaddingEnd" format="dimension" />
+        <attr name="mainTitleTextPaddingTop" format="dimension" />
+        <attr name="mainTitleTextPaddingBottom" format="dimension" />
+
+        <attr name="hasFirstActionBadge" format="boolean"/>
+        <attr name="hasSecondActionBadge" format="boolean"/>
+        <attr name="hasThirdActionBadge" format="boolean"/>
+        <attr name="hasFourthActionBadge" format="boolean"/>
+
+        <attr name="actionBadgeBackground" format="reference|color"/>
+        <attr name="actionBadgeWidth" format="dimension"/>
+        <attr name="actionBadgeHeight" format="dimension"/>
+        <attr name="actionBadgeMarginTop" format="dimension"/>
+        <attr name="actionBadgeMarginBottom" format="dimension"/>
+        <attr name="actionBadgeMarginStart" format="dimension"/>
+        <attr name="actionBadgeMarginEnd" format="dimension"/>
+        <attr name="actionBadgeTextColor" format="reference|color"/>
+        <attr name="actionBadgeTextSize" format="dimension" />
+        <attr name="actionBadgeLayoutGravity">
+            <!-- Push object to the top of its container, not changing its size. -->
+            <flag name="top" value="0x01" />
+            <!-- Push object to the bottom of its container, not changing its size. -->
+            <flag name="bottom" value="0x02" />
+            <!-- Push object to the left of its container, not changing its size. -->
+            <flag name="start" value="0x04" />
+            <!-- Push object to the right of its container, not changing its size. -->
+            <flag name="end" value="0x08" />
+            <!-- Place object in the vertical center of its container, not changing its size. -->
+            <flag name="center_vertical" value="0x10" />
+            <!-- Place object in the horizontal center of its container, not changing its size. -->
+            <flag name="center_horizontal" value="0x20" />
+            <!-- Place the object in the center of its container in both the vertical and horizontal axis, not changing its size. -->
+            <flag name="center" value="0x30" />
+        </attr>
+        <attr name="actionBadgeTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+        </attr>
+        <attr name="actionBadgePaddingTop" format="dimension"/>
+        <attr name="actionBadgePaddingBottom" format="dimension"/>
+        <attr name="actionBadgePaddingStart" format="dimension"/>
+        <attr name="actionBadgePaddingEnd" format="dimension"/>
+        <!-- title to display. -->
+        <attr name="mainTitleEllipsize">
+            <flag name="none" value="0" />
+            <flag name="start" value="1" />
+            <flag name="middle" value="2" />
+            <flag name="end" value="3" />
+            <flag name="marquee" value="4" />
+        </attr>
+    </declare-styleable>
 </resources>

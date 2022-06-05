@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.herry.libs.R
 import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.nodeview.NodeView
-import com.herry.libs.widget.view.LoadingCountView
+import com.herry.libs.widget.view.viewgroup.LoadingCountView
 
 @Suppress("unused")
 abstract class RecyclerForm : NodeView<RecyclerForm.Holder>() {

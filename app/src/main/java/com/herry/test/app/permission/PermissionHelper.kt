@@ -4,7 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import com.herry.libs.util.AppUtil
-import com.herry.libs.widget.view.AppDialog
+import com.herry.libs.widget.view.dialog.AppDialog
 import com.herry.test.widget.Popup
 
 @Suppress("MemberVisibilityCanBePrivate")

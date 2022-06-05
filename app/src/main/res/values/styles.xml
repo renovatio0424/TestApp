@@ -92,4 +92,39 @@
         <item name="android:textStyle">normal</item>
         <item name="textAllCaps">false</item>
     </style>
+
+    <style name="TitleBar">
+        <item name="android:minHeight">?attr/actionBarSize</item>
+        <item name="mainTitleTextColor">@color/tbc_10</item>
+        <item name="mainTitleTextGravity">center</item>
+        <item name="titleBarBackground">@color/colorPrimary</item>
+        <item name="mainTitleTextStyle">bold</item>
+        <item name="mainTitleTextSize">20dp</item>
+        <item name="showShadow">hide</item>
+        <item name="shadowHeight">1dp</item>
+        <item name="shadowBackground">@color/tbc_40</item>
+        <item name="subActionTextSize">@dimen/size18</item>
+        <item name="subActionViewPaddingEnd">0dp</item>
+        <item name="menuActionViewMarginTop">@dimen/size09</item>
+        <item name="menuActionViewMarginEnd">@dimen/size06</item>
+        <item name="menuWindowBackground">@drawable/shape_ra02_bg_tbc10</item>
+        <item name="menuWindowItemLayout">@layout/list_item_title_menu</item>
+        <item name="menuWindowWidth">@dimen/size144</item>
+        <item name="actionBadgeBackground">@null</item>
+        <item name="actionBadgeWidth">14dp</item>
+        <item name="actionBadgeHeight">14dp</item>
+        <item name="actionBadgeMarginTop">12dp</item>
+        <item name="actionBadgeMarginBottom">0dp</item>
+        <item name="actionBadgeMarginEnd">9dp</item>
+        <item name="actionBadgeMarginStart">0dp</item>
+        <item name="actionBadgeTextColor">@color/tbc_10</item>
+        <item name="actionBadgeTextSize">10dp</item>
+        <item name="actionBadgeTextStyle">normal</item>
+        <item name="actionBadgeLayoutGravity">top|end</item>
+        <item name="customLayout">@layout/titlebar</item>
+        <item name="android:background">@null</item>
+        <item name="android:focusable">true</item>
+        <item name="android:focusableInTouchMode">true</item>
+        <item name="firstActionDrawableSrc">@drawable/ic_back</item>
+    </style>
 </resources>

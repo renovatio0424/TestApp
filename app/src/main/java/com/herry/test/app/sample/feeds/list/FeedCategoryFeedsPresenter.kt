@@ -5,9 +5,9 @@ import com.herry.libs.widget.view.recyclerview.tabrecycler.TabRecyclerContract
 import com.herry.libs.widget.view.recyclerview.tabrecycler.TabRecyclerLoadingType
 import com.herry.libs.widget.view.recyclerview.tabrecycler.TabRecyclerPresenter
 import com.herry.test.app.sample.data.FeedCategory
-import com.herry.test.repository.feed.db.Feed
-import com.herry.test.repository.feed.db.FeedDB
-import com.herry.test.repository.feed.db.FeedDBRepository
+import com.herry.test.app.sample.repository.database.feed.Feed
+import com.herry.test.app.sample.repository.database.feed.FeedDB
+import com.herry.test.app.sample.repository.database.feed.FeedDBRepository
 import com.herry.test.rx.LastOneObservable
 import com.herry.test.rx.RxUtil
 import io.reactivex.Observable

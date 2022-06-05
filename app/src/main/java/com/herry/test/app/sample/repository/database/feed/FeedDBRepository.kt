@@ -1,4 +1,4 @@
-package com.herry.test.repository.feed.db
+package com.herry.test.app.sample.repository.database.feed
 
 import androidx.annotation.WorkerThread
 
@@ -35,4 +35,19 @@ class FeedDBRepository(private val dao: FeedDao) {
 
         return dao.getTagFeeds("%$tag%", lastProjectId, pageSize)
     }
+
+    @WorkerThread
+    fun getAutoCompleteKeywords(keyword: String): AutoCompleteKeywords {
+        val list = mutableListOf<String>()
+        if (keyword.isNotBlank()) {
+//            dao.getAutoCompleteKeywords()
+        }
+
+        return AutoCompleteKeywords(keyword = keyword, keywords = list)
+    }
+
+    data class AutoCompleteKeywords(
+        val keyword: String,
+        val keywords: MutableList<String> = mutableListOf()
+    )
 }

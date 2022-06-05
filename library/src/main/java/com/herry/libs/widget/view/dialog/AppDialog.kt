@@ -1,4 +1,4 @@
-package com.herry.libs.widget.view
+package com.herry.libs.widget.view.dialog
 
 import android.annotation.SuppressLint
 import android.app.Dialog
@@ -20,6 +20,7 @@ import androidx.annotation.*
 import androidx.core.view.isVisible
 import com.herry.libs.R
 import com.herry.libs.widget.extension.*
+import com.herry.libs.widget.view.viewgroup.FrameLayoutEx
 import kotlin.math.roundToInt
 
 @SuppressLint("InflateParams")

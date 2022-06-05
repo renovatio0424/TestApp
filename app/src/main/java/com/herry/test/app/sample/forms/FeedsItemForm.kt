@@ -12,7 +12,7 @@ import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.util.ViewUtil
 import com.herry.libs.widget.extension.setOnProtectClickListener
 import com.herry.test.R
-import com.herry.test.repository.feed.db.Feed
+import com.herry.test.app.sample.repository.database.feed.Feed
 import java.util.*
 
 class FeedsItemForm(

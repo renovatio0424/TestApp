@@ -1,4 +1,4 @@
-package com.herry.test.repository.feed.db
+package com.herry.test.app.sample.repository.database.feed
 
 import androidx.room.Dao
 import androidx.room.Query
@@ -53,4 +53,14 @@ interface FeedDao {
                 "LIMIT CASE WHEN :loadSize > 0 THEN :loadSize ELSE -1 END"
     )
     fun getTagFeeds(tag: String, lastProjectId: String, loadSize: Int): List<Feed>
+
+//    @Query(
+//        "SELECT * " +
+//                "FROM feed " +
+//                "WHERE tags LIKE :tag " +
+//                "AND (CASE WHEN :lastProjectId='' THEN published_at < datetime('now') ELSE published_at < (SELECT published_at FROM feed WHERE project_id=:lastProjectId) END) " +
+//                "ORDER BY published_at DESC " +
+//                "LIMIT CASE WHEN :loadSize > 0 THEN :loadSize ELSE -1 END"
+//    )
+//    fun getAutoCompleteKeywords(keyword: String): List<String>
 }

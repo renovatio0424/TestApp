@@ -1,4 +1,4 @@
-package com.herry.libs.widget.view
+package com.herry.libs.widget.view.viewgroup
 
 import android.animation.Animator
 import android.content.Context
@@ -87,7 +87,7 @@ class LoadingCountView : FrameLayout {
                 waitToIng?.cancel()
                 waitToIng = WaitToIng(status).execute()
             }
-            Status.LOAD_WAIT, Status.LOADING  -> loadingCount++
+            Status.LOAD_WAIT, Status.LOADING -> loadingCount++
             Status.END_WAIT -> {
                 waitToIng?.cancel()
                 waitToIng = null

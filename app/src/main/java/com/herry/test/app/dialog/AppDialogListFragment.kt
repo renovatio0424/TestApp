@@ -18,7 +18,7 @@ import com.herry.libs.nodeview.model.NodeRoot
 import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.libs.util.ViewUtil.getColorDrawable
-import com.herry.libs.widget.view.AppDialog
+import com.herry.libs.widget.view.dialog.AppDialog
 import com.herry.test.R
 import com.herry.test.app.base.nav.BaseNavView
 import com.herry.test.widget.Popup

@@ -21,8 +21,6 @@ import com.herry.libs.widget.view.recyclerview.endless.EndlessRecyclerViewScroll
 import com.herry.libs.widget.view.recyclerview.form.recycler.RecyclerForm
 import com.herry.libs.widget.view.swiperefreshlayout.SwipeRefreshLayoutEx
 import com.herry.test.R
-import com.herry.test.app.base.ScreenWindowStyle
-import com.herry.test.app.base.StatusBarStyle
 import com.herry.test.app.base.nav.BaseNavView
 import com.herry.test.app.sample.feeds.detail.FeedDetailFragment
 import com.herry.test.app.sample.forms.FeedsItemForm
@@ -39,8 +37,6 @@ class TagsFragment : BaseNavView<TagsContract.View, TagsContract.Presenter>(), T
 
         private fun getTag(args: Bundle?): String? = BundleUtil[args, ARG_TAG, String::class]
     }
-
-    override fun onScreenWindowStyle(): ScreenWindowStyle = ScreenWindowStyle(false, StatusBarStyle.LIGHT)
 
     override fun onCreatePresenter(): TagsContract.Presenter? {
         val tag = getTag(getDefaultArguments()) ?: return null

@@ -6,8 +6,8 @@ import com.herry.libs.nodeview.model.Node
 import com.herry.libs.nodeview.model.NodeHelper
 import com.herry.libs.nodeview.model.NodeModelGroup
 import com.herry.test.app.sample.forms.FeedForm
-import com.herry.test.repository.feed.db.FeedDB
-import com.herry.test.repository.feed.db.FeedDBRepository
+import com.herry.test.app.sample.repository.database.feed.FeedDB
+import com.herry.test.app.sample.repository.database.feed.FeedDBRepository
 import com.herry.test.rx.LastOneObservable
 import com.herry.test.rx.RxUtil
 import io.reactivex.Observable

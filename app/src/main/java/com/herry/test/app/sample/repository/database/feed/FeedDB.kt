@@ -1,13 +1,12 @@
-package com.herry.test.repository.feed.db
+package com.herry.test.app.sample.repository.database.feed
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-
 @Database(entities = [Feed::class], version = 1)
-abstract class FeedDB: RoomDatabase() {
+abstract class FeedDB : RoomDatabase() {
     abstract fun dao(): FeedDao
 
     companion object {

@@ -1,7 +1,7 @@
 package com.herry.test.app.sample.feeds.detail
 
 import com.herry.test.app.sample.data.FeedCategory
-import com.herry.test.repository.feed.db.Feed
+import com.herry.test.app.sample.repository.database.feed.Feed
 
 open class FeedDetailCallData(
     val loadedProjectCounts: Int = 0,

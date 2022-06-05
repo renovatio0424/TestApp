@@ -1,12 +1,9 @@
 package com.herry.libs.data_checker
 
-
 @Suppress("unused")
 open class DataCheckerChangeData<T> : DataCheckerChange {
-    var base: T? = null
-        private set
-    var data: T? = null
-        private set
+    private var base: T? = null
+    private var data: T? = null
     private val checker: DataCheckerChangeDelegate by lazy { DataCheckerChangeDelegate(this) }
     private var listener: OnDataCheckerChangedListener<T>? = null
 
@@ -14,23 +11,27 @@ open class DataCheckerChangeData<T> : DataCheckerChange {
         setBase(null)
     }
 
-    constructor(baseObj: T) {
-        setBase(baseObj)
+    constructor(base: T) {
+        setBase(base)
     }
+
+    fun getBase(): T? = this.base
 
     fun setBase(data: T?) {
         base = data
         setData(data, true)
     }
 
-    fun setData(data: T) {
+    fun getData(): T? = this.data
+
+    fun setData(data: T?) {
         setData(data, false)
     }
 
     private fun setData(data: T?, notify: Boolean) {
         if (!equals<T?, T?>(this.data, data) || notify) {
             this.data = data
-            checker.isChanged = isChangedCheck(base, this.data)
+            checker.setChanged(isChangedCheck(base, this.data))
             listener?.onChangedData(this.data)
         }
     }
@@ -43,9 +44,7 @@ open class DataCheckerChangeData<T> : DataCheckerChange {
         return !equals<T, T>(base, data)
     }
 
-    override var isChanged: Boolean
-        get() = checker.isChanged
-        set(value) {checker.isChanged = value}
+    override fun isChanged(): Boolean = checker.isChanged()
 
     override fun addOnCheckerListener(listener: DataCheckerChange.OnDataCheckerChangedListener) {
         checker.addOnCheckerListener(listener)

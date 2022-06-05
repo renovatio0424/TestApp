@@ -28,7 +28,7 @@
         android:visibility="invisible"
         />
 
-    <com.herry.libs.widget.view.LoadingCountView
+    <com.herry.libs.widget.view.viewgroup.LoadingCountView
         android:id="@+id/recycler_form_loading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

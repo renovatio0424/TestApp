@@ -18,9 +18,11 @@ class DataCheckerChangeDelegate(private val checker: DataCheckerChange?) : DataC
         }
     }
 
-    override var isChanged: Boolean
-        get() = change
-        set(value) { setChanged(value, false) }
+    override fun isChanged(): Boolean = change
+
+    fun setChanged(changed: Boolean) {
+        setChanged(changed, false)
+    }
 
     fun setChanged(change: Boolean, notify: Boolean) {
         if (notify || this.change != change) {

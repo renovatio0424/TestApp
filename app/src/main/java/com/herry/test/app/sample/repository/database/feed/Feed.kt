@@ -1,4 +1,4 @@
-package com.herry.test.repository.feed.db
+package com.herry.test.app.sample.repository.database.feed
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

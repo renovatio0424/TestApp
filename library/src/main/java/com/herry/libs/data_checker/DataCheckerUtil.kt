@@ -7,6 +7,6 @@ package com.herry.libs.data_checker
 object DataCheckerUtil {
 
     fun <T> getData(checkerData: DataCheckerChangeData<T>, default: T) : T {
-        return checkerData.data ?: return default
+        return checkerData.getData() ?: return default
     }
 }

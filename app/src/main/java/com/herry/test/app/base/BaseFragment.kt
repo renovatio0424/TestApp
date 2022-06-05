@@ -17,7 +17,7 @@ import androidx.fragment.app.DialogFragment
 import com.herry.libs.app.activity_caller.AC
 import com.herry.libs.helper.TransitionHelper
 import com.herry.libs.util.ViewUtil
-import com.herry.libs.widget.view.LoadingCountView
+import com.herry.libs.widget.view.viewgroup.LoadingCountView
 
 open class BaseFragment : DialogFragment() {
 
@@ -73,7 +73,14 @@ open class BaseFragment : DialogFragment() {
     override fun onResume() {
         super.onResume()
 
-        (onScreenWindowStyle() ?: ScreenWindowStyle(isFullScreen = ViewUtil.isSystemFullScreen(context))).let { windowStyle ->
+        val defaultScreenWindowStyle = ScreenWindowStyle(isFullScreen = ViewUtil.isSystemFullScreen(context))
+        val screenStyle = if (ViewUtil.isPortraitOrientation(context)) {
+            onScreenWindowStyle() ?: defaultScreenWindowStyle
+        } else {
+            defaultScreenWindowStyle
+        }
+
+        screenStyle.let { windowStyle ->
             ViewUtil.makeFullScreen(activity, windowStyle.isFullScreen)
             when (windowStyle.statusBarStyle) {
                 StatusBarStyle.LIGHT -> ViewUtil.setStatusBarTransparent(activity, mode = ViewUtil.StatusBarMode.LIGHT)

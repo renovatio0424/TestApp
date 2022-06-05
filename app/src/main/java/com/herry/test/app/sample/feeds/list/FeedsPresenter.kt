@@ -6,9 +6,9 @@ import com.herry.libs.nodeview.model.NodeModelGroup
 import com.herry.test.app.sample.data.FeedCategory
 import com.herry.test.app.sample.feeds.detail.CategoryFeedsDetailCallData
 import com.herry.test.app.sample.feeds.detail.FeedDetailCallData
-import com.herry.test.repository.feed.db.Feed
-import com.herry.test.repository.feed.db.FeedDB
-import com.herry.test.repository.feed.db.FeedDBRepository
+import com.herry.test.app.sample.repository.database.feed.Feed
+import com.herry.test.app.sample.repository.database.feed.FeedDB
+import com.herry.test.app.sample.repository.database.feed.FeedDBRepository
 import io.reactivex.Observable
 
 class FeedsPresenter : FeedsContract.Presenter() {

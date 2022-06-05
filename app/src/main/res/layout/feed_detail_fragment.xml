@@ -18,15 +18,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
 
-    <include
-        android:id="@+id/feed_detail_fragment_title"
-        layout="@layout/title_bar_view"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/feed_detail_fragment_cover"
         android:layout_width="0dp"
@@ -40,8 +31,17 @@
         android:id="@+id/feed_detail_fragment_top_overlay"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@drawable/gradient_linear_270_tbc_100_a20_to_tbc_0"
+        android:background="@drawable/gradient_linear_270_tbc_100_a30_to_tbc_0"
         app:layout_constraintHeight_percent="0.25"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <include
+        android:id="@+id/feed_detail_fragment_title"
+        layout="@layout/title_bar_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

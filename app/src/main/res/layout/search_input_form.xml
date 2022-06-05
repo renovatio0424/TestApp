@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="@dimen/size16"
+    android:paddingEnd="@dimen/size16"
+    android:paddingTop="@dimen/size08"
+    android:paddingBottom="@dimen/size08"
+    android:gravity="center"
+    tools:ignore="SpUsage,ContentDescription,UselessParent"
+    tools:viewBindingIgnore="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size36"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:background="@drawable/shape_ra27_bg_tbc35"
+        tools:ignore="">
+
+        <com.herry.libs.widget.view.editor.EditTextEx
+            android:id="@+id/search_input_form_edit"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingStart="@dimen/size36"
+            android:paddingEnd="@dimen/size20"
+            android:background="@null"
+            android:gravity="start|center_vertical"
+            android:inputType="text"
+            android:textColor="@color/tbc_100"
+            android:textColorHint="@color/tbc_60"
+            android:hint=""
+            android:textSize="@dimen/size16"
+            android:textStyle="normal"
+            android:singleLine="true"
+            android:imeOptions="flagNoExtractUi|flagNoFullscreen|actionDone"
+            />
+
+        <FrameLayout
+            android:id="@+id/search_input_form_clear_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/size08"
+            android:background="?android:attr/actionBarItemBackground"
+            android:visibility="gone">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="@dimen/size20"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:src="@drawable/ic_delete_text"/>
+        </FrameLayout>
+    </LinearLayout>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="@dimen/size20"
+        android:layout_height="@dimen/size20"
+        android:layout_marginStart="@dimen/size08"
+        android:layout_gravity="start|center_vertical"
+        android:src="@drawable/ic_search" />
+
+</FrameLayout>

@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.appbar.AppBarLayout
 import com.herry.libs.nodeview.NodeForm
 import com.herry.libs.nodeview.NodeHolder
 import com.herry.libs.nodeview.model.NodeRoot
@@ -14,7 +13,6 @@ import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.util.ViewUtil
 import com.herry.libs.widget.extension.navigateTo
 import com.herry.libs.widget.extension.setOnProtectClickListener
-import com.herry.libs.widget.extension.setViewPaddingTop
 import com.herry.libs.widget.view.recyclerview.snap.PagerSnapExHelper
 import com.herry.libs.widget.view.recyclerview.snap.PagerSnapWithTabLayoutHelper
 import com.herry.test.R
@@ -27,7 +25,7 @@ import com.herry.test.widget.TabLayoutForm
 
 class FeedsFragment: BaseNavView<FeedsContract.View, FeedsContract.Presenter>(), FeedsContract.View {
 
-    override fun onScreenWindowStyle(): ScreenWindowStyle = ScreenWindowStyle(true, StatusBarStyle.LIGHT)
+    override fun onScreenWindowStyle(): ScreenWindowStyle = ScreenWindowStyle(false, StatusBarStyle.LIGHT)
 
     override fun onCreatePresenter(): FeedsContract.Presenter = FeedsPresenter()
 
@@ -57,22 +55,10 @@ class FeedsFragment: BaseNavView<FeedsContract.View, FeedsContract.Presenter>(),
     private fun init(view: View?) {
         val context = view?.context ?: return
 
-        view.findViewById<View>(R.id.feeds_fragment_search_container)?.setViewPaddingTop(ViewUtil.getStatusBarHeight(context))
-        view.findViewById<View>(R.id.feeds_fragment_search)?.let { resultView ->
-            resultView.setOnProtectClickListener {
+        view.findViewById<View>(R.id.feeds_fragment_search_container)?.run {
+            setOnProtectClickListener {
                 navigateTo(destinationId = R.id.feed_search_fragment)
             }
-        }
-
-        val categoriesContainer = view.findViewById<View>(R.id.feeds_fragment_categories_form_container)
-        view.findViewById<AppBarLayout>(R.id.feeds_fragment_app_bar_layout)?.let {
-            it.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
-                val scrollRange = appBarLayout.totalScrollRange
-                if (scrollRange > 0) {
-                    val topPadding = (kotlin.math.abs(verticalOffset / scrollRange.toFloat()) * ViewUtil.getStatusBarHeight(context)).toInt()
-                    categoriesContainer?.setPadding(0, topPadding, 0, 0)
-                }
-            })
         }
 
         val categoriesForm = TabLayoutForm(

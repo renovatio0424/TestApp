@@ -12,7 +12,7 @@ import com.herry.libs.nodeview.model.NodeRoot
 import com.herry.libs.nodeview.recycler.NodeRecyclerAdapter
 import com.herry.libs.nodeview.recycler.NodeRecyclerForm
 import com.herry.libs.nodeview.recycler.NodeRecyclerHolder
-import com.herry.libs.widget.view.LoadingCountView
+import com.herry.libs.widget.view.viewgroup.LoadingCountView
 import com.herry.libs.widget.view.recyclerview.endless.EndlessRecyclerViewScrollListener
 import com.herry.libs.widget.view.recyclerview.form.recycler.RecyclerForm
 

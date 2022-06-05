@@ -499,4 +499,57 @@ object ViewUtil {
         // sets read more data
         view.setText(spannableString, TextView.BufferType.SPANNABLE)
     }
+
+    fun setViewGroupEnabled(view: View?, enabled: Boolean) {
+        if (null != view) {
+            view.isEnabled = enabled
+            if (view is ViewGroup) {
+                for (i in 0 until view.childCount) {
+                    val child = view.getChildAt(i)
+                    if (null != child) {
+                        if (child is ViewGroup) {
+                            setViewGroupEnabled(child, enabled)
+                        } else {
+                            child.isEnabled = enabled
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun setViewGroupSelected(view: View?, selected: Boolean) {
+        if (null != view) {
+            view.isSelected = selected
+            if (view is ViewGroup) {
+                for (i in 0 until view.childCount) {
+                    val child = view.getChildAt(i)
+                    if (null != child) {
+                        if (child is ViewGroup) {
+                            setViewGroupSelected(child, selected)
+                        } else {
+                            child.isSelected = selected
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun requestFocus(view: View?, focus: Boolean) {
+        view ?: return
+
+        if (focus) {
+            if (!view.isFocusable || !view.isFocusableInTouchMode) {
+                view.isFocusableInTouchMode = true
+            }
+            view.requestFocus()
+        } else {
+            view.clearFocus()
+        }
+    }
+
+    fun hasFocus(view: View?): Boolean {
+        return null != view && view.hasFocus()
+    }
 }

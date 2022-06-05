@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.herry.libs.widget.view.RoundedFrameLayout
+<com.herry.libs.widget.view.viewgroup.RoundedFrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="@dimen/size06"
@@ -12,4 +12,4 @@
         android:id="@+id/gif_decoder_gif_frames_indicator_item_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-</com.herry.libs.widget.view.RoundedFrameLayout>
+</com.herry.libs.widget.view.viewgroup.RoundedFrameLayout>

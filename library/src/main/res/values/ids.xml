@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="hcs_title_container" type="id" />
+    <item name="hcs_title_imageview" type="id" />
+    <item name="hcs_title_textview" type="id" />
+    <item name="hcs_title_first_actionview" type="id" />
+    <item name="hcs_title_end_actions_container" type="id" />
+    <item name="hcs_title_second_actionview" type="id" />
+    <item name="hcs_title_third_actionview" type="id" />
+    <item name="hcs_title_fourth_actionview" type="id" />
+    <item name="hcs_title_menu_actionview" type="id" />
+    <item name="hcs_title_container_searchview" type="id" />
+    <item name="hcs_title_menu_anchor_view" type="id" />
+    <item name="hcs_title_shadow" type="id" />
+
+</resources>
