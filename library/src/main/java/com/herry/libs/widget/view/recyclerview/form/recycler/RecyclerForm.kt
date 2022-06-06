@@ -3,6 +3,7 @@ package com.herry.libs.widget.view.recyclerview.form.recycler
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.herry.libs.R
@@ -90,6 +91,10 @@ abstract class RecyclerForm : NodeView<RecyclerForm.Holder>() {
 
     fun setVisibility(visibility: Int) {
         holder?.view?.visibility = visibility
+    }
+
+    fun isVisible(isVisible: Boolean) {
+        holder?.view?.isVisible = isVisible
     }
 
     inner class Holder(context: Context, view: View) : NodeHolder(context, view) {

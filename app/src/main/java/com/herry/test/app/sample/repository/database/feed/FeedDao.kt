@@ -54,13 +54,20 @@ interface FeedDao {
     )
     fun getTagFeeds(tag: String, lastProjectId: String, loadSize: Int): List<Feed>
 
-//    @Query(
-//        "SELECT * " +
-//                "FROM feed " +
-//                "WHERE tags LIKE :tag " +
-//                "AND (CASE WHEN :lastProjectId='' THEN published_at < datetime('now') ELSE published_at < (SELECT published_at FROM feed WHERE project_id=:lastProjectId) END) " +
-//                "ORDER BY published_at DESC " +
-//                "LIMIT CASE WHEN :loadSize > 0 THEN :loadSize ELSE -1 END"
-//    )
-//    fun getAutoCompleteKeywords(keyword: String): List<String>
+    @Query(
+        "WITH RECURSIVE " +
+            "tags_split(tags, str) AS (" +
+                "SELECT '', replace(tags, ' ', '') || '#' FROM feed " +
+                "UNION ALL SELECT " +
+                "substr(str, 0, instr(str, '#'))," +
+                "substr(str, instr(str, '#')+1) " +
+                "FROM tags_split " +
+                "WHERE str!='' and str!='\b'" +
+            ") " +
+        "SELECT DISTINCT tags " +
+            "FROM tags_split " +
+            "WHERE tags like :keyword " +
+            "ORDER BY tags ASC; "
+    )
+    fun getAutoCompleteKeywords(keyword: String): List<String>
 }

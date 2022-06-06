@@ -3,11 +3,15 @@ package com.herry.test.app.sample.feeds.search
 import com.herry.libs.nodeview.model.Node
 import com.herry.libs.nodeview.model.NodeHelper
 import com.herry.libs.nodeview.model.NodeModelGroup
+import com.herry.test.app.sample.feeds.detail.FeedDetailCallData
+import com.herry.test.app.sample.feeds.detail.TagFeedsDetailCallData
 import com.herry.test.app.sample.repository.database.feed.FeedDB
 import com.herry.test.app.sample.repository.database.feed.FeedDBRepository
 import com.herry.test.app.sample.repository.database.searchlog.RecentlySearchKeyword
 import com.herry.test.app.sample.repository.database.searchlog.RecentlySearchKeywordDB
 import com.herry.test.app.sample.repository.database.searchlog.RecentlySearchKeywordDBRepository
+import com.herry.test.app.sample.tags.TagsPresenter
+import com.herry.test.rx.LastOneObservable
 import com.herry.test.rx.RxSchedulerProvider
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
@@ -22,22 +26,20 @@ class SearchFeedsPresenter : SearchFeedsContract.Presenter() {
     private var recentlyDatabase: RecentlySearchKeywordDB? = null
     private var recentlyRepository: RecentlySearchKeywordDBRepository? = null
 
-
-    private val recentlySearchWordNodes: Node<NodeModelGroup> = NodeHelper.createNodeGroup()
-    private val searchAutoCompletesNodes: Node<NodeModelGroup> = NodeHelper.createNodeGroup()
-    private val searchAutoCompleteHotelsNodes: Node<NodeModelGroup> = NodeHelper.createNodeGroup()
+    private val keywordsNodes: Node<NodeModelGroup> = NodeHelper.createNodeGroup()
+    private val autocompleteNodes: Node<NodeModelGroup> = NodeHelper.createNodeGroup()
+    private val feedsNodes: Node<NodeModelGroup> = NodeHelper.createNodeGroup()
 
     private val autoCompleteCompositeDisposable = CompositeDisposable()
     private val autoCompleteBehaviorSubject = BehaviorSubject.create<String>()
 
-//    private val autoCompleteHotelsDisposable = LastOneObservable<Pair<AutoCompleteData, MutableList<NewHotelListData>>>(
-//        {
-//            launched {
-//                displayAutoCompleteHotels(it.first, it.second)
-//            }
-//        },
-//        onlyLastOne = false
-//    )
+    private val searchResultFeedsDisposable = LastOneObservable<Pair<Boolean, MutableList<SearchFeedsContract.SearchResultData>>>(
+        {
+            displaySearchFeedResults(it.first, it.second)
+        }
+    )
+
+    private var currentPosition: Int = 0
 
     override fun onAttach(view: SearchFeedsContract.View) {
         super.onAttach(view)
@@ -51,22 +53,23 @@ class SearchFeedsPresenter : SearchFeedsContract.Presenter() {
             recentlyRepository = RecentlySearchKeywordDBRepository(db.dao())
         }
 
-        view.recentlyRoot.beginTransition()
-        view.recentlyRoot.clearChild()
-        NodeHelper.addNode(view.recentlyRoot, recentlySearchWordNodes)
-        view.recentlyRoot.endTransition()
+        view.keywordsRoot.beginTransition()
+        view.keywordsRoot.clearChild()
+        NodeHelper.addNode(view.keywordsRoot, keywordsNodes)
+        NodeHelper.addNode(view.keywordsRoot, autocompleteNodes)
+        view.keywordsRoot.endTransition()
 
-        view.searchRoot.beginTransition()
-        view.searchRoot.clearChild()
-        NodeHelper.addNode(view.searchRoot, searchAutoCompletesNodes)
-        NodeHelper.addNode(view.searchRoot, searchAutoCompleteHotelsNodes)
-        view.searchRoot.endTransition()
+        view.feedsRoot.beginTransition()
+        view.feedsRoot.clearChild()
+        NodeHelper.addNode(view.feedsRoot, feedsNodes)
+        view.feedsRoot.endTransition()
 
-        setSearchFeedComposite()
+        setAutoCompleteComposite()
     }
 
     override fun onDetach() {
         autoCompleteCompositeDisposable.dispose()
+        searchResultFeedsDisposable.dispose()
 
         recentlyRepository = null
         recentlyDatabase = null
@@ -74,32 +77,30 @@ class SearchFeedsPresenter : SearchFeedsContract.Presenter() {
         feedRepository = null
         feedDatabase = null
 
-//        autoCompleteHotelsDisposable.dispose()
-
         super.onDetach()
     }
 
     override fun onLaunch(view: SearchFeedsContract.View, recreated: Boolean) {
         launch {
-            loadRecentlySearchWords()
+            loadRecentlySearchKeywords()
 
-            searchFeed("")
+            getAutoComplete("")
         }
     }
 
-    override fun searchFeed(keyword: String) {
+    override fun getAutoComplete(keyword: String) {
         autoCompleteBehaviorSubject.onNext(keyword)
     }
 
-    private fun getAutoCompleteKeywords(keyword: String): Observable<FeedDBRepository.AutoCompleteKeywords> {
+    private fun getAutoCompleteKeywords(keyword: String): Observable<MutableList<String>> {
         return Observable.create { emitter ->
 
-            emitter.onNext(feedRepository?.getAutoCompleteKeywords(keyword) ?: FeedDBRepository.AutoCompleteKeywords(keyword))
+            emitter.onNext(feedRepository?.getAutoCompleteKeywords(keyword) ?: mutableListOf())
             emitter.onComplete()
         }
     }
 
-    private fun setSearchFeedComposite() {
+    private fun setAutoCompleteComposite() {
         view ?: return
 
         autoCompleteCompositeDisposable.add(
@@ -122,27 +123,21 @@ class SearchFeedsPresenter : SearchFeedsContract.Presenter() {
                         subscribeObservable(
                             getAutoCompleteKeywords(searchText),
                             {
-                                setAutoCompleteResults(it)
+                                displaySearchAutoCompletes(it)
 //                                view.onLoadViewVisible(false)
                             },
                             loadView = false
                         )
                     } else {
-                        view?.onChangedViewMode(SearchFeedsContract.ViewMode.RECENTLY)
+                        view?.onChangedViewMode(SearchFeedsContract.ViewMode.RECOMMEND)
 //                        view.onLoadViewVisible(false)
                     }
                 }
         )
     }
 
-    private fun setAutoCompleteResults(dataSet: FeedDBRepository.AutoCompleteKeywords) {
-        displaySearchAutoCompletes(dataSet.keywords)
-//        Trace.d("Herry", "displaySearchAutoCompletes search keyword : ${dataSet.keyword}")
-//        loadAutoCompleteHotels(dataSet.feeds.firstOrNull())
-    }
-
     private fun displaySearchAutoCompletes(list: MutableList<String>) {
-        this.searchAutoCompletesNodes.beginTransition()
+        this.autocompleteNodes.beginTransition()
 
         val nodes = NodeHelper.createNodeGroup()
         if (list.isNotEmpty()) {
@@ -150,46 +145,10 @@ class SearchFeedsPresenter : SearchFeedsContract.Presenter() {
         } else {
             NodeHelper.addModel(nodes, SearchFeedsContract.EmptyModel())
         }
-        NodeHelper.upSert(this.searchAutoCompletesNodes, nodes)
+        NodeHelper.upSert(this.autocompleteNodes, nodes)
 
-        this.searchAutoCompletesNodes.endTransition()
-
-        view?.onChangedViewMode(SearchFeedsContract.ViewMode.SEARCH)
+        this.autocompleteNodes.endTransition()
     }
-
-//    private fun loadAutoCompleteHotels(autoCompleteData: Feed?) {
-//        launch(LaunchWhen.RESUMED) {
-//            autoCompleteHotelsDisposable.dispose()
-//
-//            if (null != autoCompleteData) {
-//                autoCompleteHotelsDisposable.subscribe(
-//                    getPresenterObservable(
-//                        RestHotelRequest().getAutoCompleteHotels(
-//                            autoCompleteData
-//                        ).map {
-//                            Pair(autoCompleteData, it)
-//                        },
-//                        loadView = false
-//                    )
-//                        .observeOn(SchedulerProvider.ui())
-//                )
-//            } else {
-//                displayAutoCompleteHotels(null)
-//            }
-//        }
-//    }
-//
-//    private fun displayAutoCompleteHotels(autoCompleteData: Feed?, list: MutableList<Feed> = mutableListOf()) {
-//        this.searchAutoCompleteHotelsNodes.beginTransition()
-//
-//        val nodes = NodeHelper.createNodeGroup()
-//        if (null != autoCompleteData && list.isNotEmpty()) {
-//            NodeHelper.addModels(nodes, *list.toTypedArray())
-//        }
-//        NodeHelper.upSert(this.searchAutoCompleteHotelsNodes, nodes)
-//
-//        this.searchAutoCompleteHotelsNodes.endTransition()
-//    }
 
     private fun getRecentlySearchKeywords(): Observable<MutableList<RecentlySearchKeyword>> {
         return Observable.create { emitter ->
@@ -198,26 +157,112 @@ class SearchFeedsPresenter : SearchFeedsContract.Presenter() {
         }
     }
 
-    private fun loadRecentlySearchWords() {
+    private fun loadRecentlySearchKeywords() {
         subscribeObservable(
             getRecentlySearchKeywords(),
             onNext = {
-                displayRecentlySearchWords(it)
+                displayRecentlySearchKeywords(it)
             },
             loadView = false
         )
     }
 
-    private fun displayRecentlySearchWords(list: MutableList<RecentlySearchKeyword>) {
-        this.recentlySearchWordNodes.beginTransition()
+    private fun displayRecentlySearchKeywords(list: MutableList<RecentlySearchKeyword>) {
+        this.keywordsNodes.beginTransition()
 
         val recentlySearchWordNodes = NodeHelper.createNodeGroup()
 
         if(list.isNotEmpty()) {
             NodeHelper.addModels(recentlySearchWordNodes, *list.toTypedArray())
         }
-        NodeHelper.upSert(this.recentlySearchWordNodes, recentlySearchWordNodes)
+        NodeHelper.upSert(this.keywordsNodes, recentlySearchWordNodes)
 
-        this.recentlySearchWordNodes.endTransition()
+        this.keywordsNodes.endTransition()
+    }
+
+    private fun getFeeds(): MutableList<SearchFeedsContract.SearchResultData> = NodeHelper.getChildrenModels(feedsNodes)
+
+    override fun loadMoreSearchResults() {
+        val keyword = getFeeds().firstOrNull()?.keyword ?: return
+        loadFeeds(false, keyword)
+    }
+
+    override fun setCurrentPosition(position: Int) {
+        this.currentPosition = position
+    }
+
+    override fun searchFeeds(keyword: String) {
+        loadFeeds(true, keyword)
+        // save
+    }
+
+    private fun loadFeeds(reset: Boolean, keyword: String) {
+        var lastProjectId = ""
+        if (!reset) {
+            val feeds = getFeeds()
+            lastProjectId = if (feeds.isNotEmpty()) feeds.last().feed.projectId else ""
+        } else {
+            searchResultFeedsDisposable.dispose()
+        }
+
+        if (searchResultFeedsDisposable.isDisposed()) {
+            if (reset) {
+//                view?.onLoadView(true)
+            }
+            if (keyword.isNotBlank()) {
+                searchResultFeedsDisposable.subscribe(
+                    presenterObservable(
+                        observable = Observable.create<MutableList<SearchFeedsContract.SearchResultData>> { emitter ->
+                            val list: MutableList<SearchFeedsContract.SearchResultData> = mutableListOf()
+
+                            feedRepository?.getTagFeeds(tag = keyword, lastProjectId = lastProjectId, pageSize = TagsPresenter.PAGE_SIZE)?.forEach { feed ->
+                                list.add(SearchFeedsContract.SearchResultData(keyword, feed))
+                            }
+
+                            emitter.onNext(list)
+                            emitter.onComplete()
+                        }, //.delay((if (init) 500 else 0).toLong(), TimeUnit.MILLISECONDS),
+                        loadView = false
+                    )
+                        .map {
+                            if (reset) {
+//                            view?.onLoadView(false)
+                            }
+                            Pair(reset, it)
+                        }
+                )
+            } else {
+                displaySearchFeedResults(reset, null)
+            }
+        }
+    }
+
+    private fun displaySearchFeedResults(reset: Boolean, result: MutableList<SearchFeedsContract.SearchResultData>? = null) {
+        if (reset) {
+            view?.onChangedViewMode(SearchFeedsContract.ViewMode.SEARCH_RESULT)
+//            view?.onScrollTo(currentPosition)
+        }
+
+        this.feedsNodes.beginTransition()
+        if (reset || result == null) {
+            val nodes = NodeHelper.createNodeGroup()
+            if (result != null) {
+                NodeHelper.addModels(nodes, *result.toTypedArray())
+            }
+            NodeHelper.upSert(this.feedsNodes, nodes)
+        } else {
+            NodeHelper.addModels(this.feedsNodes, *result.toTypedArray())
+        }
+        this.feedsNodes.endTransition()
+    }
+
+    override fun getFeedDetailCallData(selected: SearchFeedsContract.SearchResultData): FeedDetailCallData? {
+        view?.getViewContext() ?: return null
+
+        return TagFeedsDetailCallData(
+            loadedProjectCounts = getFeeds().size,
+            selectedFeed = selected.feed,
+            tag = "#${selected.keyword}"
+        )
     }
 }

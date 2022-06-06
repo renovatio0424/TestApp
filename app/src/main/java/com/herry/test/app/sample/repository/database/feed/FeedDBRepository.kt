@@ -37,17 +37,12 @@ class FeedDBRepository(private val dao: FeedDao) {
     }
 
     @WorkerThread
-    fun getAutoCompleteKeywords(keyword: String): AutoCompleteKeywords {
+    fun getAutoCompleteKeywords(keyword: String): MutableList<String> {
         val list = mutableListOf<String>()
-        if (keyword.isNotBlank()) {
-//            dao.getAutoCompleteKeywords()
+        if (keyword.isNotBlank() && keyword.length >= 2) {
+            list.addAll(dao.getAutoCompleteKeywords("%$keyword%"))
         }
 
-        return AutoCompleteKeywords(keyword = keyword, keywords = list)
+        return list
     }
-
-    data class AutoCompleteKeywords(
-        val keyword: String,
-        val keywords: MutableList<String> = mutableListOf()
-    )
 }
